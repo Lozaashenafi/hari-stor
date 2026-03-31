@@ -1,23 +1,19 @@
-import {InputGroup } from 'lucide-react'
+import { getCompanyProfile } from "@/services/company.service"
+import CompanyProfileForm from "./CompanyProfileForm"
 
+export default async function ProfilePage() {
+  const profile = await getCompanyProfile()
 
-
-
-export default function CompanyProfilePage() {
   return (
-    <div className="max-w-2xl">
-      <h1 className="font-serif text-3xl text-white mb-8">Brand Identity</h1>
-      <form className="space-y-6 bg-zinc-950 p-8 border border-white/5 rounded-2xl">
-        <InputGroup label="Store Name" defaultValue="ShallyLuxe" />
-        <InputGroup label="WhatsApp Number" placeholder="+123..." />
-        <InputGroup label="Instagram Username" placeholder="@shallyluxe" />
-        <InputGroup label="TikTok Username" placeholder="@shallyluxe" />
-        <InputGroup label="Physical Location" placeholder="123 Luxury St, Paris" />
-        
-        <button className="bg-white/10 text-white px-8 py-3 rounded-lg hover:bg-white/20 transition-all uppercase text-[10px] tracking-widest font-bold border border-white/5">
-          Update Profile
-        </button>
-      </form>
+    <div className="max-w-5xl mx-auto pb-20 px-4">
+      <header className="mb-10 mt-6">
+        <h1 className="font-serif text-4xl md:text-6xl text-white italic">Brand Identity</h1>
+        <p className="text-[#C5A059] text-xs uppercase tracking-[0.4em] font-black mt-4">
+          Global Brand Settings & Socials
+        </p>
+      </header>
+
+      <CompanyProfileForm profile={profile} />
     </div>
   )
 }

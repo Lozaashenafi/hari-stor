@@ -107,6 +107,12 @@ export const companyProfile = pgTable("company_profile", {
   contactInfo: text("contact_info"),
 });
 
+export const gallery = pgTable("gallery", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  imageUrl: text("image_url").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
 
 /* =========================
    Relations

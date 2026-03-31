@@ -15,6 +15,13 @@
       "when": 1774722282144,
       "tag": "0001_living_weapon_omega",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1774944239788,
+      "tag": "0002_acoustic_lady_vermin",
+      "breakpoints": true
     }
   ]
 }
