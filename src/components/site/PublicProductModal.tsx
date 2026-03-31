@@ -1,16 +1,33 @@
 'use client'
 import React, { useState } from 'react'
-import { X, MessageCircle, ChevronLeft, ChevronRight, Palette } from 'lucide-react'
+import { X, MessageCircle, ChevronLeft, ChevronRight, Palette, Ruler } from 'lucide-react'
 
 export default function PublicProductModal({ product, company, onClose }: { product: any, company: any, onClose: () => void }) {
   const [activeImage, setActiveImage] = useState(0)
+  
+  // 1. New States to track selection
+  const [selectedColor, setSelectedColor] = useState<string | null>(null)
+  const [selectedInch, setSelectedInch] = useState<string | null>(null)
 
   if (!product) return null
 
   const images = product.images || []
   const colors = product.colors || [] 
-  const whatsappNumber = company?.whatsapp?.replace(/[^0-9]/g, '') || ''
-  const message = encodeURIComponent(`Hi, I'm interested in the ${product.name}.`)
+  const inches = product.inches || []
+  
+  const whatsappNumber = company?.whatsapp?.replace(/\D/g, '') || ''
+
+  // 2. Generate Dynamic WhatsApp Message
+  const generateWhatsAppLink = () => {
+    const baseUrl = `https://wa.me/${whatsappNumber}`
+    const intro = `Hi ShallyLuxe! ✨%0A%0AI am interested in ordering the following:%0A%0A`
+    const itemName = `*Product:* ${product.name}%0A`
+    const colorPart = selectedColor ? `*Color:* ${selectedColor}%0A` : `*Color:* Not selected%0A`
+    const inchPart = selectedInch ? `*Length:* ${selectedInch}"%0A` : `*Length:* Not selected%0A`
+    const footer = `%0APlease let me know the availability and total price.`
+    
+    return `${baseUrl}?text=${intro}${itemName}${colorPart}${inchPart}${footer}`
+  }
 
   const nextImage = () => setActiveImage((prev) => (prev + 1) % images.length)
   const prevImage = () => setActiveImage((prev) => (prev - 1 + images.length) % images.length)
@@ -57,7 +74,7 @@ export default function PublicProductModal({ product, company, onClose }: { prod
           </div>
 
           {/* RIGHT: PRODUCT INFO */}
-          <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-between bg-gradient-to-br from-[#0A0A0A] to-black overflow-y-auto">
+          <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-between bg-gradient-to-br from-[#0A0A0A] to-black overflow-y-auto custom-scrollbar">
             <div className="space-y-8">
               <div>
                 <div className="flex justify-between items-start mb-4">
@@ -78,48 +95,76 @@ export default function PublicProductModal({ product, company, onClose }: { prod
                  <InfoRow label="Options" value={product.options} />
               </div>
 
-              {/* COLORS SECTION - NEW */}
+              {/* 3. INTERACTIVE COLORS SECTION */}
               {colors.length > 0 && (
                 <div>
                   <h4 className="text-[10px] text-gray-500 uppercase tracking-widest mb-4 font-black flex items-center gap-2">
-                    <Palette size={12} className="text-[#C5A059]" /> Available Shades
+                    <Palette size={12} className="text-[#C5A059]" /> Select Color
                   </h4>
                   <div className="flex flex-wrap gap-2">
                     {colors.map((c: any) => (
-                      <div key={c.id} className="bg-zinc-900 border border-white/10 px-4 py-2 rounded-lg text-[11px] text-gray-200 uppercase tracking-widest">
+                      <button 
+                        key={c.id} 
+                        onClick={() => setSelectedColor(c.color)}
+                        className={`px-4 py-2 rounded-lg text-[11px] uppercase tracking-widest transition-all border ${
+                          selectedColor === c.color 
+                          ? 'bg-[#C5A059] text-black border-[#C5A059] font-bold shadow-lg shadow-gold/20' 
+                          : 'bg-zinc-900 border-white/10 text-gray-400 hover:border-gray-500'
+                        }`}
+                      >
                         {c.color}
-                      </div>
+                      </button>
                     ))}
                   </div>
                 </div>
               )}
 
-              {/* LENGTHS SECTION */}
-              <div>
-                <h4 className="text-[10px] text-gray-500 uppercase tracking-widest mb-4 font-black">Available Lengths</h4>
-                <div className="flex flex-wrap gap-2">
-                  {product.inches.map((i: any) => (
-                    <div key={i.id} className="border border-white/10 px-4 py-2 text-[11px] text-white hover:border-[#C5A059] transition-colors">
-                      {i.inches}"
-                    </div>
-                  ))}
+              {/* 4. INTERACTIVE LENGTHS SECTION */}
+              {inches.length > 0 && (
+                <div>
+                  <h4 className="text-[10px] text-gray-500 uppercase tracking-widest mb-4 font-black flex items-center gap-2">
+                    <Ruler size={12} className="text-[#C5A059]" /> Select Length
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {inches.map((i: any) => (
+                      <button 
+                        key={i.id} 
+                        onClick={() => setSelectedInch(i.inches.toString())}
+                        className={`px-5 py-2 text-[11px] transition-all border ${
+                          selectedInch === i.inches.toString() 
+                          ? 'bg-[#C5A059] text-black border-[#C5A059] font-bold' 
+                          : 'border-white/10 text-white hover:border-gray-500'
+                        }`}
+                      >
+                        {i.inches}"
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
-            {/* CALL TO ACTION */}
+            {/* 5. CALL TO ACTION WITH DYNAMIC MESSAGE */}
             <div className="mt-12 space-y-4">
               <a 
-                href={`https://wa.me/${whatsappNumber}?text=${message}`}
+                href={generateWhatsAppLink()}
                 target="_blank"
-                className="w-full bg-[#C5A059] text-black font-black py-5 text-xs uppercase tracking-[0.3em] flex items-center justify-center gap-3 hover:bg-[#D4B26E] transition-all transform hover:scale-[1.01] active:scale-95 shadow-xl shadow-gold/10"
+                className={`w-full font-black py-5 text-xs uppercase tracking-[0.3em] flex items-center justify-center gap-3 transition-all transform hover:scale-[1.01] active:scale-95 shadow-xl ${
+                  selectedColor && selectedInch 
+                  ? 'bg-[#C5A059] text-black shadow-gold/10' 
+                  : 'bg-zinc-800 text-zinc-500 border border-white/5 grayscale'
+                }`}
               >
                 <MessageCircle size={18} />
                 Order via WhatsApp
               </a>
-              <p className="text-[9px] text-zinc-600 text-center uppercase tracking-widest italic">
-                Hand-Selected Luxury • ShallyLuxe Exclusive
-              </p>
+              
+              {/* Optional selection hint */}
+              {(!selectedColor || !selectedInch) && (
+                <p className="text-[9px] text-red-400/60 text-center uppercase tracking-widest">
+                   Please select a color and length to proceed
+                </p>
+              )}
             </div>
           </div>
         </div>
