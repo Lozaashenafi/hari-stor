@@ -3,6 +3,9 @@ import Hero from "@/components/site/Hero";
 import ProductSection from "@/components/site/ProductSection";
 import { getAdminProducts } from "@/services/product.service";
 import { getCompanyProfile } from "@/services/company.service";
+import GallerySection from "@/components/site/GallerySection";
+import Features from "@/components/site/Features";
+import ContactSection from "@/components/site/ContactSection";
 
 export default async function HomePage() {
    // Fetch real data from Drizzle
@@ -16,12 +19,12 @@ export default async function HomePage() {
  
       {/* Dynamic Products Section */}
       <ProductSection products={products} company={company} />
-
+  {/* Add the Gallery Section here */}
+      <GallerySection />
       {/* Add a placeholder footer */}
-      <footer className="bg-[#050505] border-t border-white/5 py-20 text-center">
-        <p className="text-zinc-600 text-[10px] uppercase tracking-[0.5em]">
-          &copy; {new Date().getFullYear()} {company?.name || 'SHALLYLUXE'} • All Rights Reserved
-        </p>
-      </footer>    </main>
+      <Features /> {/* 2. Add it here */}
+      <ContactSection /> 
+
+     </main>
   );
 }

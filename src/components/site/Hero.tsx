@@ -60,7 +60,6 @@ const Hero = async () => {
           <Link href="/" className="hover:text-[#C5A059] transition">Home</Link>
           <Link href="#products" className="hover:text-[#C5A059] transition">Products</Link>
           <Link href="#gallery" className="hover:text-[#C5A059] transition">Gallery</Link>
-          <Link href="#about" className="hover:text-[#C5A059] transition">About</Link>
           <Link href="#contact" className="hover:text-[#C5A059] transition text-nowrap">Contact Us</Link>
           
           <Link 
