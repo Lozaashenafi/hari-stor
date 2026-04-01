@@ -136,28 +136,51 @@ export default function AllProductsClient({ products, company }: { products: any
         </div>
       </div>
 
-      {/* --- RESULTS GRID --- */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-16">
+         {/* --- RESULTS GRID --- */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-20">
         {filteredProducts.map((product) => (
-          <div 
-            key={product.id} 
-            className="group cursor-pointer"
-            onClick={() => setSelectedProduct(product)}
-          >
-            <div className="aspect-[4/5] overflow-hidden bg-zinc-900 mb-6 rounded-3xl border border-white/5 relative">
+          <div key={product.id} className="group cursor-pointer" onClick={() => setSelectedProduct(product)}>
+            <div className="aspect-[4/5] overflow-hidden bg-zinc-900 mb-8 rounded-[2rem] border border-white/5 relative shadow-2xl">
+              
+              {/* --- LARGE ATTRACTIVE SALE BADGE --- */}
+              {product.isOnSale && (
+                <div className="absolute top-5 left-5 z-20 bg-red-600 text-white text-[9px] font-black uppercase tracking-[0.2em] px-4 py-2 rounded-full shadow-[0_10px_20px_rgba(0,0,0,0.4)]">
+                  Sale
+                </div>
+              )}
+
               <img 
                 src={product.images[0]?.imageUrl} 
                 className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                 alt={product.name}
               />
-              <div className="absolute top-4 right-4 px-3 py-1 bg-black/60 backdrop-blur-md rounded-full border border-white/10 text-[8px] text-[#C5A059] uppercase tracking-widest font-black">
+              
+              <div className="absolute top-5 right-5 px-3 py-1.5 bg-black/80 backdrop-blur-md rounded-full border border-[#C5A059]/30 text-[8px] text-[#C5A059] uppercase tracking-widest font-black">
                 {product.origin}
               </div>
             </div>
-            <div className="space-y-1">
-                <span className="text-zinc-600 text-[9px] uppercase tracking-[0.3em] font-black">{product.texture}</span>
-                <h3 className="text-white text-lg font-serif italic group-hover:text-[#C5A059] transition-colors">{product.name}</h3>
-                <p className="text-zinc-400 text-sm font-light italic">From ${(product.price / 100).toFixed(2)}</p>
+
+            <div className="space-y-3 px-2">
+                <span className="text-[#C5A059] text-[10px] uppercase tracking-[0.4em] font-black opacity-80">
+                    {product.texture}
+                </span>
+                
+                <h3 className="text-white text-xl font-serif italic group-hover:text-[#C5A059] transition-colors leading-tight">
+                    {product.name}
+                </h3>
+                
+                {/* --- BIG VISIBLE PRICE --- */}
+                <div className="flex items-center gap-4 pt-1">
+                  <p className="text-white text-2xl font-serif font-medium">
+                    ${(product.price / 100).toFixed(2)}
+                  </p>
+                  
+                  {product.isOnSale && product.previousPrice && (
+                    <p className="text-zinc-600 text-sm line-through decoration-red-600/40 italic font-light">
+                      ${(product.previousPrice / 100).toFixed(2)}
+                    </p>
+                  )}
+                </div>
             </div>
           </div>
         ))}

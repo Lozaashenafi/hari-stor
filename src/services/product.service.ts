@@ -7,47 +7,92 @@ import { revalidatePath } from "next/cache"
 export async function createHairProduct(data: any) {
   try {
     return await db.transaction(async (tx) => {
-      // 1. Insert Main Product
       const [product] = await tx.insert(hairProducts).values({
         name: data.name,
         texture: data.texture,
         hairType: data.hairType,
         origin: data.origin,
-        price: parseInt(data.price),
-        availability: data.availability, // 'in_hand' | 'order'
-        quantityInHand: data.quantityInHand ? parseInt(data.quantityInHand) : 0,
+        processing: data.processing,
+        options: data.options,
+        price: data.price,
+        isOnSale: data.isOnSale || false,
+        previousPrice: null, // New products don't have a history yet
+        availability: data.availability || 'in_hand', // Safety fallback
+        quantityInHand: data.quantityInHand || 0,
       }).returning();
 
-      // 2. Insert Images (URLs as strings)
       if (data.images?.length > 0) {
         await tx.insert(hairImages).values(
           data.images.map((url: string) => ({ productId: product.id, imageUrl: url }))
         );
       }
-
-      // 3. Insert Colors
       if (data.colors?.length > 0) {
-        await tx.insert(hairColors).values(
-          data.colors.map((c: string) => ({ productId: product.id, color: c }))
-        );
+        await tx.insert(hairColors).values(data.colors.map((c: string) => ({ productId: product.id, color: c })));
       }
-
-      // 4. Insert Inches
       if (data.inches?.length > 0) {
-        await tx.insert(hairInches).values(
-          data.inches.map((i: string) => ({ productId: product.id, inches: parseInt(i) }))
-        );
+        await tx.insert(hairInches).values(data.inches.map((i: string) => ({ productId: product.id, inches: parseInt(i) })));
       }
 
-      revalidatePath('/admin/products')
+      revalidatePath('/admin/products');
       return { success: true };
     });
   } catch (error) {
-    console.error("DB Error:", error);
-    return { success: false, error: "Failed to create product" };
+    console.error("Create Error:", error);
+    return { success: false };
   }
 }
 
+export async function updateHairProduct(id: number, data: any) {
+  try {
+    const currentProduct = await db.query.hairProducts.findFirst({
+      where: eq(hairProducts.id, id),
+    });
+
+    let previousPrice = currentProduct?.previousPrice;
+    // If price changed, move current price to history
+    if (currentProduct && currentProduct.price !== data.price) {
+      previousPrice = currentProduct.price;
+    }
+
+    return await db.transaction(async (tx) => {
+      await tx.update(hairProducts)
+        .set({
+          name: data.name,
+          texture: data.texture,
+          hairType: data.hairType,
+          origin: data.origin,
+          processing: data.processing,
+          options: data.options,
+          price: data.price,
+          previousPrice: previousPrice,
+          isOnSale: data.isOnSale,
+          availability: data.availability || 'in_hand', // Fixes the NULL error
+          quantityInHand: data.quantityInHand || 0,
+        })
+        .where(eq(hairProducts.id, id));
+
+      // Refresh relations
+      await tx.delete(hairImages).where(eq(hairImages.productId, id));
+      if (data.images?.length > 0) {
+        await tx.insert(hairImages).values(data.images.map((url: string) => ({ productId: id, imageUrl: url })));
+      }
+      await tx.delete(hairColors).where(eq(hairColors.productId, id));
+      if (data.colors?.length > 0) {
+        await tx.insert(hairColors).values(data.colors.map((c: string) => ({ productId: id, color: c })));
+      }
+      await tx.delete(hairInches).where(eq(hairInches.productId, id));
+      if (data.inches?.length > 0) {
+        await tx.insert(hairInches).values(data.inches.map((i: string) => ({ productId: id, inches: parseInt(i) })));
+      }
+
+      revalidatePath('/admin/products');
+      return { success: true };
+    });
+  } catch (error) {
+    console.error("Update Error:", error);
+    return { success: false };
+  }
+}
 export async function getDashboardStats() {
   try {
     const [stats] = await db.select({
@@ -108,55 +153,5 @@ export async function deleteProduct(id: number) {
     return { success: true };
   } catch (error) {
     return { success: false, error: "Failed to delete" };
-  }
-}
-
-export async function updateHairProduct(id: number, data: any) {
-  try {
-    return await db.transaction(async (tx) => {
-      // 1. Update Main Product
-      await tx.update(hairProducts)
-        .set({
-          name: data.name,
-          price: parseInt(data.price),
-          texture: data.texture,
-          hairType: data.hairType,
-          origin: data.origin,
-          availability: data.availability,
-          quantityInHand: data.quantityInHand ? parseInt(data.quantityInHand) : 0,
-        })
-        .where(eq(hairProducts.id, id));
-
-      // 2. Refresh Images (Delete old, insert new)
-      await tx.delete(hairImages).where(eq(hairImages.productId, id));
-      if (data.images?.length > 0) {
-        await tx.insert(hairImages).values(
-          data.images.map((url: string) => ({ productId: id, imageUrl: url }))
-        );
-      }
-
-      // 3. Refresh Colors
-      await tx.delete(hairColors).where(eq(hairColors.productId, id));
-      if (data.colors?.length > 0) {
-        await tx.insert(hairColors).values(
-          data.colors.map((c: string) => ({ productId: id, color: c }))
-        );
-      }
-
-      // 4. Refresh Inches
-      await tx.delete(hairInches).where(eq(hairInches.productId, id));
-      if (data.inches?.length > 0) {
-        await tx.insert(hairInches).values(
-          data.inches.map((i: string) => ({ productId: id, inches: parseInt(i) }))
-        );
-      }
-
-      revalidatePath('/admin/products');
-      revalidatePath(`/products/${id}`);
-      return { success: true };
-    });
-  } catch (error) {
-    console.error(error);
-    return { success: false };
   }
 }

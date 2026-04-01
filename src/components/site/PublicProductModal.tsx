@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { X, MessageCircle, ChevronLeft, ChevronRight, Palette, Ruler } from 'lucide-react'
 
 export default function PublicProductModal({ product, company, onClose }: { product: any, company: any, onClose: () => void }) {
@@ -8,6 +8,12 @@ export default function PublicProductModal({ product, company, onClose }: { prod
   // 1. New States to track selection
   const [selectedColor, setSelectedColor] = useState<string | null>(null)
   const [selectedInch, setSelectedInch] = useState<string | null>(null)
+
+  // Prevent background scroll when modal is open on mobile
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = 'unset' }
+  }, [])
 
   if (!product) return null
 
@@ -33,39 +39,61 @@ export default function PublicProductModal({ product, company, onClose }: { prod
   const prevImage = () => setActiveImage((prev) => (prev - 1 + images.length) % images.length)
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-2 md:p-4">
-      <div className="absolute inset-0 bg-black/95 backdrop-blur-md" onClick={onClose} />
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-0 md:p-4">
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/98 md:bg-black/95 backdrop-blur-md" onClick={onClose} />
       
-      <div className="relative bg-[#0A0A0A] border border-white/10 w-full max-w-5xl rounded-xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-300">
+      <div className="relative bg-[#0A0A0A] border-t md:border border-white/10 w-full h-full md:h-auto md:max-w-5xl md:rounded-xl overflow-hidden shadow-2xl flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-300">
         
-        <button onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-white z-[110] bg-black/50 p-2 rounded-full transition-colors">
-          <X size={20} />
+        {/* MOBILE CLOSE BUTTON (Top Right) */}
+        <button 
+          onClick={onClose} 
+          className="absolute top-4 right-4 text-white z-[110] bg-black/50 p-3 rounded-full transition-colors active:scale-90"
+        >
+          <X size={24} />
         </button>
 
-        <div className="flex flex-col md:flex-row h-full max-h-[95vh] md:max-h-[85vh]">
+        <div className="flex flex-col md:flex-row h-full overflow-y-auto md:overflow-visible">
           
-          {/* LEFT: IMAGE CAROUSEL */}
-          <div className="w-full md:w-1/2 relative bg-zinc-950 flex flex-col border-b md:border-b-0 md:border-r border-white/5">
-            <div className="relative flex-1 min-h-[350px] md:min-h-0 overflow-hidden">
+          {/* LEFT: IMAGE CAROUSEL (Fixed height on mobile, flexible on desktop) */}
+          <div className="w-full md:w-1/2 relative bg-zinc-950 flex flex-col flex-shrink-0 border-b md:border-b-0 md:border-r border-white/5">
+            <div className="relative w-full aspect-[4/5] md:aspect-auto md:flex-1 overflow-hidden">
               <img 
                 src={images[activeImage]?.imageUrl} 
                 className="w-full h-full object-cover transition-all duration-500" 
                 alt={product.name} 
               />
 
+              {/* Navigation Arrows (Larger for mobile thumbs) */}
               {images.length > 1 && (
                 <>
-                  <button onClick={(e) => { e.stopPropagation(); prevImage(); }} className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-black/40 text-white rounded-full hover:bg-[#5a3e00] hover:text-black transition-all backdrop-blur-sm"><ChevronLeft size={24} /></button>
-                  <button onClick={(e) => { e.stopPropagation(); nextImage(); }} className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-black/40 text-white rounded-full hover:bg-[#5a3e00] hover:text-black transition-all backdrop-blur-sm"><ChevronRight size={24} /></button>
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); prevImage(); }} 
+                    className="absolute left-2 top-1/2 -translate-y-1/2 p-4 bg-black/30 text-white rounded-full transition-all active:bg-[#5a3e00]"
+                  >
+                    <ChevronLeft size={28} />
+                  </button>
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); nextImage(); }} 
+                    className="absolute right-2 top-1/2 -translate-y-1/2 p-4 bg-black/30 text-white rounded-full transition-all active:bg-[#5a3e00]"
+                  >
+                    <ChevronRight size={28} />
+                  </button>
                 </>
               )}
             </div>
 
-            {/* Thumbnail Strip */}
+            {/* Thumbnail Strip (Scrollable on mobile) */}
             {images.length > 1 && (
-              <div className="flex gap-2 p-4 bg-black/50 border-t border-white/5 overflow-x-auto no-scrollbar">
+              <div className="flex gap-2 p-3 bg-black/50 border-t border-white/5 overflow-x-auto no-scrollbar scroll-smooth">
                 {images.map((img: any, idx: number) => (
-                  <button key={idx} onClick={() => setActiveImage(idx)} className={`relative w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 border-2 transition-all ${activeImage === idx ? 'border-[#5a3e00]' : 'border-transparent opacity-50'}`}>
+                  <button 
+                    key={idx} 
+                    onClick={() => setActiveImage(idx)} 
+                    className={`relative w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 border-2 transition-all ${
+                      activeImage === idx ? 'border-[#5a3e00]' : 'border-transparent opacity-60'
+                    }`}
+                  >
                     <img src={img.imageUrl} className="w-full h-full object-cover" alt="" />
                   </button>
                 ))}
@@ -73,29 +101,31 @@ export default function PublicProductModal({ product, company, onClose }: { prod
             )}
           </div>
 
-          {/* RIGHT: PRODUCT INFO */}
-          <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-between bg-gradient-to-br from-[#0A0A0A] to-black overflow-y-auto custom-scrollbar">
-            <div className="space-y-8">
+          {/* RIGHT: PRODUCT INFO (Scrollable area) */}
+          <div className="w-full md:w-1/2 p-6 md:p-12 flex flex-col bg-gradient-to-br from-[#0A0A0A] to-black">
+            <div className="space-y-8 flex-1">
               <div>
-                <div className="flex justify-between items-start mb-4">
-                  <span className="text-[#5a3e00] text-[10px] uppercase tracking-[0.5em] font-black">{product.hairType || 'Premium Piece'}</span>
+                <div className="flex justify-between items-start mb-3">
+                  <span className="text-[#5a3e00] text-[10px] uppercase tracking-[0.5em] font-black">
+                    {product.hairType || 'Premium Piece'}
+                  </span>
                   <span className="bg-[#5a3e00]/10 text-[#5a3e00] border border-[#5a3e00]/20 px-3 py-1 rounded text-[9px] font-black uppercase tracking-tighter">
                     {product.availability === 'in_hand' ? 'In Stock' : 'Pre-Order'}
                   </span>
                 </div>
-                <h2 className="font-serif text-4xl text-white mb-2 italic leading-tight">{product.name}</h2>
+                <h2 className="font-serif text-3xl md:text-5xl text-white mb-2 italic leading-tight">{product.name}</h2>
                 <p className="text-[#5a3e00] font-serif text-2xl font-light italic">${(product.price / 100).toFixed(2)}</p>
               </div>
 
-              {/* SPEC GRID */}
-              <div className="grid grid-cols-2 gap-y-6 border-y border-white/5 py-8">
+              {/* SPEC GRID (Visible and clean on mobile) */}
+              <div className="grid grid-cols-2 gap-y-6 border-y border-white/5 py-6">
                  <InfoRow label="Origin" value={product.origin} />
                  <InfoRow label="Texture" value={product.texture} />
                  <InfoRow label="Processing" value={product.processing} />
                  <InfoRow label="Options" value={product.options} />
               </div>
 
-              {/* 3. INTERACTIVE COLORS SECTION */}
+              {/* 3. INTERACTIVE COLORS SECTION (Larger tap targets) */}
               {colors.length > 0 && (
                 <div>
                   <h4 className="text-[10px] text-gray-500 uppercase tracking-widest mb-4 font-black flex items-center gap-2">
@@ -106,10 +136,10 @@ export default function PublicProductModal({ product, company, onClose }: { prod
                       <button 
                         key={c.id} 
                         onClick={() => setSelectedColor(c.color)}
-                        className={`px-4 py-2 rounded-lg text-[11px] uppercase tracking-widest transition-all border ${
+                        className={`min-h-[44px] px-5 py-2 rounded-xl text-[11px] uppercase tracking-widest transition-all border ${
                           selectedColor === c.color 
-                          ? 'bg-[#5a3e00] text-black border-[#5a3e00] font-bold shadow-lg shadow-gold/20' 
-                          : 'bg-zinc-900 border-white/10 text-gray-400 hover:border-gray-500'
+                          ? 'bg-[#5a3e00] text-black border-[#5a3e00] font-bold' 
+                          : 'bg-zinc-900 border-white/10 text-gray-400 active:border-gray-500'
                         }`}
                       >
                         {c.color}
@@ -119,7 +149,7 @@ export default function PublicProductModal({ product, company, onClose }: { prod
                 </div>
               )}
 
-              {/* 4. INTERACTIVE LENGTHS SECTION */}
+              {/* 4. INTERACTIVE LENGTHS SECTION (Larger tap targets) */}
               {inches.length > 0 && (
                 <div>
                   <h4 className="text-[10px] text-gray-500 uppercase tracking-widest mb-4 font-black flex items-center gap-2">
@@ -130,10 +160,10 @@ export default function PublicProductModal({ product, company, onClose }: { prod
                       <button 
                         key={i.id} 
                         onClick={() => setSelectedInch(i.inches.toString())}
-                        className={`px-5 py-2 text-[11px] transition-all border ${
+                        className={`min-h-[44px] min-w-[50px] px-5 py-2 text-[12px] transition-all border rounded-xl ${
                           selectedInch === i.inches.toString() 
                           ? 'bg-[#5a3e00] text-black border-[#5a3e00] font-bold' 
-                          : 'border-white/10 text-white hover:border-gray-500'
+                          : 'border-white/10 text-white active:border-gray-500'
                         }`}
                       >
                         {i.inches}"
@@ -144,25 +174,25 @@ export default function PublicProductModal({ product, company, onClose }: { prod
               )}
             </div>
 
-            {/* 5. CALL TO ACTION WITH DYNAMIC MESSAGE */}
-            <div className="mt-12 space-y-4">
+            {/* 5. CALL TO ACTION WITH DYNAMIC MESSAGE (Pinned towards bottom) */}
+            <div className="mt-12 mb-8 md:mb-0 space-y-4">
               <a 
                 href={generateWhatsAppLink()}
                 target="_blank"
-                className={`w-full font-black py-5 text-xs uppercase tracking-[0.3em] flex items-center justify-center gap-3 transition-all transform hover:scale-[1.01] active:scale-95 shadow-xl ${
+                className={`w-full font-black py-5 text-sm uppercase tracking-[0.3em] flex items-center justify-center gap-3 transition-all transform active:scale-95 shadow-xl ${
                   selectedColor && selectedInch 
-                  ? 'bg-[#5a3e00] text-black shadow-gold/10' 
-                  : 'bg-zinc-800 text-zinc-500 border border-white/5 grayscale'
+                  ? 'bg-[#5a3e00] text-black' 
+                  : 'bg-zinc-800 text-zinc-500 border border-white/5 opacity-50'
                 }`}
               >
-                <MessageCircle size={18} />
+                <MessageCircle size={20} />
                 Order via WhatsApp
               </a>
               
               {/* Optional selection hint */}
               {(!selectedColor || !selectedInch) && (
-                <p className="text-[9px] text-red-400/60 text-center uppercase tracking-widest">
-                   Please select a color and length to proceed
+                <p className="text-[10px] text-red-400/80 text-center uppercase tracking-widest animate-pulse">
+                   Select color & length to order
                 </p>
               )}
             </div>
@@ -177,7 +207,7 @@ function InfoRow({ label, value }: { label: string, value: string }) {
   return (
     <div className="flex flex-col">
       <span className="text-[9px] uppercase tracking-widest text-zinc-500 mb-1">{label}</span>
-      <span className="text-white text-sm font-medium">{value || 'Natural'}</span>
+      <span className="text-white text-sm font-medium leading-tight">{value || 'Natural'}</span>
     </div>
   )
 }

@@ -2,6 +2,7 @@
 import { pgTable, serial, text, integer, uuid, timestamp } from "drizzle-orm/pg-core"; // Add uuid and timestamp
 
 import { relations } from "drizzle-orm";
+import { boolean } from "drizzle-orm/pg-core"; // add boolean import
 
 export const profiles = pgTable("profiles", {
   // This ID will match the Supabase User ID
@@ -33,6 +34,8 @@ export const hairProducts = pgTable("hair_products", {
   options: text("options"),
 
   price: integer("price").notNull(),
+  previousPrice: integer("previous_price"), // To store the old price
+  isOnSale: boolean("is_on_sale").default(false).notNull(), // Sale toggle
 
   availability: text("availability").notNull(), // in_hand | order
 
