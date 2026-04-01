@@ -24,8 +24,9 @@ export default function Sidebar() {
     <>
       {/* Mobile Header */}
       <div className="lg:hidden flex items-center justify-between p-4 bg-zinc-950 border-b border-white/5 sticky top-0 z-50">
-        <span className="text-[#C5A059] font-bold tracking-widest text-sm">LUXE ADMIN</span>
-        <button onClick={() => setIsOpen(!isOpen)} className="text-[#C5A059] p-2">
+ <Link href="/" className="text-[#5a3e00] text-2xl font-bold tracking-[0.2em]">
+          LUXE ADMIN
+          </Link>        <button onClick={() => setIsOpen(!isOpen)} className="text-[#5a3e00] p-2">
           {isOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
@@ -45,8 +46,8 @@ export default function Sidebar() {
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div className="p-8 hidden lg:block">
-          <Link href="/" className="text-[#C5A059] text-2xl font-bold tracking-[0.2em]">
-            LUXE ADMIN
+          <Link href="/" className="text-[#5a3e00] text-2xl font-bold tracking-[0.2em]">
+          LUXE ADMIN
           </Link>
         </div>
 
@@ -57,11 +58,11 @@ export default function Sidebar() {
               href={link.href} 
               className={`flex items-center gap-4 px-4 py-4 rounded-2xl transition-all group ${
                 pathname === link.href 
-                ? 'bg-[#C5A059] text-black font-bold shadow-lg shadow-gold/20' 
+                ? 'bg-[#5a3e00] text-black font-bold shadow-lg shadow-gold/20' 
                 : 'text-gray-400 hover:bg-white/5 hover:text-white'
               }`}
             >
-              <span className={pathname === link.href ? 'text-black' : 'text-gray-500 group-hover:text-[#C5A059]'}>
+              <span className={pathname === link.href ? 'text-black' : 'text-gray-500 group-hover:text-[#5a3e00]'}>
                 {link.icon}
               </span>
               <span className="text-xs uppercase tracking-[0.2em]">{link.label}</span>

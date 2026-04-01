@@ -49,12 +49,12 @@ export default function ImageUpload({ urls, onUploadComplete, onRemove }: ImageU
       
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {/* Upload Button */}
-        <label className="relative aspect-square bg-black border-2 border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:border-[#C5A059] hover:bg-white/[0.02] transition-all group">
+        <label className="relative aspect-square bg-black border-2 border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:border-[#5a3e00] hover:bg-white/[0.02] transition-all group">
           {uploading ? (
-            <Loader2 className="text-[#C5A059] animate-spin" size={24} />
+            <Loader2 className="text-[#5a3e00] animate-spin" size={24} />
           ) : (
             <>
-              <Plus className="text-gray-500 group-hover:text-[#C5A059] mb-2" size={24} />
+              <Plus className="text-gray-500 group-hover:text-[#5a3e00] mb-2" size={24} />
               <span className="text-[9px] text-gray-500 uppercase tracking-tighter">Add Photo</span>
             </>
           )}

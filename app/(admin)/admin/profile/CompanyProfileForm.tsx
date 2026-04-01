@@ -39,9 +39,9 @@ export default function CompanyProfileForm({ profile }: { profile: any }) {
           <InputGroup label="Location" name="location" icon={<Icons.MapPin />} defaultValue={profile?.location} />
           <div className="space-y-2">
             <label className="text-xs uppercase tracking-widest text-white font-bold flex items-center gap-2">
-              <Icons.Info className="text-[#C5A059]"/> Description
+              <Icons.Info className="text-[#5a3e00]"/> Description
             </label>
-            <textarea name="contactInfo" defaultValue={profile?.contactInfo} rows={4} className="w-full bg-zinc-800 border border-zinc-600 p-4 rounded-xl text-white text-sm focus:border-[#C5A059] outline-none" />
+            <textarea name="contactInfo" defaultValue={profile?.contactInfo} rows={4} className="w-full bg-zinc-800 border border-zinc-600 p-4 rounded-xl text-white text-sm focus:border-[#5a3e00] outline-none" />
           </div>
         </div>
 
@@ -54,7 +54,7 @@ export default function CompanyProfileForm({ profile }: { profile: any }) {
         </div>
       </div>
 
-      <button disabled={loading} className="w-full bg-[#C5A059] text-black font-black py-6 rounded-2xl flex items-center justify-center gap-3 tracking-[0.3em] uppercase text-xs">
+      <button disabled={loading} className="w-full bg-[#5a3e00] text-black font-black py-6 rounded-2xl flex items-center justify-center gap-3 tracking-[0.3em] uppercase text-xs">
         {loading ? 'SAVING...' : <><Icons.Save /> SAVE CHANGES</>}
       </button>
     </form>
@@ -65,9 +65,9 @@ function InputGroup({ label, icon, ...props }: any) {
   return (
     <div className="space-y-2">
       <label className="text-xs uppercase tracking-widest text-white font-bold flex items-center gap-2">
-        <span className="text-[#C5A059]">{icon}</span> {label}
+        <span className="text-[#5a3e00]">{icon}</span> {label}
       </label>
-      <input className="w-full bg-zinc-800 border border-zinc-600 p-4 rounded-xl text-sm text-white focus:border-[#C5A059] outline-none transition-all" {...props} />
+      <input className="w-full bg-zinc-800 border border-zinc-600 p-4 rounded-xl text-sm text-white focus:border-[#5a3e00] outline-none transition-all" {...props} />
     </div>
   )
 }

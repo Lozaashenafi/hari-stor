@@ -19,7 +19,7 @@ export default function UserListClient({ users }: { users: any[] }) {
     <div className="bg-zinc-900 border border-zinc-700 rounded-[2.5rem] overflow-hidden shadow-2xl">
       <div className="overflow-x-auto">
         <table className="w-full text-left">
-          <thead className="bg-black/40 border-b border-zinc-700 text-[10px] uppercase tracking-[0.2em] text-[#C5A059] font-black">
+          <thead className="bg-black/40 border-b border-zinc-700 text-[10px] uppercase tracking-[0.2em] text-[#5a3e00] font-black">
             <tr>
               <th className="px-8 py-6">Administrator</th>
               <th className="px-6 py-6">Access Level</th>
@@ -31,7 +31,7 @@ export default function UserListClient({ users }: { users: any[] }) {
               <tr key={user.id} className="group hover:bg-white/[0.02] transition-colors">
                 <td className="px-8 py-6">
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-[#C5A059] rounded-full flex items-center justify-center text-black font-bold text-xs shadow-lg">
+                    <div className="w-10 h-10 bg-[#5a3e00] rounded-full flex items-center justify-center text-black font-bold text-xs shadow-lg">
                       {user.displayName?.charAt(0) || 'A'}
                     </div>
                     <div>
@@ -44,7 +44,7 @@ export default function UserListClient({ users }: { users: any[] }) {
                 </td>
                 <td className="px-6 py-6">
                   <div className="flex items-center gap-2 text-zinc-400 text-[10px] uppercase tracking-widest font-bold">
-                    <ShieldCheck size={14} className="text-[#C5A059]"/> Full Admin
+                    <ShieldCheck size={14} className="text-[#5a3e00]"/> Full Admin
                   </div>
                 </td>
                 <td className="px-8 py-6 text-right">

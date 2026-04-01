@@ -55,8 +55,8 @@ export default function PublicProductModal({ product, company, onClose }: { prod
 
               {images.length > 1 && (
                 <>
-                  <button onClick={(e) => { e.stopPropagation(); prevImage(); }} className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-black/40 text-white rounded-full hover:bg-[#C5A059] hover:text-black transition-all backdrop-blur-sm"><ChevronLeft size={24} /></button>
-                  <button onClick={(e) => { e.stopPropagation(); nextImage(); }} className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-black/40 text-white rounded-full hover:bg-[#C5A059] hover:text-black transition-all backdrop-blur-sm"><ChevronRight size={24} /></button>
+                  <button onClick={(e) => { e.stopPropagation(); prevImage(); }} className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-black/40 text-white rounded-full hover:bg-[#5a3e00] hover:text-black transition-all backdrop-blur-sm"><ChevronLeft size={24} /></button>
+                  <button onClick={(e) => { e.stopPropagation(); nextImage(); }} className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-black/40 text-white rounded-full hover:bg-[#5a3e00] hover:text-black transition-all backdrop-blur-sm"><ChevronRight size={24} /></button>
                 </>
               )}
             </div>
@@ -65,7 +65,7 @@ export default function PublicProductModal({ product, company, onClose }: { prod
             {images.length > 1 && (
               <div className="flex gap-2 p-4 bg-black/50 border-t border-white/5 overflow-x-auto no-scrollbar">
                 {images.map((img: any, idx: number) => (
-                  <button key={idx} onClick={() => setActiveImage(idx)} className={`relative w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 border-2 transition-all ${activeImage === idx ? 'border-[#C5A059]' : 'border-transparent opacity-50'}`}>
+                  <button key={idx} onClick={() => setActiveImage(idx)} className={`relative w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 border-2 transition-all ${activeImage === idx ? 'border-[#5a3e00]' : 'border-transparent opacity-50'}`}>
                     <img src={img.imageUrl} className="w-full h-full object-cover" alt="" />
                   </button>
                 ))}
@@ -78,13 +78,13 @@ export default function PublicProductModal({ product, company, onClose }: { prod
             <div className="space-y-8">
               <div>
                 <div className="flex justify-between items-start mb-4">
-                  <span className="text-[#C5A059] text-[10px] uppercase tracking-[0.5em] font-black">{product.hairType || 'Premium Piece'}</span>
-                  <span className="bg-[#C5A059]/10 text-[#C5A059] border border-[#C5A059]/20 px-3 py-1 rounded text-[9px] font-black uppercase tracking-tighter">
+                  <span className="text-[#5a3e00] text-[10px] uppercase tracking-[0.5em] font-black">{product.hairType || 'Premium Piece'}</span>
+                  <span className="bg-[#5a3e00]/10 text-[#5a3e00] border border-[#5a3e00]/20 px-3 py-1 rounded text-[9px] font-black uppercase tracking-tighter">
                     {product.availability === 'in_hand' ? 'In Stock' : 'Pre-Order'}
                   </span>
                 </div>
                 <h2 className="font-serif text-4xl text-white mb-2 italic leading-tight">{product.name}</h2>
-                <p className="text-[#C5A059] font-serif text-2xl font-light italic">${(product.price / 100).toFixed(2)}</p>
+                <p className="text-[#5a3e00] font-serif text-2xl font-light italic">${(product.price / 100).toFixed(2)}</p>
               </div>
 
               {/* SPEC GRID */}
@@ -99,7 +99,7 @@ export default function PublicProductModal({ product, company, onClose }: { prod
               {colors.length > 0 && (
                 <div>
                   <h4 className="text-[10px] text-gray-500 uppercase tracking-widest mb-4 font-black flex items-center gap-2">
-                    <Palette size={12} className="text-[#C5A059]" /> Select Color
+                    <Palette size={12} className="text-[#5a3e00]" /> Select Color
                   </h4>
                   <div className="flex flex-wrap gap-2">
                     {colors.map((c: any) => (
@@ -108,7 +108,7 @@ export default function PublicProductModal({ product, company, onClose }: { prod
                         onClick={() => setSelectedColor(c.color)}
                         className={`px-4 py-2 rounded-lg text-[11px] uppercase tracking-widest transition-all border ${
                           selectedColor === c.color 
-                          ? 'bg-[#C5A059] text-black border-[#C5A059] font-bold shadow-lg shadow-gold/20' 
+                          ? 'bg-[#5a3e00] text-black border-[#5a3e00] font-bold shadow-lg shadow-gold/20' 
                           : 'bg-zinc-900 border-white/10 text-gray-400 hover:border-gray-500'
                         }`}
                       >
@@ -123,7 +123,7 @@ export default function PublicProductModal({ product, company, onClose }: { prod
               {inches.length > 0 && (
                 <div>
                   <h4 className="text-[10px] text-gray-500 uppercase tracking-widest mb-4 font-black flex items-center gap-2">
-                    <Ruler size={12} className="text-[#C5A059]" /> Select Length
+                    <Ruler size={12} className="text-[#5a3e00]" /> Select Length
                   </h4>
                   <div className="flex flex-wrap gap-2">
                     {inches.map((i: any) => (
@@ -132,7 +132,7 @@ export default function PublicProductModal({ product, company, onClose }: { prod
                         onClick={() => setSelectedInch(i.inches.toString())}
                         className={`px-5 py-2 text-[11px] transition-all border ${
                           selectedInch === i.inches.toString() 
-                          ? 'bg-[#C5A059] text-black border-[#C5A059] font-bold' 
+                          ? 'bg-[#5a3e00] text-black border-[#5a3e00] font-bold' 
                           : 'border-white/10 text-white hover:border-gray-500'
                         }`}
                       >
@@ -151,7 +151,7 @@ export default function PublicProductModal({ product, company, onClose }: { prod
                 target="_blank"
                 className={`w-full font-black py-5 text-xs uppercase tracking-[0.3em] flex items-center justify-center gap-3 transition-all transform hover:scale-[1.01] active:scale-95 shadow-xl ${
                   selectedColor && selectedInch 
-                  ? 'bg-[#C5A059] text-black shadow-gold/10' 
+                  ? 'bg-[#5a3e00] text-black shadow-gold/10' 
                   : 'bg-zinc-800 text-zinc-500 border border-white/5 grayscale'
                 }`}
               >

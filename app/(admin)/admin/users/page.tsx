@@ -9,7 +9,7 @@ export default async function UsersPage() {
     <div className="space-y-12 pb-20 px-4">
       <header>
         <h1 className="font-serif text-4xl md:text-6xl text-white italic">Personnel</h1>
-        <p className="text-[#C5A059] text-xs uppercase tracking-[0.4em] mt-4 font-black">
+        <p className="text-[#5a3e00] text-xs uppercase tracking-[0.4em] mt-4 font-black">
           Access Control & Team Management
         </p>
       </header>

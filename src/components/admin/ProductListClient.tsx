@@ -22,7 +22,7 @@ export default function ProductListClient({ products }: { products: any[] }) {
               </div>
               <div className="flex-1">
                 <h3 className="text-white font-bold text-lg">{product.name}</h3>
-                <p className="text-[#C5A059] font-serif text-xl">
+                <p className="text-[#5a3e00] font-serif text-xl">
                   ${(product.price / 100).toFixed(2)}
                 </p>
                 <div className="flex gap-2 mt-2">
@@ -50,7 +50,7 @@ export default function ProductListClient({ products }: { products: any[] }) {
       <div className="hidden md:block bg-zinc-900 border border-zinc-700 rounded-[2.5rem] overflow-hidden shadow-2xl">
         <div className="overflow-x-auto">
           <table className="w-full text-left min-w-[800px]">
-            <thead className="bg-black/50 border-b border-zinc-700 text-[10px] uppercase tracking-[0.2em] text-[#C5A059] font-black">
+            <thead className="bg-black/50 border-b border-zinc-700 text-[10px] uppercase tracking-[0.2em] text-[#5a3e00] font-black">
               <tr>
                 <th className="px-8 py-6 text-white">Masterpiece</th>
                 <th className="px-6 py-6 text-white">Investment</th>
@@ -76,13 +76,13 @@ export default function ProductListClient({ products }: { products: any[] }) {
                     </div>
                   </td>
                   <td className="px-6 py-6">
-                    <span className="text-[#C5A059] font-serif text-2xl font-light">
+                    <span className="text-[#5a3e00] font-serif text-2xl font-light">
                       ${(product.price / 100).toFixed(2)}
                     </span>
                   </td>
                   <td className="px-6 py-6">
                     <div className="flex flex-col gap-1">
-                      <span className="text-xs text-white flex items-center gap-1"><MapPin size={10} className="text-[#C5A059]"/> {product.origin}</span>
+                      <span className="text-xs text-white flex items-center gap-1"><MapPin size={10} className="text-[#5a3e00]"/> {product.origin}</span>
                       <span className="text-[10px] text-gray-500 flex items-center gap-1 uppercase tracking-tighter"><Hash size={10}/> {product.texture}</span>
                     </div>
                   </td>
@@ -95,10 +95,10 @@ export default function ProductListClient({ products }: { products: any[] }) {
                   </td>
                   <td className="px-8 py-6">
                     <div className="flex justify-end gap-3">
-                       <button onClick={() => setSelectedProduct(product)} className="p-3 bg-zinc-800 rounded-xl text-white hover:border-[#C5A059] border border-zinc-700 transition-all shadow-md">
+                       <button onClick={() => setSelectedProduct(product)} className="p-3 bg-zinc-800 rounded-xl text-white hover:border-[#5a3e00] border border-zinc-700 transition-all shadow-md">
                          <Eye size={18} />
                        </button>
-                       <Link href={`/admin/products/${product.id}/edit`} className="p-3 bg-zinc-800 rounded-xl text-white hover:border-[#C5A059] border border-zinc-700 transition-all shadow-md">
+                       <Link href={`/admin/products/${product.id}/edit`} className="p-3 bg-zinc-800 rounded-xl text-white hover:border-[#5a3e00] border border-zinc-700 transition-all shadow-md">
                          <Edit2 size={18} />
                        </Link>
                        <DeleteProductButton id={product.id} />

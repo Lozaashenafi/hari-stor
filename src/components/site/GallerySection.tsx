@@ -14,13 +14,13 @@ const GallerySection = async () => {
         
         {/* Section Header */}
         <header className="text-center mb-16 space-y-4">
-          <span className="text-[#C5A059] text-[10px] uppercase tracking-[0.5em] font-black block">
+          <span className="text-[#5a3e00] text-[10px] uppercase tracking-[0.5em] font-black block">
             Inspiration
           </span>
           <h2 className="font-serif text-5xl md:text-6xl text-white italic">
             Styled Looks
           </h2>
-          <div className="w-24 h-[1px] bg-gradient-to-r from-transparent via-[#C5A059] to-transparent mx-auto mt-6" />
+          <div className="w-24 h-[1px] bg-gradient-to-r from-transparent via-[#5a3e00] to-transparent mx-auto mt-6" />
           <p className="text-gray-500 max-w-2xl mx-auto text-sm leading-relaxed font-light pt-4">
             See how our hair transforms — from sleek bobs to voluminous curls, 
             the possibilities are endless.
@@ -42,7 +42,7 @@ const GallerySection = async () => {
               
               {/* Elegant Hover Overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6">
-                <p className="text-[#C5A059] text-[9px] uppercase tracking-[0.3em] font-bold mb-1">
+                <p className="text-[#5a3e00] text-[9px] uppercase tracking-[0.3em] font-bold mb-1">
                   Collection Piece
                 </p>
                 <h3 className="text-white font-serif text-xl italic">
@@ -57,7 +57,7 @@ const GallerySection = async () => {
         <div className="text-center mt-16">
           <Link 
             href="/gallery" 
-            className="group inline-flex items-center gap-4 border border-[#C5A059]/30 px-12 py-4 rounded-full text-[10px] uppercase tracking-[0.4em] text-gray-400 hover:text-white hover:border-[#C5A059] transition-all"
+            className="group inline-flex items-center gap-4 border border-[#5a3e00]/30 px-12 py-4 rounded-full text-[10px] uppercase tracking-[0.4em] text-gray-400 hover:text-white hover:border-[#5a3e00] transition-all"
           >
             Explore Full Gallery
           </Link>

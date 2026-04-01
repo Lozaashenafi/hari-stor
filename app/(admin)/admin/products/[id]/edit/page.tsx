@@ -22,7 +22,7 @@ export default async function EditPage({
         <h1 className="font-serif text-4xl md:text-6xl text-white italic">
           Refine Masterpiece
         </h1>
-        <p className="text-[#C5A059] text-xs uppercase tracking-[0.4em] font-bold mt-4">
+        <p className="text-[#5a3e00] text-xs uppercase tracking-[0.4em] font-bold mt-4">
           Modifying: {product.name}
         </p>
       </header>

@@ -8,7 +8,7 @@ export default async function ProfilePage() {
     <div className="max-w-5xl mx-auto pb-20 px-4">
       <header className="mb-10 mt-6">
         <h1 className="font-serif text-4xl md:text-6xl text-white italic">Brand Identity</h1>
-        <p className="text-[#C5A059] text-xs uppercase tracking-[0.4em] font-black mt-4">
+        <p className="text-[#5a3e00] text-xs uppercase tracking-[0.4em] font-black mt-4">
           Global Brand Settings & Socials
         </p>
       </header>

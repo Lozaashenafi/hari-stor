@@ -1,58 +1,142 @@
 'use client'
 import React, { useState, useMemo } from 'react'
-import { Search, SlidersHorizontal } from 'lucide-react'
+import { Search, Menu, X, ChevronDown, SlidersHorizontal, RotateCcw } from 'lucide-react'
 import PublicProductModal from '@/components/site/PublicProductModal'
 
 export default function AllProductsClient({ products, company }: { products: any[], company: any }) {
   const [searchTerm, setSearchTerm] = useState('')
+  const [filterOrigin, setFilterOrigin] = useState('All')
+  const [filterTexture, setFilterTexture] = useState('All')
   const [filterType, setFilterType] = useState('All')
   const [selectedProduct, setSelectedProduct] = useState<any>(null)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
-  // Get unique hair types for the filter buttons
+  // Options from your request
+  const origins = ['All', 'Brazilian', 'Peruvian', 'Chinese', 'Malaysian']
+  const textures = ['All', 'Straight', 'Natural Wave', 'Body Wave', 'Classic Wave', 'Deep Wave', 'Curly Wave']
   const types = ['All', ...Array.from(new Set(products.map(p => p.hairType).filter(Boolean)))]
 
   const filteredProducts = useMemo(() => {
     return products.filter(p => {
       const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase())
+      const matchesOrigin = filterOrigin === 'All' || p.origin === filterOrigin
+      const matchesTexture = filterTexture === 'All' || p.texture === filterTexture
       const matchesType = filterType === 'All' || p.hairType === filterType
-      return matchesSearch && matchesType
+      return matchesSearch && matchesOrigin && matchesTexture && matchesType
     })
-  }, [searchTerm, filterType, products])
+  }, [searchTerm, filterOrigin, filterTexture, filterType, products])
+
+  const resetFilters = () => {
+    setFilterOrigin('All')
+    setFilterTexture('All')
+    setFilterType('All')
+    setSearchTerm('')
+    setIsSidebarOpen(false)
+  }
+
+  const selectClass = "appearance-none w-full bg-zinc-900 border border-white/10 rounded-xl py-4 px-6 text-sm text-white focus:border-[#C5A059] outline-none transition-all cursor-pointer";
 
   return (
-    <div className="space-y-12">
-      {/* SEARCH & FILTER BAR */}
-     
-      <div className="flex flex-col md:flex-row gap-6 justify-between items-center bg-zinc-900/50 p-6 rounded-3xl border border-white/5 backdrop-blur-sm">
-        <div className="relative w-full md:w-96">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
+    <div className="space-y-12 relative">
+      
+      {/* --- TOP BAR (Search + Sambusa Icon) --- */}
+      <div className="flex gap-4 items-center bg-zinc-900/40 p-4 md:p-6 rounded-[2rem] border border-white/5 backdrop-blur-md sticky top-24 z-30">
+        <div className="relative flex-1">
+          <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
           <input 
             type="text"
-            placeholder="Search our vault..."
-            className="w-full bg-black border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-sm text-white focus:border-[#C5A059] outline-none transition-all"
+            placeholder="Search collections..."
+            className="w-full bg-black border border-white/10 rounded-2xl py-3 md:py-4 pl-12 pr-4 text-sm text-white focus:border-[#C5A059] outline-none transition-all"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
 
-        <div className="flex flex-wrap justify-center gap-2">
-          {types.map(type => (
-            <button
-              key={type}
-              onClick={() => setFilterType(type)}
-              className={`px-6 py-3 rounded-full text-[10px] uppercase tracking-widest font-bold transition-all border ${
-                filterType === type 
-                ? 'bg-[#C5A059] text-black border-[#C5A059]' 
-                : 'bg-transparent text-gray-400 border-white/10 hover:border-gray-600'
-              }`}
-            >
-              {type}
-            </button>
-          ))}
+        {/* Mobile Filter Trigger (Sambusa Icon) */}
+        <button 
+          onClick={() => setIsSidebarOpen(true)}
+          className="lg:hidden flex items-center gap-2 bg-[#C5A059] text-black px-5 py-3 rounded-2xl font-bold text-xs uppercase tracking-widest"
+        >
+          <Menu size={20} />
+        </button>
+
+        {/* Desktop Quick Filters (Hidden on Mobile) */}
+        <div className="hidden lg:flex items-center gap-4">
+           <div className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold ml-4">Filter by:</div>
+           <select value={filterOrigin} onChange={(e)=>setFilterOrigin(e.target.value)} className="bg-transparent border-none text-white text-xs font-bold uppercase tracking-widest outline-none cursor-pointer hover:text-[#C5A059]">
+              {origins.map(o => <option key={o} value={o} className="bg-black">{o === 'All' ? 'Origin' : o}</option>)}
+           </select>
+           <select value={filterTexture} onChange={(e)=>setFilterTexture(e.target.value)} className="bg-transparent border-none text-white text-xs font-bold uppercase tracking-widest outline-none cursor-pointer hover:text-[#C5A059]">
+              {textures.map(t => <option key={t} value={t} className="bg-black">{t === 'All' ? 'Texture' : t}</option>)}
+           </select>
+           {searchTerm || filterOrigin !== 'All' || filterTexture !== 'All' ? (
+             <button onClick={resetFilters} className="text-[#C5A059]"><RotateCcw size={16}/></button>
+           ) : null}
         </div>
       </div>
 
-      {/* RESULTS GRID */}
+      {/* --- MOBILE SIDEBAR DRAWER --- */}
+      <div className={`fixed inset-0 z-[100] transition-all duration-500 ${isSidebarOpen ? 'visible' : 'invisible'}`}>
+        {/* Backdrop */}
+        <div 
+          className={`absolute inset-0 bg-black/90 backdrop-blur-sm transition-opacity duration-500 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}
+          onClick={() => setIsSidebarOpen(false)}
+        />
+        
+        {/* Drawer Content */}
+        <div className={`absolute right-0 top-0 h-full w-[85%] max-w-sm bg-[#0A0A0A] border-l border-white/10 p-8 shadow-2xl transition-transform duration-500 transform ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+          <div className="flex justify-between items-center mb-12">
+            <h2 className="text-white font-serif text-2xl italic">Filters</h2>
+            <button onClick={() => setIsSidebarOpen(false)} className="text-gray-500 hover:text-white">
+              <X size={28} />
+            </button>
+          </div>
+
+          <div className="space-y-10">
+            {/* Origin Filter */}
+            <div className="space-y-4">
+              <label className="text-[10px] uppercase tracking-[0.3em] text-[#C5A059] font-black">Origin</label>
+              <div className="grid grid-cols-2 gap-2">
+                {origins.map(o => (
+                  <button 
+                    key={o} 
+                    onClick={() => setFilterOrigin(o)}
+                    className={`py-3 px-2 rounded-xl text-[10px] uppercase tracking-widest border transition-all ${filterOrigin === o ? 'bg-[#C5A059] text-black border-[#C5A059] font-bold' : 'bg-zinc-900 border-white/5 text-gray-400'}`}
+                  >
+                    {o}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Texture Filter */}
+            <div className="space-y-4">
+              <label className="text-[10px] uppercase tracking-[0.3em] text-[#C5A059] font-black">Texture</label>
+              <div className="flex flex-wrap gap-2">
+                {textures.map(t => (
+                  <button 
+                    key={t} 
+                    onClick={() => setFilterTexture(t)}
+                    className={`py-2 px-4 rounded-full text-[9px] uppercase tracking-widest border transition-all ${filterTexture === t ? 'bg-[#C5A059] text-black border-[#C5A059] font-bold' : 'bg-zinc-900 border-white/5 text-gray-400'}`}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Reset Button */}
+            <button 
+              onClick={resetFilters}
+              className="w-full py-5 border border-white/10 rounded-2xl text-white text-xs uppercase tracking-[0.4em] font-bold mt-10 hover:bg-white/5 transition-all flex items-center justify-center gap-3"
+            >
+              <RotateCcw size={16} /> Reset All
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* --- RESULTS GRID --- */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-16">
         {filteredProducts.map((product) => (
           <div 
@@ -60,24 +144,29 @@ export default function AllProductsClient({ products, company }: { products: any
             className="group cursor-pointer"
             onClick={() => setSelectedProduct(product)}
           >
-            <div className="aspect-[4/5] overflow-hidden bg-zinc-900 mb-6 border border-white/5 rounded-2xl">
+            <div className="aspect-[4/5] overflow-hidden bg-zinc-900 mb-6 rounded-3xl border border-white/5 relative">
               <img 
                 src={product.images[0]?.imageUrl} 
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                 alt={product.name}
               />
+              <div className="absolute top-4 right-4 px-3 py-1 bg-black/60 backdrop-blur-md rounded-full border border-white/10 text-[8px] text-[#C5A059] uppercase tracking-widest font-black">
+                {product.origin}
+              </div>
             </div>
-            <span className="text-gray-500 text-[9px] uppercase tracking-[0.3em] font-bold block mb-2">{product.hairType}</span>
-            <h3 className="text-white text-lg font-serif italic mb-1 group-hover:text-[#C5A059] transition-colors">{product.name}</h3>
-            <p className="text-gray-400 text-sm font-light">${(product.price / 100).toFixed(2)}</p>
+            <div className="space-y-1">
+                <span className="text-zinc-600 text-[9px] uppercase tracking-[0.3em] font-black">{product.texture}</span>
+                <h3 className="text-white text-lg font-serif italic group-hover:text-[#C5A059] transition-colors">{product.name}</h3>
+                <p className="text-zinc-400 text-sm font-light italic">From ${(product.price / 100).toFixed(2)}</p>
+            </div>
           </div>
         ))}
       </div>
 
       {/* NO RESULTS STATE */}
       {filteredProducts.length === 0 && (
-        <div className="py-40 text-center">
-          <p className="text-gray-600 font-serif text-2xl italic">No hair matches your search criteria...</p>
+        <div className="py-40 text-center border border-dashed border-white/10 rounded-[3rem]">
+          <p className="text-gray-600 font-serif text-2xl italic tracking-widest">No matching pieces in our vault...</p>
         </div>
       )}
 

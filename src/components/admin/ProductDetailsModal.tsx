@@ -20,7 +20,7 @@ export default function ProductDetailsModal({ product, onClose }: { product: any
         {/* Close Button */}
         <button 
           onClick={onClose} 
-          className="absolute top-6 right-6 text-zinc-400 hover:text-[#C5A059] z-20 bg-black/20 p-2 rounded-full transition-colors"
+          className="absolute top-6 right-6 text-zinc-400 hover:text-[#5a3e00] z-20 bg-black/20 p-2 rounded-full transition-colors"
         >
           <X size={24} />
         </button>
@@ -53,13 +53,13 @@ export default function ProductDetailsModal({ product, onClose }: { product: any
             
             {/* Header: Name & Price */}
             <div className="border-b border-zinc-800 pb-6">
-              <h4 className="text-[#C5A059] tracking-[0.4em] text-[10px] font-black mb-2 uppercase italic">
+              <h4 className="text-[#5a3e00] tracking-[0.4em] text-[10px] font-black mb-2 uppercase italic">
                 Vault Record #{product.id}
               </h4>
               <h2 className="font-serif text-4xl md:text-5xl text-white mb-4 italic leading-tight">
                 {product.name}
               </h2>
-              <p className="text-[#C5A059] text-3xl font-serif italic font-light tracking-tight">
+              <p className="text-[#5a3e00] text-3xl font-serif italic font-light tracking-tight">
                 ${formattedPrice}
               </p>
             </div>
@@ -103,7 +103,7 @@ export default function ProductDetailsModal({ product, onClose }: { product: any
 
             {/* Section 3: Inventory Status */}
             <div className="bg-black/40 border border-zinc-800 p-6 rounded-3xl space-y-4">
-              <h3 className="text-[#C5A059] text-[10px] uppercase tracking-[0.3em] font-black">Stock Control</h3>
+              <h3 className="text-[#5a3e00] text-[10px] uppercase tracking-[0.3em] font-black">Stock Control</h3>
               <div className="flex flex-col sm:flex-row gap-6 justify-between">
                 <DetailItem 
                   icon={<Calendar size={16}/>} 
@@ -137,7 +137,7 @@ function DetailItem({ icon, label, value }: { icon: React.ReactNode, label: stri
   return (
     <div className="flex flex-col gap-1.5">
       <div className="flex items-center gap-2 text-zinc-500">
-        <span className="text-[#C5A059]">{icon}</span>
+        <span className="text-[#5a3e00]">{icon}</span>
         <span className="text-[9px] uppercase tracking-widest font-black">{label}</span>
       </div>
       <span className="text-white text-sm font-medium pl-6">

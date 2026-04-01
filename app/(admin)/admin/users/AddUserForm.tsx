@@ -42,7 +42,7 @@ export default function AddUserForm() {
 
         <button 
           disabled={loading}
-          className="w-full bg-[#C5A059] text-black font-black py-5 rounded-2xl flex items-center justify-center gap-3 tracking-[0.2em] uppercase text-[10px] shadow-xl shadow-gold/10 hover:bg-[#D4B26E] transition-all disabled:opacity-30"
+          className="w-full bg-[#5a3e00] text-black font-black py-5 rounded-2xl flex items-center justify-center gap-3 tracking-[0.2em] uppercase text-[10px] shadow-xl shadow-gold/10 hover:bg-[#D4B26E] transition-all disabled:opacity-30"
         >
           {loading ? <Loader2 className="animate-spin" size={18}/> : <><UserPlus size={18}/> Grant Access</>}
         </button>
@@ -56,7 +56,7 @@ function InputGroup({ label, ...props }: any) {
     <div className="space-y-2">
       <label className="text-[10px] uppercase tracking-widest text-zinc-500 font-black ml-1">{label}</label>
       <input 
-        className="w-full bg-zinc-800 border border-zinc-700 p-4 rounded-xl text-sm text-white outline-none focus:border-[#C5A059] transition-all"
+        className="w-full bg-zinc-800 border border-zinc-700 p-4 rounded-xl text-sm text-white outline-none focus:border-[#5a3e00] transition-all"
         {...props}
       />
     </div>

@@ -32,12 +32,12 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-black flex items-center justify-center px-4 relative overflow-hidden">
       {/* Decorative Background Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#C5A059]/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#5a3e00]/10 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="w-full max-w-md z-10">
         {/* Logo / Brand */}
         <div className="text-center mb-10">
-          <Link href="/" className="text-[#C5A059] text-2xl font-bold tracking-[0.3em] inline-block mb-2">
+          <Link href="/" className="text-[#5a3e00] text-2xl font-bold tracking-[0.3em] inline-block mb-2">
             LUXE HAIR
           </Link>
           <p className="text-gray-500 text-xs uppercase tracking-[0.2em]">Administrative Portal</p>
@@ -58,7 +58,7 @@ export default function LoginPage() {
               <input 
                 type="email" 
                 placeholder="admin@shallyluxe.com" 
-                className="w-full bg-black border border-white/10 text-white p-3 rounded-xl focus:outline-none focus:border-[#C5A059] transition-colors placeholder:text-gray-800 text-sm"
+                className="w-full bg-black border border-white/10 text-white p-3 rounded-xl focus:outline-none focus:border-[#5a3e00] transition-colors placeholder:text-gray-800 text-sm"
                 value={email} 
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -70,7 +70,7 @@ export default function LoginPage() {
               <input 
                 type="password" 
                 placeholder="••••••••" 
-                className="w-full bg-black border border-white/10 text-white p-3 rounded-xl focus:outline-none focus:border-[#C5A059] transition-colors placeholder:text-gray-800 text-sm"
+                className="w-full bg-black border border-white/10 text-white p-3 rounded-xl focus:outline-none focus:border-[#5a3e00] transition-colors placeholder:text-gray-800 text-sm"
                 value={password} 
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -79,14 +79,14 @@ export default function LoginPage() {
 
             <button 
               disabled={loading}
-              className="w-full bg-[#C5A059] text-black font-bold py-4 rounded-xl hover:bg-[#D4B26E] transition-all transform active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed mt-4 tracking-widest uppercase text-xs"
+              className="w-full bg-[#5a3e00] text-black font-bold py-4 rounded-xl hover:bg-[#D4B26E] transition-all transform active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed mt-4 tracking-widest uppercase text-xs"
             >
               {loading ? 'Authenticating...' : 'Enter Dashboard'}
             </button>
           </form>
 
           <div className="mt-8 text-center">
-            <Link href="/" className="text-gray-600 hover:text-[#C5A059] text-[10px] uppercase tracking-widest transition-colors">
+            <Link href="/" className="text-gray-600 hover:text-[#5a3e00] text-[10px] uppercase tracking-widest transition-colors">
               ← Return to Main Site
             </Link>
           </div>

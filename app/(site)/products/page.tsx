@@ -20,7 +20,7 @@ export default async function AllProductsPage() {
         <header className="mb-16">
           <Link 
             href="/" 
-            className="inline-flex items-center gap-3 text-gray-500 hover:text-[#C5A059] transition-all group mb-8 uppercase text-[10px] tracking-[0.3em] font-bold"
+            className="inline-flex items-center gap-3 text-gray-500 hover:text-[#5a3e00] transition-all group mb-8 uppercase text-[10px] tracking-[0.3em] font-bold"
           >
             <span className="group-hover:-translate-x-1 transition-transform">
                 <ArrowLeft />
@@ -29,7 +29,7 @@ export default async function AllProductsPage() {
           </Link>
 
           <div className="space-y-4">
-            <span className="text-[#C5A059] text-[10px] uppercase tracking-[0.5em] font-black block">
+            <span className="text-[#5a3e00] text-[10px] uppercase tracking-[0.5em] font-black block">
               {company?.name || "ShallyLuxe"} Catalog
             </span>
             <h1 className="font-serif text-6xl md:text-8xl text-white italic leading-tight">

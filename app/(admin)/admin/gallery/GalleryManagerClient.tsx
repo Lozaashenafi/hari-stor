@@ -41,7 +41,7 @@ export default function GalleryManagerClient({ initialImages }: { initialImages:
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="E.g. Summer Silk Collection"
-                className="w-full bg-zinc-800 border border-zinc-700 p-4 rounded-xl text-sm text-white focus:border-[#C5A059] outline-none"
+                className="w-full bg-zinc-800 border border-zinc-700 p-4 rounded-xl text-sm text-white focus:border-[#5a3e00] outline-none"
               />
             </div>
 
@@ -54,7 +54,7 @@ export default function GalleryManagerClient({ initialImages }: { initialImages:
             <button 
               disabled={loading || !uploadUrl}
               onClick={handleAdd}
-              className="w-full bg-[#C5A059] text-black font-black py-5 rounded-2xl flex items-center justify-center gap-3 tracking-[0.2em] uppercase text-[10px] disabled:opacity-30 transition-all hover:bg-[#D4B26E]"
+              className="w-full bg-[#5a3e00] text-black font-black py-5 rounded-2xl flex items-center justify-center gap-3 tracking-[0.2em] uppercase text-[10px] disabled:opacity-30 transition-all hover:bg-[#D4B26E]"
             >
               {loading ? 'Adding...' : <><Plus size={16}/> Add to Gallery</>}
             </button>
@@ -71,7 +71,7 @@ export default function GalleryManagerClient({ initialImages }: { initialImages:
             
             <div className="absolute bottom-0 left-0 p-8 w-full flex justify-between items-end">
               <div>
-                <p className="text-[#C5A059] text-[9px] uppercase tracking-[0.3em] font-black mb-1">Showcase Piece</p>
+                <p className="text-[#5a3e00] text-[9px] uppercase tracking-[0.3em] font-black mb-1">Showcase Piece</p>
                 <h4 className="text-white font-serif text-xl italic">{img.title}</h4>
               </div>
               <button 

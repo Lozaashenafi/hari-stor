@@ -16,7 +16,7 @@ export default async function FullGalleryPage() {
         <header className="mb-20 space-y-6">
           <Link 
             href="/" 
-            className="inline-flex items-center gap-2 text-gray-500 hover:text-[#C5A059] transition-all group uppercase text-[10px] tracking-[0.3em] font-bold"
+            className="inline-flex items-center gap-2 text-gray-500 hover:text-[#5a3e00] transition-all group uppercase text-[10px] tracking-[0.3em] font-bold"
           >
             <span className="group-hover:-translate-x-1 transition-transform">
               <BackArrow />
@@ -27,7 +27,7 @@ export default async function FullGalleryPage() {
           <h1 className="font-serif text-6xl md:text-8xl text-white italic leading-tight">
             The Archive
           </h1>
-          <p className="text-[#C5A059] text-[10px] uppercase tracking-[0.5em] font-black">
+          <p className="text-[#5a3e00] text-[10px] uppercase tracking-[0.5em] font-black">
             Visual record of luxury transformations
           </p>
         </header>

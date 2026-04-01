@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { getCompanyProfile } from '@/services/company.service';
 import HeroImage from '../../../public/hero-model.jpg';
 import Logo from '../../../public/logo.jpg'; 
+import MobileMenu from './MobileMenu'; // 1. Import the new component
+
 
 // Custom SVG Icons
 const Icons = {
@@ -43,49 +45,47 @@ const Hero = async () => {
       </div>
 
       {/* Header / Navbar */}
-      <nav className="relative z-20 flex items-center justify-between px-6 py-6 md:px-16 border-b border-white/5 backdrop-blur-sm bg-black/10">
+       <nav className="relative z-20 flex items-center justify-between px-6 py-6 md:px-16 border-b border-white/5 backdrop-blur-sm bg-black/10">
         <Link href="/" className="flex items-center gap-4 group">
-          {/* Logo Rendering */}
           <img 
             src={Logo.src} 
             alt="Luxe Logo" 
             className="h-10 md:h-14 w-auto object-contain transition-transform group-hover:scale-105" 
           />
-          <div className="hidden sm:block text-xl md:text-2xl font-bold tracking-[0.3em] text-[#C5A059] uppercase">
+          <div className="hidden sm:block text-xl md:text-2xl font-bold tracking-[0.3em] text-[#5a3e00] uppercase">
             {profile?.name || "LUXE HAIR"}
           </div>
         </Link>
         
+        {/* DESKTOP LINKS (Hidden on Mobile) */}
         <div className="hidden lg:flex items-center space-x-10 text-[11px] uppercase tracking-[0.2em] font-light">
-          <Link href="/" className="hover:text-[#C5A059] transition">Home</Link>
-          <Link href="#products" className="hover:text-[#C5A059] transition">Products</Link>
-          <Link href="#gallery" className="hover:text-[#C5A059] transition">Gallery</Link>
-          <Link href="#contact" className="hover:text-[#C5A059] transition text-nowrap">Contact Us</Link>
+          <Link href="/" className="hover:text-[#5a3e00] transition">Home</Link>
+          <Link href="/products" className="hover:text-[#5a3e00] transition">Products</Link>
+          <Link href="/gallery" className="hover:text-[#5a3e00] transition">Gallery</Link>
+          <Link href="#contact" className="hover:text-[#5a3e00] transition text-nowrap">Contact Us</Link>
           
           <Link 
             href="/login" 
-            className="flex items-center gap-2 border border-[#C5A059]/40 px-5 py-2 rounded-full hover:bg-[#C5A059] hover:text-black transition duration-300"
+            className="flex items-center gap-2 border border-[#5a3e00]/40 px-5 py-2 rounded-full hover:bg-[#5a3e00] hover:text-black transition duration-300"
           >
             <Icons.User />
             <span className="text-[10px] tracking-widest font-bold">Admin</span>
           </Link>
         </div>
 
-        {/* Mobile Mini Admin Icon (visible when menu hidden) */}
-        <Link href="/login" className="lg:hidden p-2 border border-[#C5A059]/40 rounded-full text-[#C5A059]">
-          <Icons.User />
-        </Link>
+        {/* 2. MOBILE MENU COMPONENT (Visible only on Mobile) */}
+        <MobileMenu />
       </nav>
 
       {/* Hero Content */}
       <div className="relative z-10 flex flex-col justify-center h-[calc(100vh-100px)] px-8 md:px-16 max-w-5xl">
-        <h4 className="text-[#C5A059] tracking-[0.4em] text-[10px] md:text-xs mb-6 font-bold uppercase">
+        <h4 className="text-[#5a3e00] tracking-[0.4em] text-[10px] md:text-xs mb-6 font-bold uppercase">
           PREMIUM VIRGIN HAIR
         </h4>
         
         <h1 className="font-serif text-5xl md:text-8xl leading-[1.1] mb-8">
           Embrace Your <br />
-          <span className="text-[#C5A059] italic font-light">Natural Beauty</span>
+          <span className="text-[#5a3e00] italic font-light">Natural Beauty</span>
         </h1>
         
         <p className="text-gray-300 text-base md:text-lg max-w-lg mb-12 font-light leading-relaxed opacity-80">
@@ -114,7 +114,7 @@ const Hero = async () => {
       </div>
 
       {/* Decorative Bottom Line */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[1px] h-24 bg-gradient-to-b from-[#C5A059] to-transparent"></div>
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[1px] h-24 bg-gradient-to-b from-[#5a3e00] to-transparent"></div>
     </div>
   );
 };
@@ -124,9 +124,9 @@ const SocialButton = ({ icon, label, href }: { icon: React.ReactNode, label: str
     href={href}
     target="_blank"
     rel="noopener noreferrer"
-    className="flex items-center gap-4 px-6 py-3 border border-white/10 rounded-full hover:border-[#C5A059]/50 hover:bg-white/5 transition-all duration-300 group"
+    className="flex items-center gap-4 px-6 py-3 border border-white/10 rounded-full hover:border-[#5a3e00]/50 hover:bg-white/5 transition-all duration-300 group"
   >
-    <span className="text-[#C5A059] group-hover:scale-110 transition-transform">{icon}</span>
+    <span className="text-[#5a3e00] group-hover:scale-110 transition-transform">{icon}</span>
     <span className="text-[10px] md:text-sm font-light tracking-widest uppercase text-gray-200">{label}</span>
   </a>
 );

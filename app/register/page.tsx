@@ -23,12 +23,12 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen bg-black flex items-center justify-center px-4 relative overflow-hidden">
       {/* Background Lighting */}
-      <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#C5A059]/5 rounded-full blur-[120px]" />
-      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#C5A059]/5 rounded-full blur-[120px]" />
+      <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#5a3e00]/5 rounded-full blur-[120px]" />
+      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#5a3e00]/5 rounded-full blur-[120px]" />
 
       <div className="w-full max-w-md z-10">
         <div className="text-center mb-10">
-          <Link href="/" className="text-[#C5A059] text-2xl font-bold tracking-[0.3em] inline-block mb-2">
+          <Link href="/" className="text-[#5a3e00] text-2xl font-bold tracking-[0.3em] inline-block mb-2">
             LUXE HAIR
           </Link>
           <p className="text-gray-500 text-[10px] uppercase tracking-[0.2em]">Join the Elite Collection</p>
@@ -50,7 +50,7 @@ export default function RegisterPage() {
                 name="displayName"
                 type="text" 
                 placeholder="Jane Doe" 
-                className="w-full bg-black border border-white/10 text-white p-3 rounded-xl focus:outline-none focus:border-[#C5A059] transition-colors placeholder:text-zinc-800 text-sm"
+                className="w-full bg-black border border-white/10 text-white p-3 rounded-xl focus:outline-none focus:border-[#5a3e00] transition-colors placeholder:text-zinc-800 text-sm"
                 required
               />
             </div>
@@ -61,7 +61,7 @@ export default function RegisterPage() {
                 name="email"
                 type="email" 
                 placeholder="jane@example.com" 
-                className="w-full bg-black border border-white/10 text-white p-3 rounded-xl focus:outline-none focus:border-[#C5A059] transition-colors placeholder:text-zinc-800 text-sm"
+                className="w-full bg-black border border-white/10 text-white p-3 rounded-xl focus:outline-none focus:border-[#5a3e00] transition-colors placeholder:text-zinc-800 text-sm"
                 required
               />
             </div>
@@ -72,14 +72,14 @@ export default function RegisterPage() {
                 name="password"
                 type="password" 
                 placeholder="••••••••" 
-                className="w-full bg-black border border-white/10 text-white p-3 rounded-xl focus:outline-none focus:border-[#C5A059] transition-colors placeholder:text-zinc-800 text-sm"
+                className="w-full bg-black border border-white/10 text-white p-3 rounded-xl focus:outline-none focus:border-[#5a3e00] transition-colors placeholder:text-zinc-800 text-sm"
                 required
               />
             </div>
 
             <button 
               disabled={loading}
-              className="w-full bg-[#C5A059] text-black font-bold py-4 rounded-xl hover:bg-[#D4B26E] transition-all transform active:scale-[0.98] disabled:opacity-50 mt-4 tracking-[0.2em] uppercase text-[10px]"
+              className="w-full bg-[#5a3e00] text-black font-bold py-4 rounded-xl hover:bg-[#D4B26E] transition-all transform active:scale-[0.98] disabled:opacity-50 mt-4 tracking-[0.2em] uppercase text-[10px]"
             >
               {loading ? 'Creating Account...' : 'Join Now'}
             </button>
@@ -88,7 +88,7 @@ export default function RegisterPage() {
           <div className="mt-8 text-center">
             <p className="text-gray-600 text-[10px] uppercase tracking-widest">
               Already a member?{' '}
-              <Link href="/login" className="text-[#C5A059] hover:underline font-bold">
+              <Link href="/login" className="text-[#5a3e00] hover:underline font-bold">
                 Sign In
               </Link>
             </p>

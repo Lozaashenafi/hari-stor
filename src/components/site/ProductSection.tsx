@@ -15,7 +15,7 @@ export default function ProductSection({ products, company }: { products: any[],
       <div className="max-w-7xl mx-auto">
         <header className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-6">
           <div className="max-w-xl">
-            <span className="text-[#C5A059] text-[10px] uppercase tracking-[0.5em] font-black block mb-4">
+            <span className="text-[#5a3e00] text-[10px] uppercase tracking-[0.5em] font-black block mb-4">
               Featured Selection
             </span>
             <h2 className="font-serif text-5xl md:text-7xl text-white italic">
@@ -23,7 +23,7 @@ export default function ProductSection({ products, company }: { products: any[],
             </h2>
           </div>
           
-          <Link href="/products" className="group flex items-center gap-3 text-gray-400 hover:text-[#C5A059] transition-colors uppercase text-[10px] tracking-[0.3em] font-bold">
+          <Link href="/products" className="group flex items-center gap-3 text-gray-400 hover:text-[#5a3e00] transition-colors uppercase text-[10px] tracking-[0.3em] font-bold">
             Explore All Collections <ArrowRight size={14} className="group-hover:translate-x-2 transition-transform" />
           </Link>
         </header>
@@ -44,7 +44,7 @@ export default function ProductSection({ products, company }: { products: any[],
               </div>
               <span className="text-gray-500 text-[9px] uppercase tracking-[0.4em] font-black block mb-2">{product.hairType}</span>
               <h3 className="text-white text-xl font-serif italic mb-1">{product.name}</h3>
-              <p className="text-[#C5A059] text-sm font-light italic">From ${(product.price / 100).toFixed(2)}</p>
+              <p className="text-[#5a3e00] text-sm font-light italic">From ${(product.price / 100).toFixed(2)}</p>
             </div>
           ))}
         </div>
