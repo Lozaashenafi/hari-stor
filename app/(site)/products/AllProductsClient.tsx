@@ -11,17 +11,22 @@ export default function AllProductsClient({ products, company }: { products: any
   const [selectedProduct, setSelectedProduct] = useState<any>(null)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
-  // Options from your request
+  // Options
   const origins = ['All', 'Brazilian', 'Peruvian', 'Chinese', 'Malaysian']
   const textures = ['All', 'Straight', 'Natural Wave', 'Body Wave', 'Classic Wave', 'Deep Wave', 'Curly Wave']
-  const types = ['All', ...Array.from(new Set(products.map(p => p.hairType).filter(Boolean)))]
+  
+  // Extract Categories (using category name from joined table or fallback to hairType)
+  const types = useMemo(() => {
+    return ['All', ...Array.from(new Set(products.map(p => p.category?.name || p.hairType).filter(Boolean)))]
+  }, [products])
 
   const filteredProducts = useMemo(() => {
     return products.filter(p => {
+      const pCategory = p.category?.name || p.hairType
       const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase())
       const matchesOrigin = filterOrigin === 'All' || p.origin === filterOrigin
       const matchesTexture = filterTexture === 'All' || p.texture === filterTexture
-      const matchesType = filterType === 'All' || p.hairType === filterType
+      const matchesType = filterType === 'All' || pCategory === filterType
       return matchesSearch && matchesOrigin && matchesTexture && matchesType
     })
   }, [searchTerm, filterOrigin, filterTexture, filterType, products])
@@ -33,8 +38,6 @@ export default function AllProductsClient({ products, company }: { products: any
     setSearchTerm('')
     setIsSidebarOpen(false)
   }
-
-  const selectClass = "appearance-none w-full bg-zinc-900 border border-white/10 rounded-xl py-4 px-6 text-sm text-white focus:border-[#C5A059] outline-none transition-all cursor-pointer";
 
   return (
     <div className="space-y-12 relative">
@@ -60,7 +63,7 @@ export default function AllProductsClient({ products, company }: { products: any
           <Menu size={20} />
         </button>
 
-        {/* Desktop Quick Filters (Hidden on Mobile) */}
+        {/* Desktop Quick Filters (Origin & Texture - Hidden on Mobile) */}
         <div className="hidden lg:flex items-center gap-4">
            <div className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold ml-4">Filter by:</div>
            <select value={filterOrigin} onChange={(e)=>setFilterOrigin(e.target.value)} className="bg-transparent border-none text-white text-xs font-bold uppercase tracking-widest outline-none cursor-pointer hover:text-[#C5A059]">
@@ -69,63 +72,48 @@ export default function AllProductsClient({ products, company }: { products: any
            <select value={filterTexture} onChange={(e)=>setFilterTexture(e.target.value)} className="bg-transparent border-none text-white text-xs font-bold uppercase tracking-widest outline-none cursor-pointer hover:text-[#C5A059]">
               {textures.map(t => <option key={t} value={t} className="bg-black">{t === 'All' ? 'Texture' : t}</option>)}
            </select>
-           {searchTerm || filterOrigin !== 'All' || filterTexture !== 'All' ? (
+           {/* Desktop Category Filter */}
+           <select value={filterType} onChange={(e)=>setFilterType(e.target.value)} className="bg-transparent border-none text-white text-xs font-bold uppercase tracking-widest outline-none cursor-pointer hover:text-[#C5A059]">
+              {types.map(cat => <option key={cat} value={cat} className="bg-black">{cat === 'All' ? 'Category' : cat}</option>)}
+           </select>
+           {searchTerm || filterOrigin !== 'All' || filterTexture !== 'All' || filterType !== 'All' ? (
              <button onClick={resetFilters} className="text-[#C5A059]"><RotateCcw size={16}/></button>
            ) : null}
         </div>
       </div>
 
-      {/* --- MOBILE SIDEBAR DRAWER --- */}
+      {/* --- MOBILE SIDEBAR DRAWER (CATEGORIES ONLY) --- */}
       <div className={`fixed inset-0 z-[100] transition-all duration-500 ${isSidebarOpen ? 'visible' : 'invisible'}`}>
-        {/* Backdrop */}
         <div 
           className={`absolute inset-0 bg-black/90 backdrop-blur-sm transition-opacity duration-500 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}
           onClick={() => setIsSidebarOpen(false)}
         />
         
-        {/* Drawer Content */}
         <div className={`absolute right-0 top-0 h-full w-[85%] max-w-sm bg-[#0A0A0A] border-l border-white/10 p-8 shadow-2xl transition-transform duration-500 transform ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'}`}>
           <div className="flex justify-between items-center mb-12">
-            <h2 className="text-white font-serif text-2xl italic">Filters</h2>
+            <h2 className="text-white font-serif text-2xl italic">Categories</h2>
             <button onClick={() => setIsSidebarOpen(false)} className="text-gray-500 hover:text-white">
               <X size={28} />
             </button>
           </div>
 
           <div className="space-y-10">
-            {/* Origin Filter */}
+            {/* Category Filter - Only this section is shown on mobile sidebar */}
             <div className="space-y-4">
-              <label className="text-[10px] uppercase tracking-[0.3em] text-[#C5A059] font-black">Origin</label>
-              <div className="grid grid-cols-2 gap-2">
-                {origins.map(o => (
+              <label className="text-[10px] uppercase tracking-[0.3em] text-[#C5A059] font-black">Browse Collections</label>
+              <div className="flex flex-col gap-3">
+                {types.map(cat => (
                   <button 
-                    key={o} 
-                    onClick={() => setFilterOrigin(o)}
-                    className={`py-3 px-2 rounded-xl text-[10px] uppercase tracking-widest border transition-all ${filterOrigin === o ? 'bg-[#C5A059] text-black border-[#C5A059] font-bold' : 'bg-zinc-900 border-white/5 text-gray-400'}`}
+                    key={cat} 
+                    onClick={() => {setFilterType(cat); setIsSidebarOpen(false);}}
+                    className={`py-4 px-6 rounded-2xl text-sm text-left uppercase tracking-widest border transition-all ${filterType === cat ? 'bg-[#C5A059] text-black border-[#C5A059] font-bold' : 'bg-zinc-900 border-white/5 text-gray-400'}`}
                   >
-                    {o}
+                    {cat}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Texture Filter */}
-            <div className="space-y-4">
-              <label className="text-[10px] uppercase tracking-[0.3em] text-[#C5A059] font-black">Texture</label>
-              <div className="flex flex-wrap gap-2">
-                {textures.map(t => (
-                  <button 
-                    key={t} 
-                    onClick={() => setFilterTexture(t)}
-                    className={`py-2 px-4 rounded-full text-[9px] uppercase tracking-widest border transition-all ${filterTexture === t ? 'bg-[#C5A059] text-black border-[#C5A059] font-bold' : 'bg-zinc-900 border-white/5 text-gray-400'}`}
-                  >
-                    {t}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Reset Button */}
             <button 
               onClick={resetFilters}
               className="w-full py-5 border border-white/10 rounded-2xl text-white text-xs uppercase tracking-[0.4em] font-bold mt-10 hover:bg-white/5 transition-all flex items-center justify-center gap-3"
@@ -136,13 +124,12 @@ export default function AllProductsClient({ products, company }: { products: any
         </div>
       </div>
 
-         {/* --- RESULTS GRID --- */}
+      {/* --- RESULTS GRID --- */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-20">
         {filteredProducts.map((product) => (
           <div key={product.id} className="group cursor-pointer" onClick={() => setSelectedProduct(product)}>
             <div className="aspect-[4/5] overflow-hidden bg-zinc-900 mb-8 rounded-[2rem] border border-white/5 relative shadow-2xl">
               
-              {/* --- LARGE ATTRACTIVE SALE BADGE --- */}
               {product.isOnSale && (
                 <div className="absolute top-5 left-5 z-20 bg-red-600 text-white text-[9px] font-black uppercase tracking-[0.2em] px-4 py-2 rounded-full shadow-[0_10px_20px_rgba(0,0,0,0.4)]">
                   Sale
@@ -169,7 +156,6 @@ export default function AllProductsClient({ products, company }: { products: any
                     {product.name}
                 </h3>
                 
-                {/* --- BIG VISIBLE PRICE --- */}
                 <div className="flex items-center gap-4 pt-1">
                   <p className="text-white text-2xl font-serif font-medium">
                     ${(product.price / 100).toFixed(2)}
@@ -186,14 +172,12 @@ export default function AllProductsClient({ products, company }: { products: any
         ))}
       </div>
 
-      {/* NO RESULTS STATE */}
       {filteredProducts.length === 0 && (
         <div className="py-40 text-center border border-dashed border-white/10 rounded-[3rem]">
           <p className="text-gray-600 font-serif text-2xl italic tracking-widest">No matching pieces in our vault...</p>
         </div>
       )}
 
-      {/* Detail Popup */}
       {selectedProduct && (
         <PublicProductModal 
           product={selectedProduct} 

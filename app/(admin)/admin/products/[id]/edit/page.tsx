@@ -1,4 +1,4 @@
-import { getProductById } from "@/services/product.service";
+import { getCategories, getProductById } from "@/services/product.service";
 import { notFound } from "next/navigation";
 import EditProductForm from "./EditProductForm";
 
@@ -12,8 +12,11 @@ export default async function EditPage({
 
   if (isNaN(productId)) notFound();
 
-  const product = await getProductById(productId);
-  
+   // FETCH BOTH: Product data and Categories list
+  const [product, categories] = await Promise.all([
+    getProductById(productId),
+    getCategories()
+  ]);
   if (!product) notFound();
 
   return (
@@ -27,7 +30,7 @@ export default async function EditPage({
         </p>
       </header>
       
-      <EditProductForm product={product} />
+      <EditProductForm product={product}  categories={categories}/>
     </div>
   );
 }

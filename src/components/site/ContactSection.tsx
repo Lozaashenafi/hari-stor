@@ -13,7 +13,19 @@ const ContactSection = async () => {
   const tkLink = `https://tiktok.com/@${profile?.tiktok?.replace('@', '')}`;
 
   return (
-    <footer id="contact" className="bg-black pt-32 pb-12 px-6 border-t border-[#5a3e00]/20">
+    <footer className="relative bg-[#0a0904] py-32 px-6 border-t border-[#C5A059]/20 overflow-hidden">
+         {/* --- INTENSE LUXURY GOLDEN BACKGROUND --- */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        {/* 1. Large Central Golden Radiance */}
+        <div className="absolute top-[10%] left-1/2 -translate-x-1/2 w-[120%] h-[80%] rounded-full bg-[#C5A059]/20 blur-[160px] opacity-50" />
+        
+        {/* 2. Side Amber Glows */}
+        <div className="absolute top-0 left-[-10%] w-[50%] h-[50%] rounded-full bg-[#5a3e00]/40 blur-[130px]" />
+        <div className="absolute bottom-0 right-[-10%] w-[50%] h-[50%] rounded-full bg-[#8c6b12]/30 blur-[130px]" />
+
+        {/* Subtle Shimmer Texture */}
+        <div className="absolute inset-0 opacity-[0.04] mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+      </div>
       <div className="max-w-7xl mx-auto">
         
         <div className="text-center mb-24 space-y-10">

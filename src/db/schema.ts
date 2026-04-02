@@ -37,6 +37,9 @@ export const hairProducts = pgTable("hair_products", {
   previousPrice: integer("previous_price"), // To store the old price
   isOnSale: boolean("is_on_sale").default(false).notNull(), // Sale toggle
 
+  // Link to Category
+  categoryId: integer("category_id")
+    .references(() => categories.id, { onDelete: "set null" }),
   availability: text("availability").notNull(), // in_hand | order
 
   quantityInHand: integer("quantity_in_hand"),
@@ -72,6 +75,16 @@ export const hairColors = pgTable("hair_colors", {
   color: text("color").notNull(),
 });
 
+/* =========================
+   Categories (New Table)
+========================= */
+export const categories = pgTable("categories", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(), // e.g., Wigs, Bundles, Hair Care
+});
+
+
+
 
 /* =========================
    Hair Inches
@@ -85,6 +98,8 @@ export const hairInches = pgTable("hair_inches", {
     .references(() => hairProducts.id, { onDelete: "cascade" }),
 
   inches: integer("inches").notNull(),
+    additionalPrice: integer("additional_price").default(0).notNull(), 
+
 });
 
 
@@ -120,8 +135,15 @@ export const gallery = pgTable("gallery", {
 /* =========================
    Relations
 ========================= */
+export const categoriesRelations = relations(categories, ({ many }) => ({
+  products: many(hairProducts),
+}));
 
-export const hairProductsRelations = relations(hairProducts, ({ many }) => ({
+export const hairProductsRelations = relations(hairProducts, ({ one, many }) => ({
+  category: one(categories, {
+    fields: [hairProducts.categoryId],
+    references: [categories.id],
+  }),
   images: many(hairImages),
   colors: many(hairColors),
   inches: many(hairInches),

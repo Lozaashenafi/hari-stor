@@ -5,7 +5,7 @@ import { X, MessageCircle, ChevronLeft, ChevronRight, Palette, Ruler } from 'luc
 export default function PublicProductModal({ product, company, onClose }: { product: any, company: any, onClose: () => void }) {
   const [activeImage, setActiveImage] = useState(0)
   
-  // 1. New States to track selection
+  // 1. States to track selection
   const [selectedColor, setSelectedColor] = useState<string | null>(null)
   const [selectedInch, setSelectedInch] = useState<string | null>(null)
 
@@ -23,6 +23,14 @@ export default function PublicProductModal({ product, company, onClose }: { prod
   
   const whatsappNumber = company?.whatsapp?.replace(/\D/g, '') || ''
 
+  // --- DYNAMIC PRICE CALCULATION ---
+  // Find the selected inch object to get its additionalPrice
+  const selectedInchData = inches.find((i: any) => i.inches.toString() === selectedInch)
+  const additionalCost = selectedInchData?.additionalPrice || 0
+  const totalPrice = product.price + additionalCost
+  const displayPrice = (totalPrice / 100).toFixed(2)
+  // ---------------------------------
+
   // 2. Generate Dynamic WhatsApp Message
   const generateWhatsAppLink = () => {
     const baseUrl = `https://wa.me/${whatsappNumber}`
@@ -30,9 +38,10 @@ export default function PublicProductModal({ product, company, onClose }: { prod
     const itemName = `*Product:* ${product.name}%0A`
     const colorPart = selectedColor ? `*Color:* ${selectedColor}%0A` : `*Color:* Not selected%0A`
     const inchPart = selectedInch ? `*Length:* ${selectedInch}"%0A` : `*Length:* Not selected%0A`
-    const footer = `%0APlease let me know the availability and total price.`
+    const pricePart = `*Total Price:* $${displayPrice}%0A` // Added total price to message
+    const footer = `%0APlease let me know the availability.`
     
-    return `${baseUrl}?text=${intro}${itemName}${colorPart}${inchPart}${footer}`
+    return `${baseUrl}?text=${intro}${itemName}${colorPart}${inchPart}${pricePart}${footer}`
   }
 
   const nextImage = () => setActiveImage((prev) => (prev + 1) % images.length)
@@ -55,7 +64,7 @@ export default function PublicProductModal({ product, company, onClose }: { prod
 
         <div className="flex flex-col md:flex-row h-full overflow-y-auto md:overflow-visible">
           
-          {/* LEFT: IMAGE CAROUSEL (Fixed height on mobile, flexible on desktop) */}
+          {/* LEFT: IMAGE CAROUSEL */}
           <div className="w-full md:w-1/2 relative bg-zinc-950 flex flex-col flex-shrink-0 border-b md:border-b-0 md:border-r border-white/5">
             <div className="relative w-full aspect-[4/5] md:aspect-auto md:flex-1 overflow-hidden">
               <img 
@@ -64,7 +73,6 @@ export default function PublicProductModal({ product, company, onClose }: { prod
                 alt={product.name} 
               />
 
-              {/* Navigation Arrows (Larger for mobile thumbs) */}
               {images.length > 1 && (
                 <>
                   <button 
@@ -83,7 +91,7 @@ export default function PublicProductModal({ product, company, onClose }: { prod
               )}
             </div>
 
-            {/* Thumbnail Strip (Scrollable on mobile) */}
+            {/* Thumbnail Strip */}
             {images.length > 1 && (
               <div className="flex gap-2 p-3 bg-black/50 border-t border-white/5 overflow-x-auto no-scrollbar scroll-smooth">
                 {images.map((img: any, idx: number) => (
@@ -101,7 +109,7 @@ export default function PublicProductModal({ product, company, onClose }: { prod
             )}
           </div>
 
-          {/* RIGHT: PRODUCT INFO (Scrollable area) */}
+          {/* RIGHT: PRODUCT INFO */}
           <div className="w-full md:w-1/2 p-6 md:p-12 flex flex-col bg-gradient-to-br from-[#0A0A0A] to-black">
             <div className="space-y-8 flex-1">
               <div>
@@ -114,10 +122,13 @@ export default function PublicProductModal({ product, company, onClose }: { prod
                   </span>
                 </div>
                 <h2 className="font-serif text-3xl md:text-5xl text-white mb-2 italic leading-tight">{product.name}</h2>
-                <p className="text-[#5a3e00] font-serif text-2xl font-light italic">${(product.price / 100).toFixed(2)}</p>
+                {/* DYNAMIC PRICE DISPLAY */}
+                <p className="text-[#5a3e00] font-serif text-2xl font-light italic transition-all duration-300">
+                  ${displayPrice}
+                </p>
               </div>
 
-              {/* SPEC GRID (Visible and clean on mobile) */}
+              {/* SPEC GRID */}
               <div className="grid grid-cols-2 gap-y-6 border-y border-white/5 py-6">
                  <InfoRow label="Origin" value={product.origin} />
                  <InfoRow label="Texture" value={product.texture} />
@@ -125,7 +136,7 @@ export default function PublicProductModal({ product, company, onClose }: { prod
                  <InfoRow label="Options" value={product.options} />
               </div>
 
-              {/* 3. INTERACTIVE COLORS SECTION (Larger tap targets) */}
+              {/* 3. INTERACTIVE COLORS SECTION */}
               {colors.length > 0 && (
                 <div>
                   <h4 className="text-[10px] text-gray-500 uppercase tracking-widest mb-4 font-black flex items-center gap-2">
@@ -149,7 +160,7 @@ export default function PublicProductModal({ product, company, onClose }: { prod
                 </div>
               )}
 
-              {/* 4. INTERACTIVE LENGTHS SECTION (Larger tap targets) */}
+              {/* 4. INTERACTIVE LENGTHS SECTION */}
               {inches.length > 0 && (
                 <div>
                   <h4 className="text-[10px] text-gray-500 uppercase tracking-widest mb-4 font-black flex items-center gap-2">
@@ -174,7 +185,7 @@ export default function PublicProductModal({ product, company, onClose }: { prod
               )}
             </div>
 
-            {/* 5. CALL TO ACTION WITH DYNAMIC MESSAGE (Pinned towards bottom) */}
+            {/* 5. CALL TO ACTION */}
             <div className="mt-12 mb-8 md:mb-0 space-y-4">
               <a 
                 href={generateWhatsAppLink()}
@@ -189,7 +200,6 @@ export default function PublicProductModal({ product, company, onClose }: { prod
                 Order via WhatsApp
               </a>
               
-              {/* Optional selection hint */}
               {(!selectedColor || !selectedInch) && (
                 <p className="text-[10px] text-red-400/80 text-center uppercase tracking-widest animate-pulse">
                    Select color & length to order
