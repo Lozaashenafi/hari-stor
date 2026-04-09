@@ -1,182 +1,150 @@
 'use client'
 import React, { useState, useMemo } from 'react'
-import { Search, Menu, X, ChevronDown, SlidersHorizontal, RotateCcw } from 'lucide-react'
+import { Search, ChevronDown } from 'lucide-react'
 import PublicProductModal from '@/components/site/PublicProductModal'
 
-export default function AllProductsClient({ products, company }: { products: any[], company: any }) {
+export default function AllProductsClient({ products, company, categoryName }: { products: any[], company: any, categoryName?: string }) {
   const [searchTerm, setSearchTerm] = useState('')
-  const [filterOrigin, setFilterOrigin] = useState('All')
-  const [filterTexture, setFilterTexture] = useState('All')
-  const [filterType, setFilterType] = useState('All')
+  const [sortOrder, setSortOrder] = useState('featured')
+  const [filterType, setFilterType] = useState(categoryName || 'All')
   const [selectedProduct, setSelectedProduct] = useState<any>(null)
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
-  // Options
-  const origins = ['All', 'Brazilian', 'Peruvian', 'Chinese', 'Malaysian']
-  const textures = ['All', 'Straight', 'Natural Wave', 'Body Wave', 'Classic Wave', 'Deep Wave', 'Curly Wave']
-  
-  // Extract Categories (using category name from joined table or fallback to hairType)
+  // Banner Mapping
+  const categoryBanners: Record<string, string> = {
+    all: '/banners/all-collections.jpg', // Ensure these exist in public/banners
+    wigs: '/banners/wigs.jpg',
+    bundles: '/banners/bundles.jpg',
+    'clip ins': '/banners/clip-ins.jpg',
+    ponytail: '/banners/ponytail.jpg',
+  };
+
+  const safeCategoryKey = (categoryName || filterType || "all").toLowerCase();
+
   const types = useMemo(() => {
     return ['All', ...Array.from(new Set(products.map(p => p.category?.name || p.hairType).filter(Boolean)))]
   }, [products])
 
   const filteredProducts = useMemo(() => {
-    return products.filter(p => {
-      const pCategory = p.category?.name || p.hairType
-      const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase())
-      const matchesOrigin = filterOrigin === 'All' || p.origin === filterOrigin
-      const matchesTexture = filterTexture === 'All' || p.texture === filterTexture
+    let result = products.filter(p => {
+      const pCategory = p.category?.name || p.hairType || ""
+      const searchLower = searchTerm.toLowerCase()
+      const matchesSearch = p.name.toLowerCase().includes(searchLower) || pCategory.toLowerCase().includes(searchLower);
       const matchesType = filterType === 'All' || pCategory === filterType
-      return matchesSearch && matchesOrigin && matchesTexture && matchesType
+      return matchesSearch && matchesType
     })
-  }, [searchTerm, filterOrigin, filterTexture, filterType, products])
 
-  const resetFilters = () => {
-    setFilterOrigin('All')
-    setFilterTexture('All')
-    setFilterType('All')
-    setSearchTerm('')
-    setIsSidebarOpen(false)
-  }
+    if (sortOrder === 'price-low') result.sort((a, b) => a.price - b.price)
+    if (sortOrder === 'price-high') result.sort((a, b) => b.price - a.price)
+    return result
+  }, [searchTerm, filterType, sortOrder, products])
 
   return (
-    <div className="space-y-12 relative">
+    <div className="bg-black min-h-screen pb-20">
       
-      {/* --- TOP BAR (Search + Sambusa Icon) --- */}
-      <div className="flex gap-4 items-center bg-zinc-900/40 p-4 md:p-6 rounded-[2rem] border border-white/5 backdrop-blur-md sticky top-24 z-30">
-        <div className="relative flex-1">
-          <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
-          <input 
-            type="text"
-            placeholder="Search collections..."
-            className="w-full bg-black border border-white/10 rounded-2xl py-3 md:py-4 pl-12 pr-4 text-sm text-white focus:border-[#C5A059] outline-none transition-all"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-
-        {/* Mobile Filter Trigger (Sambusa Icon) */}
-        <button 
-          onClick={() => setIsSidebarOpen(true)}
-          className="lg:hidden flex items-center gap-2 bg-[#C5A059] text-black px-5 py-3 rounded-2xl font-bold text-xs uppercase tracking-widest"
-        >
-          <Menu size={20} />
-        </button>
-
-        {/* Desktop Quick Filters (Origin & Texture - Hidden on Mobile) */}
-        <div className="hidden lg:flex items-center gap-4">
-           <div className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold ml-4">Filter by:</div>
-           <select value={filterOrigin} onChange={(e)=>setFilterOrigin(e.target.value)} className="bg-transparent border-none text-white text-xs font-bold uppercase tracking-widest outline-none cursor-pointer hover:text-[#C5A059]">
-              {origins.map(o => <option key={o} value={o} className="bg-black">{o === 'All' ? 'Origin' : o}</option>)}
-           </select>
-           <select value={filterTexture} onChange={(e)=>setFilterTexture(e.target.value)} className="bg-transparent border-none text-white text-xs font-bold uppercase tracking-widest outline-none cursor-pointer hover:text-[#C5A059]">
-              {textures.map(t => <option key={t} value={t} className="bg-black">{t === 'All' ? 'Texture' : t}</option>)}
-           </select>
-           {/* Desktop Category Filter */}
-           <select value={filterType} onChange={(e)=>setFilterType(e.target.value)} className="bg-transparent border-none text-white text-xs font-bold uppercase tracking-widest outline-none cursor-pointer hover:text-[#C5A059]">
-              {types.map(cat => <option key={cat} value={cat} className="bg-black">{cat === 'All' ? 'Category' : cat}</option>)}
-           </select>
-           {searchTerm || filterOrigin !== 'All' || filterTexture !== 'All' || filterType !== 'All' ? (
-             <button onClick={resetFilters} className="text-[#C5A059]"><RotateCcw size={16}/></button>
-           ) : null}
+      {/* 1. STATIC BANNER - Fixed object-top alignment */}
+      <div className="max-w-7xl mx-auto px-4 pt-2"> {/* Reduced pt-8 to pt-2 to bring it to the top */}
+        <div className="aspect-[4/3] md:aspect-[21/9] w-full overflow-hidden bg-zinc-900 border border-white/5 shadow-2xl">
+            <img 
+              // Restored dynamic banner logic, fallback to hero-model if not found
+              src={'/hero-model.png'} 
+              alt="Collection Banner"
+              className="w-full h-full object-cover object-top" // CHANGED TO object-top
+            />
         </div>
       </div>
 
-      {/* --- MOBILE SIDEBAR DRAWER (CATEGORIES ONLY) --- */}
-      <div className={`fixed inset-0 z-[100] transition-all duration-500 ${isSidebarOpen ? 'visible' : 'invisible'}`}>
-        <div 
-          className={`absolute inset-0 bg-black/90 backdrop-blur-sm transition-opacity duration-500 ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}
-          onClick={() => setIsSidebarOpen(false)}
-        />
-        
-        <div className={`absolute right-0 top-0 h-full w-[85%] max-w-sm bg-[#0A0A0A] border-l border-white/10 p-8 shadow-2xl transition-transform duration-500 transform ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-          <div className="flex justify-between items-center mb-12">
-            <h2 className="text-white font-serif text-2xl italic">Categories</h2>
-            <button onClick={() => setIsSidebarOpen(false)} className="text-gray-500 hover:text-white">
-              <X size={28} />
-            </button>
-          </div>
+      <div className="max-w-7xl mx-auto px-6 mt-12">
+        {/* 2. PAGE TITLE */}
+        <h1 className="text-4xl md:text-5xl font-serif text-[#C5A059] uppercase tracking-[0.2em] mb-10 text-center md:text-left">
+            {filterType === 'All' ? 'Our Collections' : filterType}
+        </h1>
 
-          <div className="space-y-10">
-            {/* Category Filter - Only this section is shown on mobile sidebar */}
-            <div className="space-y-4">
-              <label className="text-[10px] uppercase tracking-[0.3em] text-[#C5A059] font-black">Browse Collections</label>
-              <div className="flex flex-col gap-3">
-                {types.map(cat => (
-                  <button 
-                    key={cat} 
-                    onClick={() => {setFilterType(cat); setIsSidebarOpen(false);}}
-                    className={`py-4 px-6 rounded-2xl text-sm text-left uppercase tracking-widest border transition-all ${filterType === cat ? 'bg-[#C5A059] text-black border-[#C5A059] font-bold' : 'bg-zinc-900 border-white/5 text-gray-400'}`}
-                  >
-                    {cat}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <button 
-              onClick={resetFilters}
-              className="w-full py-5 border border-white/10 rounded-2xl text-white text-xs uppercase tracking-[0.4em] font-bold mt-10 hover:bg-white/5 transition-all flex items-center justify-center gap-3"
-            >
-              <RotateCcw size={16} /> Reset All
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* --- RESULTS GRID --- */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-20">
-        {filteredProducts.map((product) => (
-          <div key={product.id} className="group cursor-pointer" onClick={() => setSelectedProduct(product)}>
-            <div className="aspect-[4/5] overflow-hidden bg-zinc-900 mb-8 rounded-[2rem] border border-white/5 relative shadow-2xl">
-              
-              {product.isOnSale && (
-                <div className="absolute top-5 left-5 z-20 bg-red-600 text-white text-[9px] font-black uppercase tracking-[0.2em] px-4 py-2 rounded-full shadow-[0_10px_20px_rgba(0,0,0,0.4)]">
-                  Sale
-                </div>
-              )}
-
-              <img 
-                src={product.images[0]?.imageUrl} 
-                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                alt={product.name}
-              />
-              
-              <div className="absolute top-5 right-5 px-3 py-1.5 bg-black/80 backdrop-blur-md rounded-full border border-[#C5A059]/30 text-[8px] text-[#C5A059] uppercase tracking-widest font-black">
-                {product.origin}
-              </div>
-            </div>
-
-            <div className="space-y-3 px-2">
-                <span className="text-[#C5A059] text-[10px] uppercase tracking-[0.4em] font-black opacity-80">
-                    {product.texture}
-                </span>
-                
-                <h3 className="text-white text-xl font-serif italic group-hover:text-[#C5A059] transition-colors leading-tight">
-                    {product.name}
-                </h3>
-                
-                <div className="flex items-center gap-4 pt-1">
-                  <p className="text-white text-2xl font-serif font-medium">
-                    ${(product.price / 100).toFixed(2)}
-                  </p>
-                  
-                  {product.isOnSale && product.previousPrice && (
-                    <p className="text-zinc-600 text-sm line-through decoration-red-600/40 italic font-light">
-                      ${(product.previousPrice / 100).toFixed(2)}
-                    </p>
-                  )}
+        {/* 3. SEARCH & FILTERS SECTION */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 items-end">
+            <div className="flex flex-col gap-2">
+                <label className="text-[10px] uppercase tracking-widest text-gray-400">Search Products or Categories</label>
+                <div className="relative">
+                    <input 
+                        type="text"
+                        placeholder="Search..."
+                        className="w-full bg-black border border-white/40 py-3 pl-10 pr-4 text-xs text-white focus:outline-none focus:border-[#C5A059]"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={16} />
                 </div>
             </div>
-          </div>
-        ))}
-      </div>
 
-      {filteredProducts.length === 0 && (
-        <div className="py-40 text-center border border-dashed border-white/10 rounded-[3rem]">
-          <p className="text-gray-600 font-serif text-2xl italic tracking-widest">No matching pieces in our vault...</p>
+            <div className="flex flex-col gap-2">
+                <label className="text-[10px] uppercase tracking-widest text-gray-400">Filter By Category</label>
+                <div className="relative">
+                    <select 
+                        className="w-full bg-black border border-white/40 py-3 px-4 text-xs appearance-none text-white focus:outline-none focus:border-[#C5A059]"
+                        value={filterType}
+                        onChange={(e) => setFilterType(e.target.value)}
+                    >
+                        {types.map(cat => <option key={cat} value={cat} className="bg-zinc-900">{cat === 'All' ? 'All Collections' : cat}</option>)}
+                    </select>
+                    <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400" />
+                </div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+                <label className="text-[10px] uppercase tracking-widest text-gray-400">Sort By</label>
+                <div className="relative">
+                    <select 
+                        className="w-full bg-black border border-white/40 py-3 px-4 text-xs appearance-none text-white focus:outline-none focus:border-[#C5A059]"
+                        value={sortOrder}
+                        onChange={(e) => setSortOrder(e.target.value)}
+                    >
+                        <option value="featured" className="bg-zinc-900">Featured</option>
+                        <option value="price-low" className="bg-zinc-900">Price, low to high</option>
+                        <option value="price-high" className="bg-zinc-900">Price, high to low</option>
+                    </select>
+                    <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400" />
+                </div>
+            </div>
         </div>
-      )}
+
+        {/* 4. RESULTS GRID */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-16">
+            {filteredProducts.map((product) => (
+                <div key={product.id} className="group cursor-pointer" onClick={() => setSelectedProduct(product)}>
+                    <div className="aspect-[4/5] overflow-hidden bg-zinc-900 mb-6 border border-white/5 relative shadow-xl">
+                        {product.isOnSale && (
+                            <div className="absolute top-4 left-4 z-20 bg-red-600 text-white text-[8px] font-black uppercase tracking-widest px-3 py-1.5 rounded-sm">
+                                SALE
+                            </div>
+                        )}
+                        <img 
+                            src={product.images[0]?.imageUrl} 
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                            alt={product.name}
+                        />
+                    </div>
+
+                    <div className="text-center md:text-left space-y-2">
+                        <span className="text-[#C5A059] text-[9px] uppercase tracking-[0.3em] font-bold">
+                            {product.category?.name || product.hairType}
+                        </span>
+                        <h3 className="text-white text-sm font-medium tracking-tight h-10 overflow-hidden leading-tight">
+                            {product.name}
+                        </h3>
+                        <div className="flex items-center justify-center md:justify-start gap-3">
+                            <p className="text-white text-sm font-bold">
+                                from ${(product.price / 100).toFixed(2)}
+                            </p>
+                            {product.isOnSale && product.previousPrice && (
+                                <p className="text-zinc-500 text-xs line-through italic">
+                                    ${(product.previousPrice / 100).toFixed(2)}
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            ))}
+        </div>
+      </div>
 
       {selectedProduct && (
         <PublicProductModal 

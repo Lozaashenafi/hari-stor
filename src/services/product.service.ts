@@ -17,7 +17,35 @@ export async function getCategories() {
     return [];
   }
 }
+export async function getProductsByCategory(slug: string) {
+  try {
+    // Defensive check
+    if (!slug) return [];
 
+    const categoryRecord = await db.query.categories.findFirst({
+      where: (cat, { sql }) => sql`LOWER(${cat.name}) = ${slug.toLowerCase()}`,
+    });
+
+    if (!categoryRecord) {
+      console.warn(`Category not found: ${slug}`);
+      return [];
+    }
+
+    return await db.query.hairProducts.findMany({
+      where: eq(hairProducts.categoryId, categoryRecord.id),
+      with: {
+        category: true,
+        images: true,
+        colors: true,
+        inches: true,
+      },
+      orderBy: [desc(hairProducts.id)],
+    });
+  } catch (error) {
+    console.error("Error fetching products by category:", error);
+    return [];
+  }
+}
 /* =========================
    2. CREATE PRODUCT
 ========================= */
