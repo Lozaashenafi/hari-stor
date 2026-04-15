@@ -16,7 +16,6 @@ export default async function HomePage() {
   return (
     <main>
       <Hero />
- 
       {/* Dynamic Products Section */}
       <ProductSection products={products} company={company} />
   {/* Add the Gallery Section here */}

@@ -35,20 +35,21 @@ export default function ProductSection({ products, company }: { products: any[],
         </header>
 
         {/* --- PRODUCT GRID --- */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-16">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-12 md:gap-x-6 md:gap-y-16">
           {featuredProducts.map((product) => (
-            <div key={product.id} className="group cursor-pointer" onClick={() => setSelectedProduct(product)}>
+            <div key={product.id} className="group cursor-pointer flex flex-col" onClick={() => setSelectedProduct(product)}>
               
-              {/* Image Container */}
-              <div className="aspect-[4/5] overflow-hidden bg-zinc-900 mb-6 relative border border-white/5 shadow-xl transition-all">
-                
-                {/* Clean Sale Badge */}
+              {/* ON SALE Badge - Completely Outside the Image Box */}
+              <div className="h-[30px] md:h-[36px] w-full flex items-end">
                 {product.isOnSale && (
-                  <div className="absolute top-4 left-4 z-20 bg-red-600 text-white text-[8px] font-black uppercase tracking-widest px-3 py-1.5 rounded-sm">
-                    SALE
+                  <div className="bg-[#ED2939] text-white text-[11px] md:text-[13px] font-bold px-3 py-1 md:px-4 md:py-1.5 tracking-wide w-max">
+                    ON SALE
                   </div>
                 )}
-                
+              </div>
+              
+              {/* Image Container */}
+              <div className="aspect-square overflow-hidden bg-white mb-5 relative transition-all">
                 <img 
                   src={product.images[0]?.imageUrl} 
                   alt={product.name}
@@ -57,27 +58,26 @@ export default function ProductSection({ products, company }: { products: any[],
               </div>
 
               {/* Text Content */}
-              <div className="text-center md:text-left space-y-2">
-                <span className="text-[#C5A059] text-[9px] uppercase tracking-[0.3em] font-bold">
-                   {product.category?.name || product.hairType}
-                </span>
-                
-                <h3 className="text-white text-sm font-medium tracking-tight h-10 overflow-hidden leading-tight">
+              <div className="text-center space-y-2 px-1">
+                {/* Product Title - Gold Color */}
+                <h3 className="text-[#C5A059] text-[14px] md:text-[16px] font-normal leading-snug">
                   {product.name}
                 </h3>
                 
-                <div className="flex items-center justify-center md:justify-start gap-3">
-                  <p className="text-white text-sm font-bold">
-                    from ${(product.price / 100).toFixed(2)}
-                  </p>
-                  
+                {/* Price layout - Old Price Left, New Price Right */}
+                <div className="flex items-center justify-center gap-2 mt-2">
                   {product.isOnSale && product.previousPrice && (
-                    <p className="text-zinc-500 text-xs line-through italic">
+                    <span className="text-gray-300 text-[14px] md:text-[16px] line-through">
                       ${(product.previousPrice / 100).toFixed(2)}
-                    </p>
+                    </span>
                   )}
+                  
+                  <span className="text-white text-[15px] md:text-[18px] font-bold">
+                    ${(product.price / 100).toFixed(2)}
+                  </span>
                 </div>
               </div>
+
             </div>
           ))}
         </div>

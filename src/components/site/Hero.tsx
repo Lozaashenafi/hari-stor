@@ -1,53 +1,50 @@
 import React from 'react';
 import Link from 'next/link';
-import { getCompanyProfile } from '@/services/company.service';
-import HeroImage from '../../../public/hero-model.png';
+import HeroImage from '../../../public/hero-model.png'; 
 
-const Hero = async () => {
-  
+const Hero = () => {
   return (
-    <div className="flex flex-col min-h-screen bg-black">
-     
-      {/* 2. HERO SECTION - Starts AFTER the header */}
-      <div className="relative flex-grow w-full overflow-hidden h-[90vh] md:h-[80vh]">
-        
-        {/* Background Image - Using bg-top to avoid cropping the head */}
-        <div
-          className="absolute inset-0 z-0 bg-cover bg-top bg-no-repeat"
-          style={{ backgroundImage: `url(${HeroImage.src})` }}
-        >
-          {/* Subtle Overlays for text readability */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/30 to-transparent z-10"></div>
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10"></div>
-        </div>
-
-        {/* Hero Content */}
-        <div className="relative z-20 flex flex-col justify-end align-bottom h-full px-8 md:px-16 max-w-5xl py-20">
-          <h4 className="text-[#C5A059] tracking-[0.4em] text-[10px] md:text-xs mb-4 font-bold uppercase">
-            PREMIUM VIRGIN HAIR
-          </h4>
-          
-          <h1 className="font-serif text-5xl md:text-8xl leading-tight mb-6 font-bold text-white">
-            Embrace Your <br />
-            <span className="text-[#C5A059] italic font-light">
-              Natural Beauty
-            </span>
-          </h1>
-          
-          <p className="text-zinc-200 text-sm md:text-base max-w-md mb-10 font-normal leading-relaxed">
-            Discover our collection of 100% virgin human hair extensions. 
-            Luxurious quality, ethically sourced, designed for excellence.
-          </p>
-
-          {/* Action Button */}
-          <Link 
-            href="/products" 
-            className="w-fit px-10 py-4 border border-[#C5A059] text-[#C5A059] uppercase tracking-widest text-xs font-bold hover:bg-[#C5A059] hover:text-black transition-all duration-300"
-          >
-            Shop Collection
-          </Link>
-        </div>
+    <div className="w-full bg-black flex flex-col pb-12">
+      
+      {/* 1. IMAGE SECTION */}
+      {/* Using standard width/height without forcing full screen height */}
+      <div className="w-full">
+        <img
+          src={HeroImage.src}
+          alt="Shally Luxe Hair Collection"
+          className="w-full h-auto object-cover max-h-[60vh] md:max-h-[80vh] object-top"
+        />
       </div>
+      
+      {/* 2. TEXT & DESCRIPTION SECTION (Fills the space below on mobile) */}
+      <div className="flex flex-col items-center justify-center px-6 pt-10 text-center">
+        
+        {/* Subtitle / Eyebrow text */}
+        <span className="text-[#C5A059] text-[10px] tracking-[0.25em] font-medium uppercase mb-3">
+          shalls hair
+        </span>
+
+        {/* Main Title */}
+        <h1 className="text-4xl md:text-6xl font-serif text-white mb-4 leading-tight">
+          welcome <br className="md:hidden" />
+          <span className="text-[#C5A059] italic font-light"> to shalls hair</span>
+        </h1>
+        
+        {/* Short Description */}
+        <p className="text-gray-300 text-sm md:text-base max-w-md mb-8 leading-relaxed font-light">
+          Discover the perfect blend of quality and style with our premium hair extensions.
+        </p>
+
+        {/* Call to Action Button */}
+        <Link 
+          href="/products" 
+          className="px-8 py-4 border border-[#C5A059] text-[#C5A059] text-xs font-bold tracking-[0.2em] uppercase hover:bg-[#C5A059] hover:text-black transition-all duration-300"
+        >
+          Shop Collection
+        </Link>
+        
+      </div>
+
     </div>
   );
 };

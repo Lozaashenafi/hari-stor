@@ -19,8 +19,11 @@ const Navbar = async () => {
 
   return (
     <nav className="relative z-50 flex items-center justify-between px-6 py-4 md:px-12 bg-black border-b border-[#C5A059]/20 w-full">
-      {/* Left: Logo Section */}
-      <Link href="/" className="flex flex-col items-center group">
+      
+      {/* ============================== */}
+      {/* DESKTOP LEFT: Logo             */}
+      {/* ============================== */}
+      <Link href="/" className="hidden lg:flex flex-col items-center group">
         <img 
           src={Logo.src} 
           alt="Logo" 
@@ -30,8 +33,34 @@ const Navbar = async () => {
           {profile?.name || "SHALLY LUXE"}
         </span>
       </Link>
-      
-      {/* Center: Navigation Links */}
+
+      {/* ============================== */}
+      {/* MOBILE LEFT: Sambusa Menu      */}
+      {/* ============================== */}
+      <div className="lg:hidden flex items-center text-[#C5A059]">
+        <MobileMenu />
+      </div>
+
+      {/* ============================== */}
+      {/* MOBILE CENTER: Logo            */}
+      {/* ============================== */}
+      {/* Absolute positioning guarantees it stays perfectly centered on mobile */}
+      <div className="lg:hidden absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+        <Link href="/" className="flex flex-col items-center group">
+          <img 
+            src={Logo.src} 
+            alt="Logo" 
+            className="h-10 w-auto object-contain" 
+          />
+          <span className="text-[9px] tracking-[0.2em] text-[#C5A059] font-medium mt-1 uppercase text-center whitespace-nowrap">
+            {profile?.name || "SHALLY LUXE"}
+          </span>
+        </Link>
+      </div>
+
+      {/* ============================== */}
+      {/* DESKTOP CENTER: Links          */}
+      {/* ============================== */}
       <div className="hidden lg:flex items-center space-x-8 text-[11px] uppercase tracking-[0.15em] font-medium text-[#C5A059]">
         {categories.map((cat) => (
           <Link key={cat.name} href={cat.href} className="hover:text-white transition-colors duration-300">
@@ -40,13 +69,20 @@ const Navbar = async () => {
         ))}
       </div>
 
-      {/* Right: Icons */}
-      <div className="flex items-center space-x-6 text-[#C5A059]">
-        <Search className="cursor-pointer hover:text-white transition" size={18} />
-        <Link href="/login" className="hover:text-white transition"><User size={18} /></Link>
-        <ShoppingCart className="cursor-pointer hover:text-white transition" size={18} />
-        <MobileMenu />
+      {/* ============================== */}
+      {/* RIGHT: Icons & Cart            */}
+      {/* ============================== */}
+      <div className="flex items-center space-x-5 md:space-x-6 text-[#C5A059]">
+        {/* Hide Search and User icons on mobile, show on large screens */}
+        <Search className="hidden lg:block cursor-pointer hover:text-white transition" size={18} />
+        <Link href="/login" className="hidden lg:block hover:text-white transition">
+          <User size={18} />
+        </Link>
+        
+        {/* Cart stays visible on BOTH mobile and desktop */}
+        <ShoppingCart className="cursor-pointer hover:text-white transition" size={20} />
       </div>
+
     </nav>
   );
 };

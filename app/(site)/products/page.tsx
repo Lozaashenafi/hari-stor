@@ -1,8 +1,7 @@
 import { getAdminProducts } from "@/services/product.service";
 import { getCompanyProfile } from "@/services/company.service";
 import AllProductsClient from "./AllProductsClient";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+
 
 export default async function AllProductsPage() {
   const [products, company] = await Promise.all([
