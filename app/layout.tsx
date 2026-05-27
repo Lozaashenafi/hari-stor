@@ -22,7 +22,6 @@ export const metadata: Metadata = {
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair" });
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
-// MUST HAVE 'export default'
 export default function RootLayout({
   children,
 }: {
@@ -30,7 +29,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="h-full">
-<body className={`${playfair.variable} ${inter.variable} font-sans bg-black text-white`}>
+      <body className={`${playfair.variable} ${inter.variable} font-sans bg-black text-white`}>
         <AuthProvider>
           {children}
         </AuthProvider>
@@ -38,4 +37,3 @@ export default function RootLayout({
     </html>
   );
 }
-

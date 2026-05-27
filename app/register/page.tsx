@@ -22,7 +22,6 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center px-4 relative overflow-hidden">
-      {/* Background Lighting */}
       <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#5a3e00]/5 rounded-full blur-[120px]" />
       <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#5a3e00]/5 rounded-full blur-[120px]" />
 
@@ -36,7 +35,7 @@ export default function RegisterPage() {
 
         <div className="bg-zinc-950 border border-white/5 p-8 md:p-10 rounded-2xl shadow-2xl">
           <h1 className="font-serif text-3xl text-white mb-8 text-center italic font-light">Create Account</h1>
-          
+
           <form onSubmit={handleSubmit} className="space-y-5">
             {errorMsg && (
               <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] uppercase tracking-widest p-3 rounded-lg text-center">
@@ -46,10 +45,10 @@ export default function RegisterPage() {
 
             <div>
               <label className="block text-[9px] uppercase tracking-[0.2em] text-gray-500 mb-2 ml-1">Full Name</label>
-              <input 
+              <input
                 name="displayName"
-                type="text" 
-                placeholder="Jane Doe" 
+                type="text"
+                placeholder="Jane Doe"
                 className="w-full bg-black border border-white/10 text-white p-3 rounded-xl focus:outline-none focus:border-[#5a3e00] transition-colors placeholder:text-zinc-800 text-sm"
                 required
               />
@@ -57,10 +56,10 @@ export default function RegisterPage() {
 
             <div>
               <label className="block text-[9px] uppercase tracking-[0.2em] text-gray-500 mb-2 ml-1">Email Address</label>
-              <input 
+              <input
                 name="email"
-                type="email" 
-                placeholder="jane@example.com" 
+                type="email"
+                placeholder="jane@example.com"
                 className="w-full bg-black border border-white/10 text-white p-3 rounded-xl focus:outline-none focus:border-[#5a3e00] transition-colors placeholder:text-zinc-800 text-sm"
                 required
               />
@@ -68,16 +67,16 @@ export default function RegisterPage() {
 
             <div>
               <label className="block text-[9px] uppercase tracking-[0.2em] text-gray-500 mb-2 ml-1">Secure Password</label>
-              <input 
+              <input
                 name="password"
-                type="password" 
-                placeholder="••••••••" 
+                type="password"
+                placeholder="••••••••"
                 className="w-full bg-black border border-white/10 text-white p-3 rounded-xl focus:outline-none focus:border-[#5a3e00] transition-colors placeholder:text-zinc-800 text-sm"
                 required
               />
             </div>
 
-            <button 
+            <button
               disabled={loading}
               className="w-full bg-[#5a3e00] text-black font-bold py-4 rounded-xl hover:bg-[#D4B26E] transition-all transform active:scale-[0.98] disabled:opacity-50 mt-4 tracking-[0.2em] uppercase text-[10px]"
             >

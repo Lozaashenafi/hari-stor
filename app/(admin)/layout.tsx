@@ -1,11 +1,11 @@
 import Sidebar from '@/components/admin/Sidebar'
-import { createClient } from '@/lib/supabase/server'
+import { auth } from '@/auth/auth'
 import { redirect } from 'next/navigation'
+import { headers } from 'next/headers'
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+  const session = await auth.api.getSession({ headers: await headers() })
+  if (!session) redirect('/login')
 
   return (
     <div className="flex flex-col lg:flex-row h-screen bg-[#050505]">

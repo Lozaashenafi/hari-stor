@@ -1,17 +1,76 @@
-
-import { pgTable, serial, text, integer, uuid, timestamp } from "drizzle-orm/pg-core"; // Add uuid and timestamp
-
+import { pgTable, serial, text, integer, uuid, timestamp, boolean, pgEnum } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import { boolean } from "drizzle-orm/pg-core"; // add boolean import
 
+/* =========================
+   Better Auth Tables
+   See: https://better-auth.com
+========================= */
+export const user = pgTable("user", {
+  id: text("id").primaryKey(),
+  email: text("email").notNull().unique(),
+  emailVerified: boolean("email_verified").notNull().default(false),
+  name: text("name"),
+  image: text("image"),
+  role: text("role").default("user"),
+  banned: boolean("banned").default(false),
+  banReason: text("ban_reason"),
+  banExpires: timestamp("ban_expires"),
+  createdAt: timestamp("created_at").notNull(),
+  updatedAt: timestamp("updated_at").notNull(),
+});
+
+export const session = pgTable("session", {
+  id: text("id").primaryKey(),
+  expiresAt: timestamp("expires_at").notNull(),
+  token: text("token").notNull().unique(),
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").notNull(),
+  updatedAt: timestamp("updated_at").notNull(),
+});
+
+export const account = pgTable("account", {
+  id: text("id").primaryKey(),
+  accountId: text("account_id").notNull(),
+  providerId: text("provider_id").notNull(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  accessToken: text("access_token"),
+  refreshToken: text("refresh_token"),
+  idToken: text("id_token"),
+  accessTokenExpiresAt: timestamp("access_token_expires_at"),
+  refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
+  scope: text("scope"),
+  password: text("password"),
+  createdAt: timestamp("created_at").notNull(),
+  updatedAt: timestamp("updated_at").notNull(),
+});
+
+export const verification = pgTable("verification", {
+  id: text("id").primaryKey(),
+  identifier: text("identifier").notNull(),
+  value: text("value").notNull(),
+  expiresAt: timestamp("expires_at").notNull(),
+  createdAt: timestamp("created_at").notNull(),
+  updatedAt: timestamp("updated_at").notNull(),
+});
+
+/* =========================
+   Profiles (admin users)
+========================= */
 export const profiles = pgTable("profiles", {
-  // This ID will match the Supabase User ID
-  id: uuid("id").primaryKey().notNull(),
-  
+  id: text("id")
+    .primaryKey()
+    .references(() => user.id, { onDelete: "cascade" }),
+
   email: text("email").notNull(),
-  
+
   displayName: text("display_name"),
-  
+
   avatarUrl: text("avatar_url"),
 
   updatedAt: timestamp("updated_at").defaultNow(),
@@ -34,8 +93,8 @@ export const hairProducts = pgTable("hair_products", {
   options: text("options"),
 
   price: integer("price").notNull(),
-  previousPrice: integer("previous_price"), // To store the old price
-  isOnSale: boolean("is_on_sale").default(false).notNull(), // Sale toggle
+  previousPrice: integer("previous_price"),
+  isOnSale: boolean("is_on_sale").default(false).notNull(),
 
   // Link to Category
   categoryId: integer("category_id")
@@ -76,14 +135,12 @@ export const hairColors = pgTable("hair_colors", {
 });
 
 /* =========================
-   Categories (New Table)
+   Categories
 ========================= */
 export const categories = pgTable("categories", {
   id: serial("id").primaryKey(),
-  name: text("name").notNull(), // e.g., Wigs, Bundles, Hair Care
+  name: text("name").notNull(),
 });
-
-
 
 
 /* =========================
@@ -98,7 +155,7 @@ export const hairInches = pgTable("hair_inches", {
     .references(() => hairProducts.id, { onDelete: "cascade" }),
 
   inches: integer("inches").notNull(),
-    additionalPrice: integer("additional_price").default(0).notNull(), 
+    additionalPrice: integer("additional_price").default(0).notNull(),
 
 });
 

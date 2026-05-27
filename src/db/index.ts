@@ -1,12 +1,14 @@
-// src/db/index.ts
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
-import * as schema from './schema'; // 1. Import your entire schema
+import { neon, neonConfig } from '@neondatabase/serverless';
+import { drizzle } from 'drizzle-orm/neon-http';
+import * as schema from './schema';
 
-const connectionString = process.env.DATABASE_URL!;
+// This allows Neon to work better in local development
+// and handles the connection "reset" issues.
+if (process.env.NODE_ENV === 'development') {
+  neonConfig.fetchConnectionCache = true;
+}
 
-// 2. Disable prefetch for Supabase/PgBouncer if using port 6543
-const client = postgres(connectionString, { prepare: false }); 
+const sql = neon(process.env.DATABASE_URL!);
 
-// 3. Pass the schema object here
-export const db = drizzle(client, { schema });
+// Use neon-http for better stability with cold starts
+export const db = drizzle(sql, { schema });
