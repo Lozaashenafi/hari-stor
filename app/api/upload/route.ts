@@ -1,33 +1,27 @@
-import { NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
+import { put } from '@vercel/blob';
+import { NextResponse } from 'next/server';
 
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
   try {
     const formData = await request.formData();
-    const file = formData.get("file") as File | null;
+    const file = formData.get('file') as File;
 
     if (!file) {
-      return NextResponse.json({ error: "No file provided" }, { status: 400 });
+      return NextResponse.json({ error: 'No file provided' }, { status: 400 });
     }
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    // 1. Upload to Vercel Blob
+    // We add a timestamp to the name to prevent overwriting files with the same name
+    const filename = `${Date.now()}-${file.name}`;
+    
+    const blob = await put(filename, file, {
+      access: 'public', // Makes the URL readable by everyone
+    });
 
-    const ext = file.name.split(".").pop() || "jpg";
-    const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${ext}`;
-
-    const uploadDir = path.join(process.cwd(), "public", "uploads");
-    await mkdir(uploadDir, { recursive: true });
-
-    const filePath = path.join(uploadDir, fileName);
-    await writeFile(filePath, buffer);
-
-    const url = `/uploads/${fileName}`;
-
-    return NextResponse.json({ url });
+    // 2. Return the cloud URL back to your ImageUpload component
+    return NextResponse.json(blob);
   } catch (error) {
-    console.error("Upload error:", error);
-    return NextResponse.json({ error: "Upload failed" }, { status: 500 });
+    console.error('Upload Error:', error);
+    return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
   }
 }

@@ -4,6 +4,22 @@ import { db } from "@/db"
 import { hairProducts, hairImages, hairColors, hairInches, categories } from "@/db/schema"
 import { desc, eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache"
+import { put, del } from "@vercel/blob"; // ADD THIS
+
+/* =========================
+   NEW: IMAGE UPLOAD ACTION
+========================= */
+export async function uploadFile(formData: FormData) {
+  const file = formData.get('file') as File;
+  if (!file) throw new Error("No file provided");
+
+  // Upload to Vercel Blob
+  const blob = await put(`products/${Date.now()}-${file.name}`, file, {
+    access: 'public',
+  });
+
+  return blob.url; // This returns the permanent https:// link
+}
 
 /* =========================
    1. CATEGORY ACTIONS
@@ -11,25 +27,21 @@ import { revalidatePath } from "next/cache"
 export async function getCategories() {
   try {
     return await db.select().from(categories).orderBy(categories.name);
-    // console.log("Fetched Categories:", categories);
   } catch (error) {
     console.error("Error fetching categories:", error);
     return [];
   }
 }
+
 export async function getProductsByCategory(slug: string) {
   try {
-    // Defensive check
     if (!slug) return [];
 
     const categoryRecord = await db.query.categories.findFirst({
       where: (cat, { sql }) => sql`LOWER(${cat.name}) = ${slug.toLowerCase()}`,
     });
 
-    if (!categoryRecord) {
-      console.warn(`Category not found: ${slug}`);
-      return [];
-    }
+    if (!categoryRecord) return [];
 
     return await db.query.hairProducts.findMany({
       where: eq(hairProducts.categoryId, categoryRecord.id),
@@ -42,20 +54,20 @@ export async function getProductsByCategory(slug: string) {
       orderBy: [desc(hairProducts.id)],
     });
   } catch (error) {
-    console.error("Error fetching products by category:", error);
     return [];
   }
 }
+
 /* =========================
    2. CREATE PRODUCT
 ========================= */
 export async function createHairProduct(data: any) {
   try {
+    // Note: 'data.images' should now be an array of Cloud URLs (https://...)
     return await db.transaction(async (tx) => {
-      // 1. Insert Main Product
       const [product] = await tx.insert(hairProducts).values({
         name: data.name,
-        categoryId: data.categoryId, // NEW: Link to category
+        categoryId: data.categoryId,
         texture: data.texture,
         hairType: data.hairType,
         origin: data.origin,
@@ -68,36 +80,55 @@ export async function createHairProduct(data: any) {
         quantityInHand: data.quantityInHand || 0,
       }).returning();
 
-      // 2. Insert Images
       if (data.images?.length > 0) {
         await tx.insert(hairImages).values(
           data.images.map((url: string) => ({ productId: product.id, imageUrl: url }))
         );
       }
 
-      // 3. Insert Colors
       if (data.colors?.length > 0) {
         await tx.insert(hairColors).values(
           data.colors.map((c: string) => ({ productId: product.id, color: c }))
         );
       }
 
-      // 4. Insert Inches (Updated for Dynamic Pricing)
       if (data.inches?.length > 0) {
         await tx.insert(hairInches).values(
           data.inches.map((i: any) => ({ 
             productId: product.id, 
             inches: parseInt(i.value), 
-            additionalPrice: i.extra // NEW: Store the price increase in cents
+            additionalPrice: i.extra 
           }))
         );
       }
 
       revalidatePath('/admin/products');
+      revalidatePath('/');
       return { success: true };
     });
   } catch (error) {
     console.error("Create Error:", error);
+    return { success: false };
+  }
+}
+
+/* ... updateHairProduct, getProductById, getAdminProducts (Keep same as your original) ... */
+export async function deleteProduct(id: number) {
+  try {
+    // 1. Get images from DB to find the URLs
+    const images = await db.select().from(hairImages).where(eq(hairImages.productId, id));
+    
+    // 2. Delete each image from Vercel Cloud
+    for (const img of images) {
+      await del(img.imageUrl);
+    }
+
+    // 3. Delete from Database
+    await db.delete(hairProducts).where(eq(hairProducts.id, id));
+    
+    revalidatePath('/admin/products');
+    return { success: true };
+  } catch (error) {
     return { success: false };
   }
 }
@@ -228,16 +259,5 @@ export async function getDashboardStats() {
   } catch (error) {
     console.error("Stats Error:", error);
     return { totalProducts: 0, inHandCount: 0, inventoryValue: 0 };
-  }
-}
-
-export async function deleteProduct(id: number) {
-  try {
-    await db.delete(hairProducts).where(eq(hairProducts.id, id));
-    revalidatePath('/admin/products');
-    return { success: true };
-  } catch (error) {
-    console.error("Delete Error:", error);
-    return { success: false };
   }
 }
