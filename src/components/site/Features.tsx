@@ -32,10 +32,10 @@ const Features = () => {
         
         {/* --- HEADER --- */}
         <header className="text-center mb-20 space-y-4">
-          <span className="text-[10px] uppercase tracking-[0.4em] font-black text-[#C5A059] block">
+          <span className="text-[10px] uppercase tracking-[0.4em] font-black text-gray-300 block">
             Quality Assurance
           </span>
-          <h2 className="font-serif text-4xl md:text-6xl text-white uppercase tracking-wider">
+          <h2 className="font-serif text-4xl md:text-6xl text-[#C5A059] uppercase tracking-wider">
             The Luxe Difference
           </h2>
           <div className="w-16 h-[1px] bg-[#C5A059] mx-auto mt-6" />

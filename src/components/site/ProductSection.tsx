@@ -18,17 +18,17 @@ export default function ProductSection({ products, company }: { products: any[],
         {/* --- HEADER --- */}
         <header className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8 border-b border-[#C5A059]/10 pb-10">
           <div className="space-y-4">
-            <span className="text-[10px] uppercase tracking-[0.4em] font-black text-[#C5A059] block">
+            <span className="text-[10px] uppercase tracking-[0.4em] font-black text-gray-300 block">
                Premium Collections
             </span>
-            <h2 className="font-serif text-4xl md:text-6xl text-white uppercase tracking-wider">
+            <h2 className="font-serif text-4xl md:text-6xl text-[#C5A059] uppercase tracking-wider">
               The Essentials
             </h2>
           </div>
           
           <Link 
             href="/products" 
-            className="group flex items-center gap-3 text-[#C5A059] hover:text-white transition-all uppercase text-[10px] tracking-[0.3em] font-bold"
+            className="group flex items-center gap-3 text-gray-300 hover:text-white transition-all uppercase text-[10px] tracking-[0.3em] font-bold"
           >
             Explore All Collections <ArrowRight size={14} className="group-hover:translate-x-2 transition-transform" />
           </Link>

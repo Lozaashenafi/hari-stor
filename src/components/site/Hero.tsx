@@ -1,6 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
-import HeroImage from '../../../public/hero-model.png'; 
+import HeroImage from '../../../public/image/hero.jpg'; 
+import HeroImage2 from '../../../public/hero-model.jpg'; 
+
 
 const Hero = () => {
   return (
@@ -20,21 +22,40 @@ const Hero = () => {
       <div className="flex flex-col items-center justify-center px-6 pt-10 text-center">
         
         {/* Subtitle / Eyebrow text */}
-        <span className="text-[#C5A059] text-[10px] tracking-[0.25em] font-medium uppercase mb-3">
-          shalls hair
-        </span>
+       {/* Subtitle / Eyebrow text */}
+<span className="text-gray-300 text-[10px] tracking-[0.25em] font-medium uppercase mb-3 block">
+  shalls hair
+</span>
 
-        {/* Main Title */}
-        <h1 className="text-4xl md:text-6xl font-serif text-white mb-4 leading-tight">
-          welcome <br className="md:hidden" />
-          <span className="text-[#C5A059] italic font-light"> to shalls hair</span>
-        </h1>
-        
-        {/* Short Description */}
+{/* Main Title */}
+<h1 className="text-4xl md:text-6xl font-serif text-white mb-6 tracking-wide flex flex-col items-center">
+  {/* First Line */}
+  <span className="block text-[#C5A059] leading-none">
+     WELCOME
+  </span>
+  
+  {/* Middle Line */}
+  <span className="text-[#C5A059] italic font-light text-2xl md:text-4xl my-2 block lowercase">
+    TO
+  </span>
+  
+  {/* Bottom Line */}
+  <span className="text-[#C5A059] italic font-light block leading-none">
+    SHALLY LUXE
+  </span>
+</h1>
+       
+<div className="w-full">
+        <img
+          src={HeroImage2.src}
+          alt="Shally Luxe Hair Collection"
+          className="w-full h-auto object-cover max-h-[60vh] md:max-h-[80vh] object-top"
+        />
+      </div>
+       {/* Short Description */}
         <p className="text-gray-300 text-sm md:text-base max-w-md mb-8 leading-relaxed font-light">
           Discover the perfect blend of quality and style with our premium hair extensions.
         </p>
-
         {/* Call to Action Button */}
         <Link 
           href="/products" 

@@ -18,10 +18,10 @@ const ContactSection = async () => {
         
         {/* --- HEADER SECTION --- */}
         <div className="text-center mb-20 space-y-4">
-          <span className="text-[10px] uppercase tracking-[0.5em] font-black text-[#C5A059] block">
+          <span className="text-[10px] uppercase tracking-[0.5em] font-black text-gray-300 block">
             Customer Care
           </span>
-          <h2 className="font-serif text-4xl md:text-7xl text-white uppercase tracking-wider">
+          <h2 className="font-serif text-4xl md:text-7xl text-[#C5A059] uppercase tracking-wider">
             Let's Connect
           </h2>
           <div className="w-16 h-[1px] bg-[#C5A059] mx-auto mt-6" />
