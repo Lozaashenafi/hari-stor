@@ -1,5 +1,4 @@
 'use server'
-export const revalidate = 0; // This disables cache for all functions in this file
 import { unstable_noStore as noStore } from 'next/cache';
 import { db } from "@/db"
 import { hairProducts, hairImages, hairColors, hairInches, categories } from "@/db/schema"
