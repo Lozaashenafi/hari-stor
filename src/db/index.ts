@@ -1,17 +1,22 @@
-import { neonConfig, Pool } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-serverless';
-import ws from 'ws';
+import { Pool, neonConfig } from '@neondatabase/serverless';
 import * as schema from './schema';
 
-// This tells the Neon driver to use the 'ws' package for WebSockets in Node.js
-neonConfig.webSocketConstructor = ws;
+if (typeof window === 'undefined' && !globalThis.WebSocket) {
+  const ws = require('ws');
+  neonConfig.webSocketConstructor = ws;
+}
 
 const connectionString = process.env.DATABASE_URL!;
 
-// Singleton pattern to prevent exhausting connections during dev hot-reloads
+// Singleton to prevent connection exhaustion
 const globalForPg = global as unknown as { pool: Pool | undefined };
 
-const pool = globalForPg.pool ?? new Pool({ connectionString });
+export const pool = globalForPg.pool ?? new Pool({ 
+  connectionString,
+  // Add these for better stability in Middleware
+  connectionTimeoutMillis: 10000,
+});
 
 if (process.env.NODE_ENV !== 'production') {
   globalForPg.pool = pool;
