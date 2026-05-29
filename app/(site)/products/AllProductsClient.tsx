@@ -79,7 +79,7 @@ export default function AllProductsClient({ products, company, categoryName }: {
         {/* 2. PAGE TITLE */}
         <h1 className="text-4xl md:text-5xl font-serif text-[#C5A059] uppercase tracking-[0.2em] mb-10 text-center md:text-left">
             {filterType === 'All' ? 'Our Collections' : filterType}
-        </h1>
+     </h1>
 
         {/* 3. SEARCH & FILTERS SECTION */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 items-end">

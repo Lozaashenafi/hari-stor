@@ -1,5 +1,6 @@
 'use server'
-
+export const revalidate = 0; // This disables cache for all functions in this file
+import { unstable_noStore as noStore } from 'next/cache';
 import { db } from "@/db"
 import { gallery } from "@/db/schema"
 import { eq, desc } from "drizzle-orm"
@@ -7,6 +8,7 @@ import { revalidatePath } from "next/cache"
 import { put, del } from "@vercel/blob"
 
 export async function getGalleryImages() {
+  noStore();
   return await db.select().from(gallery).orderBy(desc(gallery.id));
 }
 
