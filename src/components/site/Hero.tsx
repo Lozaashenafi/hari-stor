@@ -32,9 +32,7 @@ const Hero = () => {
       
       {/* 2. WELCOME TEXT SECTION */}
       <div className="flex flex-col items-center justify-center px-6 pt-10 text-center">
-        <span className="text-gray-400 text-[10px] tracking-[0.4em] font-bold uppercase mb-3 block">
-          shalls hair
-        </span>
+        
 
         <h1 className="text-4xl md:text-6xl font-serif text-white mb-6 tracking-wide flex flex-col items-center">
           <span className="block text-[#C5A059] leading-none">WELCOME</span>
