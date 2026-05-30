@@ -114,16 +114,16 @@ export default function PublicProductModal({ product, company, onClose }: { prod
             <div className="space-y-8 flex-1">
               <div>
                 <div className="flex justify-between items-start mb-3">
-                  <span className="text-[#5a3e00] text-[10px] uppercase tracking-[0.5em] font-black">
+                  <span className="text-gray-400 text-[10px] uppercase tracking-[0.5em] font-black">
                     {product.hairType || 'Premium Piece'}
                   </span>
                   <span className="bg-[#5a3e00]/10 text-[#5a3e00] border border-[#5a3e00]/20 px-3 py-1 rounded text-[9px] font-black uppercase tracking-tighter">
                     {product.availability === 'in_hand' ? 'In Stock' : 'Pre-Order'}
                   </span>
                 </div>
-                <h2 className="font-serif text-3xl md:text-5xl text-white mb-2 italic leading-tight">{product.name}</h2>
+                <h2 className="font-serif text-3xl md:text-5xl text-[#5a3e00] mb-2 italic leading-tight">{product.name}</h2>
                 {/* DYNAMIC PRICE DISPLAY */}
-                <p className="text-[#5a3e00] font-serif text-2xl font-light italic transition-all duration-300">
+                <p className="text-gray-400 font-serif text-2xl font-light italic transition-all duration-300">
                   ${displayPrice}
                 </p>
               </div>
@@ -217,7 +217,7 @@ function InfoRow({ label, value }: { label: string, value: string }) {
   return (
     <div className="flex flex-col">
       <span className="text-[9px] uppercase tracking-widest text-zinc-500 mb-1">{label}</span>
-      <span className="text-white text-sm font-medium leading-tight">{value || 'Natural'}</span>
+      <span className="text-[#5a3e00] text-sm font-medium leading-tight">{value || 'Natural'}</span>
     </div>
   )
 }

@@ -1,17 +1,49 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { ChevronDown } from 'lucide-react';
-// Import your modal component - adjust the path as necessary
 import PublicProductModal from '@/components/site/PublicProductModal'; 
 
 export default function CategoryClient({ initialProducts, categoryName, company }: any) {
+  // --- 1. FILTER & SORT STATES ---
   const [sortOrder, setSortOrder] = useState('featured');
-  const [filterValue, setFilterValue] = useState('all');
+  const [textureFilter, setTextureFilter] = useState('all');
+  const [originFilter, setOriginFilter] = useState('all');
+  const [styleFilter, setStyleFilter] = useState('all'); // For U-Part, V-Part, etc.
   
-  // 1. ADD STATE TO TRACK SELECTED PRODUCT
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
 
   const safeCategoryKey = (categoryName || "").toLowerCase();
+
+  // --- 2. FILTERING & SORTING LOGIC ---
+  const filteredProducts = useMemo(() => {
+    let result = [...initialProducts];
+
+    // Filter by Texture
+    if (textureFilter !== 'all') {
+      result = result.filter(p => p.texture === textureFilter);
+    }
+
+    // Filter by Origin
+    if (originFilter !== 'all') {
+      result = result.filter(p => p.origin === originFilter);
+    }
+
+    // Filter by Style (Checking name or options for Wig Styles)
+    if (styleFilter !== 'all') {
+      result = result.filter(p => p.name.includes(styleFilter));
+    }
+
+    // Sorting
+    if (sortOrder === 'price-low') {
+      result.sort((a, b) => a.price - b.price);
+    } else if (sortOrder === 'price-high') {
+      result.sort((a, b) => b.price - a.price);
+    } else if (sortOrder === 'newest') {
+      result.sort((a, b) => b.id - a.id);
+    }
+
+    return result;
+  }, [initialProducts, textureFilter, originFilter, styleFilter, sortOrder]);
 
   const categoryBanners: Record<string, string> = {
     wigs: '/banners/wigs.png',
@@ -33,73 +65,110 @@ export default function CategoryClient({ initialProducts, categoryName, company 
         </div>
       </div>
 
-      {/* TITLE & FILTERS */}
       <div className="max-w-7xl mx-auto px-6 mt-12 text-center md:text-left">
-        <h1 className="text-4xl md:text-5xl font-serif text-[#C5A059] uppercase tracking-widest mb-10">
+        <h1 className="text-4xl md:text-5xl font-serif text-[#C5A059] uppercase tracking-widest mb-10 italic">
           {categoryName}
         </h1>
 
-        <div className="flex flex-col md:flex-row items-center gap-8 mb-16">
-          <div className="flex flex-col gap-2 w-full md:w-64">
-            <label className="text-[10px] uppercase tracking-widest text-gray-400">Filter</label>
+        {/* --- FILTER BAR --- */}
+        <div className="grid grid-cols-2 md:flex md:flex-wrap items-center gap-4 md:gap-8 mb-16">
+        
+          {/* Texture Filter */}
+          <div className="flex flex-col gap-2 w-full md:w-48">
+            <label className="text-[9px] uppercase tracking-widest text-gray-400 font-bold">Texture</label>
             <div className="relative">
               <select 
-                className="w-full bg-black border border-white/40 py-3 px-4 text-xs appearance-none focus:outline-none focus:border-[#C5A059]"
-                value={filterValue}
-                onChange={(e) => setFilterValue(e.target.value)}
+                className="w-full bg-black border border-white/20 py-3 px-4 text-[11px] appearance-none focus:outline-none focus:border-[#C5A059] text-white"
+                value={textureFilter}
+                onChange={(e) => setTextureFilter(e.target.value)}
               >
-                <option value="all">All products</option>
+                <option value="all">All Textures</option>
+                <option value="Straight">Straight</option>
+                <option value="Body Wave">Body Wave</option>
+                <option value="Deep wave">Deep Wave</option>
               </select>
-              <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400" />
+              <ChevronDown size={12} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400" />
             </div>
           </div>
 
-          <div className="flex flex-col gap-2 w-full md:w-64">
-            <label className="text-[10px] uppercase tracking-widest text-gray-400">Sort by</label>
+          {/* Origin Filter */}
+          <div className="flex flex-col gap-2 w-full md:w-48">
+            <label className="text-[9px] uppercase tracking-widest text-gray-400 font-bold">Origin</label>
             <div className="relative">
               <select 
-                className="w-full bg-black border border-white/40 py-3 px-4 text-xs appearance-none focus:outline-none focus:border-[#C5A059]"
+                className="w-full bg-black border border-white/20 py-3 px-4 text-[11px] appearance-none focus:outline-none focus:border-[#C5A059] text-white"
+                value={originFilter}
+                onChange={(e) => setOriginFilter(e.target.value)}
+              >
+                <option value="all">All Origins</option>
+                <option value="Brazilian">Brazilian</option>
+                <option value="Asian">Asian</option>
+              </select>
+              <ChevronDown size={12} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400" />
+            </div>
+          </div>
+
+          {/* Sort By */}
+          <div className="flex flex-col gap-2 w-full md:w-48">
+            <label className="text-[9px] uppercase tracking-widest text-gray-400 font-bold">Sort By</label>
+            <div className="relative">
+              <select 
+                className="w-full bg-black border border-white/20 py-3 px-4 text-[11px] appearance-none focus:outline-none focus:border-[#C5A059] text-white"
                 value={sortOrder}
                 onChange={(e) => setSortOrder(e.target.value)}
               >
                 <option value="featured">Featured</option>
-                <option value="price-low">Price, low to high</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="newest">Newest Arrival</option>
               </select>
-              <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400" />
+              <ChevronDown size={12} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400" />
             </div>
           </div>
         </div>
 
         {/* PRODUCT GRID */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12">
-          {initialProducts.map((product: any) => (
-            // 2. ADD ONCLICK TO OPEN MODAL
+          {filteredProducts.map((product: any) => (
             <div 
               key={product.id} 
-              className="group cursor-pointer"
+              className="group cursor-pointer flex flex-col"
               onClick={() => setSelectedProduct(product)}
             >
-              <div className="aspect-[4/5] bg-zinc-900 overflow-hidden mb-4 border border-white/5">
+              <div className="relative aspect-[4/5] bg-zinc-900 overflow-hidden mb-4 border border-white/5">
                 <img 
                   src={product.images[0]?.imageUrl} 
-                  className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   alt={product.name}
                 />
+                {product.isOnSale && (
+                  <div className="absolute top-2 left-2 bg-[#C5A059] text-black text-[8px] font-black px-2 py-1 uppercase tracking-tighter">
+                    Sale
+                  </div>
+                )}
               </div>
               <div className="text-center md:text-left space-y-1">
-                <h3 className="text-[#C5A059] text-[11px] md:text-sm font-medium tracking-tight h-10 overflow-hidden">
+                <h3 className="text-[#C5A059] text-[10px] md:text-xs uppercase tracking-widest font-medium h-10 overflow-hidden">
                   {product.name}
                 </h3>
-                <p className="text-white font-bold text-xs md:text-sm">
-                  from <span className="text-white">${(product.price / 100).toFixed(2)}</span>
+                <p className="text-white font-serif italic text-sm md:text-base">
+                  from ${(product.price / 100).toFixed(2)} CAD
+                </p>
+                <p className="text-[9px] text-zinc-500 uppercase tracking-tighter">
+                  {product.texture} • {product.origin}
                 </p>
               </div>
             </div>
           ))}
         </div>
+
+        {filteredProducts.length === 0 && (
+          <div className="py-20 text-center border border-white/5 bg-zinc-950/50">
+            <p className="text-zinc-500 uppercase tracking-widest text-xs italic">No pieces found in this selection</p>
+          </div>
+        )}
       </div>
 
-      {/* 3. CONDITIONALLY RENDER THE MODAL */}
       {selectedProduct && (
         <PublicProductModal 
           product={selectedProduct} 
