@@ -45,13 +45,19 @@ export default function CategoryClient({ initialProducts, categoryName, company 
     return result;
   }, [initialProducts, textureFilter, originFilter, styleFilter, sortOrder]);
 
-  const categoryBanners: Record<string, string> = {
-    wigs: '/banners/wigs.png',
-    bundles: '/banners/bundles.png',
-    'clip-ins': '/banners/clip-ins.png',
-    ponytail: '/banners/ponytail.png',
-  };
+const categoryBanners: Record<string, string> = {
+  wigs: '/banners/wigs.png',
 
+  bundle: '/banners/bundles.png',
+  bundles: '/banners/bundles.png',
+
+  clip: '/banners/clip-ins.png',
+  clips: '/banners/clip-ins.png',
+  'clip-ins': '/banners/clip-ins.png',
+
+  ponytail: '/banners/ponytail.png',
+  ponytails: '/banners/ponytail.png',
+};
   return (
     <div className="pb-20">
       {/* FEATURED CATEGORY IMAGE */}

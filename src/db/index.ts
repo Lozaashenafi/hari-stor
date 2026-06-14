@@ -1,25 +1,11 @@
-import { drizzle } from 'drizzle-orm/neon-serverless';
-import { Pool, neonConfig } from '@neondatabase/serverless';
-import * as schema from './schema';
-
-if (typeof window === 'undefined' && !globalThis.WebSocket) {
-  const ws = require('ws');
-  neonConfig.webSocketConstructor = ws;
-}
+import { drizzle } from "drizzle-orm/neon-http";
+import { neon } from "@neondatabase/serverless";
+import * as schema from "./schema";
 
 const connectionString = process.env.DATABASE_URL!;
 
-// Singleton to prevent connection exhaustion
-const globalForPg = global as unknown as { pool: Pool | undefined };
+const sql = neon(connectionString);
 
-export const pool = globalForPg.pool ?? new Pool({ 
-  connectionString,
-  // Add these for better stability in Middleware
-  connectionTimeoutMillis: 10000,
+export const db = drizzle(sql, {
+  schema,
 });
-
-if (process.env.NODE_ENV !== 'production') {
-  globalForPg.pool = pool;
-}
-
-export const db = drizzle(pool, { schema });
