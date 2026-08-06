@@ -16,10 +16,25 @@ export default function LogoutButton() {
   return (
     <button
       onClick={handleLogout}
-      className="flex items-center gap-4 px-4 py-3 w-full rounded-lg text-red-400 hover:bg-red-500/10 transition-all group text-sm uppercase tracking-widest font-light"
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 6,
+        background: '#d4d0c8',
+        border: '2px solid',
+        borderColor: '#ffffff #808080 #808080 #ffffff',
+        padding: '4px 10px',
+        width: '100%',
+        cursor: 'pointer',
+        fontSize: 11,
+        fontFamily: '"MS Sans Serif", Arial, sans-serif',
+        color: '#000',
+        boxShadow: 'inset -1px -1px #0a0a0a, inset 1px 1px #fff',
+        justifyContent: 'flex-start',
+      }}
     >
-      <LogOut size={18} className="group-hover:translate-x-1 transition-transform" />
-      Sign Out
+      <LogOut size={14} />
+      <span>Sign Out</span>
     </button>
   )
 }
