@@ -1,18 +1,29 @@
 'use client'
 import React, { useState, useMemo } from 'react';
+import Image from 'next/image';
 import { ChevronDown } from 'lucide-react';
-import PublicProductModal from '@/components/site/PublicProductModal'; 
+import PublicProductModal from '@/components/site/PublicProductModal';
+import type { Product, CompanyProfile } from '@/lib/types';
 
-export default function CategoryClient({ initialProducts, categoryName, company }: any) {
+export default function CategoryClient({ initialProducts, categoryName, company }: { initialProducts: Product[]; categoryName: string; company: CompanyProfile | null }) {
   // --- 1. FILTER & SORT STATES ---
   const [sortOrder, setSortOrder] = useState('featured');
   const [textureFilter, setTextureFilter] = useState('all');
   const [originFilter, setOriginFilter] = useState('all');
-  const [styleFilter, setStyleFilter] = useState('all'); // For U-Part, V-Part, etc.
   
-  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   const safeCategoryKey = (categoryName || "").toLowerCase();
+
+  // Derived filter options (populated from actual product data)
+  const textures = useMemo(
+    () => Array.from(new Set(initialProducts.map((p) => p.texture).filter((x): x is string => Boolean(x)))),
+    [initialProducts]
+  );
+  const origins = useMemo(
+    () => Array.from(new Set(initialProducts.map((p) => p.origin).filter((x): x is string => Boolean(x)))),
+    [initialProducts]
+  );
 
   // --- 2. FILTERING & SORTING LOGIC ---
   const filteredProducts = useMemo(() => {
@@ -28,11 +39,6 @@ export default function CategoryClient({ initialProducts, categoryName, company 
       result = result.filter(p => p.origin === originFilter);
     }
 
-    // Filter by Style (Checking name or options for Wig Styles)
-    if (styleFilter !== 'all') {
-      result = result.filter(p => p.name.includes(styleFilter));
-    }
-
     // Sorting
     if (sortOrder === 'price-low') {
       result.sort((a, b) => a.price - b.price);
@@ -43,7 +49,7 @@ export default function CategoryClient({ initialProducts, categoryName, company 
     }
 
     return result;
-  }, [initialProducts, textureFilter, originFilter, styleFilter, sortOrder]);
+  }, [initialProducts, textureFilter, originFilter, sortOrder]);
 
 const categoryBanners: Record<string, string> = {
   wigs: '/banners/wigs.png',
@@ -62,11 +68,14 @@ const categoryBanners: Record<string, string> = {
     <div className="pb-20">
       {/* FEATURED CATEGORY IMAGE */}
       <div className="max-w-7xl mx-auto px-4 mt-8">
-        <div className="aspect-[4/3] md:aspect-[21/9] w-full overflow-hidden bg-zinc-900 border border-white/5 shadow-2xl">
-          <img 
+        <div className="aspect-[4/3] md:aspect-[21/9] w-full overflow-hidden bg-zinc-900 border border-white/5 shadow-2xl relative">
+          <Image 
             src={categoryBanners[safeCategoryKey] || '/banners/default.jpg'} 
             alt={categoryName}
-            className="w-full h-full object-cover object-center"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-center"
           />
         </div>
       </div>
@@ -89,9 +98,9 @@ const categoryBanners: Record<string, string> = {
                 onChange={(e) => setTextureFilter(e.target.value)}
               >
                 <option value="all">All Textures</option>
-                <option value="Straight">Straight</option>
-                <option value="Body Wave">Body Wave</option>
-                <option value="Deep wave">Deep Wave</option>
+                {textures.map((t) => (
+                  <option key={t} value={t}>{t}</option>
+                ))}
               </select>
               <ChevronDown size={12} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400" />
             </div>
@@ -107,8 +116,9 @@ const categoryBanners: Record<string, string> = {
                 onChange={(e) => setOriginFilter(e.target.value)}
               >
                 <option value="all">All Origins</option>
-                <option value="Brazilian">Brazilian</option>
-                <option value="Asian">Asian</option>
+                {origins.map((o) => (
+                  <option key={o} value={o}>{o}</option>
+                ))}
               </select>
               <ChevronDown size={12} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400" />
             </div>
@@ -135,18 +145,22 @@ const categoryBanners: Record<string, string> = {
 
         {/* PRODUCT GRID */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12">
-          {filteredProducts.map((product: any) => (
+          {filteredProducts.map((product: Product) => (
             <div 
               key={product.id} 
               className="group cursor-pointer flex flex-col"
               onClick={() => setSelectedProduct(product)}
             >
               <div className="relative aspect-[4/5] bg-zinc-900 overflow-hidden mb-4 border border-white/5">
-                <img 
-                  src={product.images[0]?.imageUrl} 
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                {product.images[0] && (
+                <Image 
+                  src={product.images[0].imageUrl} 
+                  fill
+                  sizes="(max-width: 768px) 50vw, 25vw"
+                  className="object-cover transition-transform duration-700 group-hover:scale-110"
                   alt={product.name}
                 />
+                )}
                 {product.isOnSale && (
                   <div className="absolute top-2 left-2 bg-[#C5A059] text-black text-[8px] font-black px-2 py-1 uppercase tracking-tighter">
                     Sale

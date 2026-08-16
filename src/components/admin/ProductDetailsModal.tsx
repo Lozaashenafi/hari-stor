@@ -3,8 +3,10 @@ import {
   X, ExternalLink, Calendar, Tag, Ruler, 
   Layers, Settings, Database, Palette, PackageSearch 
 } from 'lucide-react'
+import Image from 'next/image'
+import type { Product, ProductImage } from '@/lib/types'
 
-export default function ProductDetailsModal({ product, onClose }: { product: any, onClose: () => void }) {
+export default function ProductDetailsModal({ product, onClose }: { product: Product; onClose: () => void }) {
   if (!product) return null
 
   // Price formatting: cents to dollars
@@ -30,18 +32,22 @@ export default function ProductDetailsModal({ product, onClose }: { product: any
           {/* LEFT SIDE: IMAGE PREVIEW */}
           <div className="w-full md:w-5/12 bg-black border-b md:border-b-0 md:border-r border-zinc-800">
             <div className="sticky top-0">
-               <div className="aspect-[4/5] w-full">
-                <img 
-                  src={product.images[0]?.imageUrl} 
-                  className="w-full h-full object-cover" 
-                  alt={product.name} 
-                />
+               <div className="aspect-[4/5] w-full relative">
+                {product.images[0] && (
+                  <Image 
+                    src={product.images[0].imageUrl} 
+                    fill
+                    sizes="400px"
+                    className="object-cover" 
+                    alt={product.name} 
+                  />
+                )}
               </div>
               {/* Small Gallery strip below main image */}
               <div className="p-4 grid grid-cols-4 gap-2">
-                {product.images.map((img: any, i: number) => (
-                  <div key={i} className="aspect-square rounded-lg overflow-hidden border border-zinc-800">
-                    <img src={img.imageUrl} className="w-full h-full object-cover opacity-60 hover:opacity-100 transition-opacity" />
+                {product.images.map((img: ProductImage, i: number) => (
+                  <div key={i} className="aspect-square rounded-lg overflow-hidden border border-zinc-800 relative">
+                    <Image src={img.imageUrl} fill sizes="100px" className="object-cover opacity-60 hover:opacity-100 transition-opacity" alt={`${product.name} view ${i + 1}`} />
                   </div>
                 ))}
               </div>
@@ -86,12 +92,12 @@ export default function ProductDetailsModal({ product, onClose }: { product: any
                 <DetailItem 
                   icon={<Ruler size={16}/>} 
                   label="Available Inches" 
-                  value={product.inches.length > 0 ? product.inches.map((i: any) => i.inches).join(', ') + '"' : 'N/A'} 
+                  value={product.inches.length > 0 ? product.inches.map((i: Product['inches'][number]) => i.inches).join(', ') + '"' : 'N/A'} 
                 />
                 <DetailItem 
                   icon={<Palette size={16}/>} 
                   label="Available Colors" 
-                  value={product.colors.length > 0 ? product.colors.map((c: any) => c.color).join(', ') : 'N/A'} 
+                  value={product.colors.length > 0 ? product.colors.map((c: Product['colors'][number]) => c.color).join(', ') : 'N/A'} 
                 />
                 <DetailItem 
                   icon={<Database size={16}/>} 
@@ -112,7 +118,7 @@ export default function ProductDetailsModal({ product, onClose }: { product: any
                 />
                 <div className="flex items-center gap-3">
                   <span className="text-zinc-500 uppercase text-[10px] tracking-widest font-bold">In Hand:</span>
-                  <span className={`text-lg font-bold ${product.quantityInHand > 0 ? 'text-white' : 'text-zinc-600'}`}>
+                  <span className={`text-lg font-bold ${(product.quantityInHand ?? 0) > 0 ? 'text-white' : 'text-zinc-600'}`}>
                     {product.quantityInHand || 0} Pieces
                   </span>
                 </div>

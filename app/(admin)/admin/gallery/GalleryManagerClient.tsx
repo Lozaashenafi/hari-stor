@@ -1,11 +1,18 @@
 'use client'
 import { useState } from 'react'
+import Image from 'next/image'
 import { addGalleryImage, deleteGalleryImage } from '@/services/gallery.service'
-import ImageUpload from '@/components/admin/ImageUpload' // Reuse your uploader
-import { Trash2, Image as ImageIcon, Plus } from 'lucide-react'
+import ImageUpload from '@/components/admin/ImageUpload'
+import { Trash2, Plus } from 'lucide-react'
 
-export default function GalleryManagerClient({ initialImages }: { initialImages: any[] }) {
-  const [images, setImages] = useState(initialImages)
+interface GalleryImage {
+  id: number
+  title: string
+  imageUrl: string
+}
+
+export default function GalleryManagerClient({ initialImages }: { initialImages: GalleryImage[] }) {
+  const [images, setImages] = useState<GalleryImage[]>(initialImages)
   const [loading, setLoading] = useState(false)
   const [title, setTitle] = useState('')
   const [uploadUrl, setUploadUrl] = useState('')
@@ -14,8 +21,12 @@ export default function GalleryManagerClient({ initialImages }: { initialImages:
     if (!title || !uploadUrl) return alert("Title and Image required")
     setLoading(true)
     const res = await addGalleryImage(title, uploadUrl)
-    if (res.success) {
-      window.location.reload() // Simple refresh to show new data
+    if (res.success && res.image) {
+      setImages([res.image, ...images])
+      setTitle('')
+      setUploadUrl('')
+    } else {
+      alert("Failed to add image")
     }
     setLoading(false)
   }
@@ -66,7 +77,7 @@ export default function GalleryManagerClient({ initialImages }: { initialImages:
       <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-6">
         {images.map((img) => (
           <div key={img.id} className="group relative aspect-[4/5] bg-zinc-900 rounded-[2rem] overflow-hidden border border-zinc-800 shadow-xl">
-            <img src={img.imageUrl} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={img.title} />
+            <Image src={img.imageUrl} fill sizes="(max-width: 640px) 100vw, 50vw" className="object-cover transition-transform duration-700 group-hover:scale-110" alt={img.title} />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
             
             <div className="absolute bottom-0 left-0 p-8 w-full flex justify-between items-end">

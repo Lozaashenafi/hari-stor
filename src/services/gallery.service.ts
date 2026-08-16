@@ -4,35 +4,39 @@ import { db } from "@/db"
 import { gallery } from "@/db/schema"
 import { eq, desc } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
-import { put, del } from "@vercel/blob"
+import { requireAdmin } from "@/lib/auth-guard"
+import { deleteStoredFile } from "@/lib/blob"
+import { gallerySchema } from "@/lib/validation"
 
 export async function getGalleryImages() {
   noStore();
   return await db.select().from(gallery).orderBy(desc(gallery.id));
 }
 
-// Updated to handle File directly if needed, or just save the URL
 export async function addGalleryImage(title: string, imageUrl: string) {
   try {
-    // Expecting imageUrl to be the Vercel Blob URL
-    await db.insert(gallery).values({ title, imageUrl });
+    await requireAdmin();
+    const parsed = gallerySchema.parse({ title, imageUrl });
+    const [created] = await db.insert(gallery).values(parsed).returning();
     
     revalidatePath('/admin/gallery');
     revalidatePath('/gallery');
-    return { success: true };
+    return { success: true, image: created };
   } catch (error) {
+    console.error("Add Gallery Image Error:", error);
     return { success: false };
   }
 }
 
 export async function deleteGalleryImage(id: number) {
   try {
+    await requireAdmin();
     // 1. Find the image to get the URL
     const [image] = await db.select().from(gallery).where(eq(gallery.id, id));
     
     if (image) {
       // 2. Delete from Vercel Blob
-      await del(image.imageUrl);
+      await deleteStoredFile(image.imageUrl);
     }
 
     // 3. Delete from DB
@@ -41,7 +45,7 @@ export async function deleteGalleryImage(id: number) {
     revalidatePath('/admin/gallery');
     revalidatePath('/gallery');
     return { success: true };
-  } catch (error) {
+  } catch {
     return { success: false };
   }
 }

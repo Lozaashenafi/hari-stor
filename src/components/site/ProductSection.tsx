@@ -1,11 +1,13 @@
 'use client'
 import React, { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import PublicProductModal from './PublicProductModal'
 import { ArrowRight } from 'lucide-react'
+import type { Product, CompanyProfile } from '@/lib/types'
 
-export default function ProductSection({ products, company }: { products: any[], company: any }) {
-  const [selectedProduct, setSelectedProduct] = useState<any>(null)
+export default function ProductSection({ products, company }: { products: Product[]; company: CompanyProfile | null }) {
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
   
   // Displaying only the first 4 products to match the grid style of the collection pages
   const featuredProducts = products.slice(0, 4)
@@ -50,11 +52,15 @@ export default function ProductSection({ products, company }: { products: any[],
               
               {/* Image Container */}
               <div className="aspect-square overflow-hidden bg-white mb-5 relative transition-all">
-                <img 
-                  src={product.images[0]?.imageUrl} 
-                  alt={product.name}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
+                {product.images[0] && (
+                  <Image 
+                    src={product.images[0].imageUrl} 
+                    alt={product.name}
+                    fill
+                    sizes="(max-width: 768px) 50vw, 25vw"
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                )}
               </div>
 
               {/* Text Content */}

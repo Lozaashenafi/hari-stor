@@ -51,7 +51,7 @@ export default function AddUserForm() {
   )
 }
 
-function InputGroup({ label, ...props }: any) {
+function InputGroup({ label, ...props }: { label: string } & React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <div className="space-y-2">
       <label className="text-[10px] uppercase tracking-widest text-zinc-500 font-black ml-1">{label}</label>

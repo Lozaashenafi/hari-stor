@@ -1,16 +1,18 @@
 'use client'
 import React, { useState, useEffect, useMemo } from 'react'
+import Image from 'next/image'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { Search as SearchIcon } from 'lucide-react'
 import PublicProductModal from '@/components/site/PublicProductModal'
+import type { Product, CompanyProfile } from '@/lib/types'
 
-export default function SearchPageClient({ products = [], company }: { products: any[], company: any }) {
+export default function SearchPageClient({ products = [], company }: { products?: Product[]; company?: CompanyProfile | null }) {
   const searchParams = useSearchParams()
   const router = useRouter()
 
   const query = searchParams?.get('q') || ''
   const [searchInput, setSearchInput] = useState(query)
-  const [selectedProduct, setSelectedProduct] = useState<any>(null)
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
 
   // Sync input with URL query (for back/forward navigation)
   useEffect(() => {
@@ -73,8 +75,10 @@ export default function SearchPageClient({ products = [], company }: { products:
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 border-t border-white/10 pt-16">
             {searchResults.map((product) => (
               <div key={product.id} className="group cursor-pointer" onClick={() => setSelectedProduct(product)}>
-                <div className="aspect-square overflow-hidden bg-white mb-4">
-                  <img src={product.images?.[0]?.imageUrl} alt={product.name} className="w-full h-full object-cover" />
+                <div className="aspect-square overflow-hidden bg-white mb-4 relative">
+                  {product.images?.[0]?.imageUrl && (
+                    <Image src={product.images[0].imageUrl} alt={product.name} fill sizes="(max-width: 768px) 50vw, 25vw" className="object-cover" />
+                  )}
                 </div>
                 <h3 className="text-[#C5A059] text-center">{product.name}</h3>
                 <p className="text-white text-center font-bold">${(product.price / 100).toFixed(2)}</p>

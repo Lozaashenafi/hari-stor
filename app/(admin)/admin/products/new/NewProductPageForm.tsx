@@ -4,12 +4,7 @@ import { createHairProduct } from '@/services/product.service'
 import { useRouter } from 'next/navigation'
 import ImageUpload from '@/components/admin/ImageUpload'
 import { Plus, Trash2 } from 'lucide-react'
-
-// Define the Category type for strict TS
-interface Category {
-  id: number;
-  name: string;
-}
+import type { Category } from '@/lib/types'
 
 export default function NewProductPageForm({ categories }: { categories: Category[] }) {
   const router = useRouter()
@@ -30,18 +25,19 @@ export default function NewProductPageForm({ categories }: { categories: Categor
     const formData = new FormData(e.currentTarget)
     
     const priceInCents = Math.round(parseFloat(formData.get('price') as string) * 100)
+    const str = (key: string) => (formData.get(key) as string) || ''
 
     const payload = {
-      name: formData.get('name'),
+      name: str('name'),
       categoryId: formData.get('categoryId') ? parseInt(formData.get('categoryId') as string) : null,
-      texture: formData.get('texture'),
-      hairType: formData.get('hairType'),
-      origin: formData.get('origin'),
-      processing: formData.get('processing'),
-      options: formData.get('options'),
+      texture: str('texture'),
+      hairType: str('hairType'),
+      origin: str('origin'),
+      processing: str('processing'),
+      options: str('options'),
       price: priceInCents,
       isOnSale: formData.get('isOnSale') === 'on',
-      availability: formData.get('availability'),
+      availability: ((formData.get('availability') as string) || 'in_hand') as 'in_hand' | 'order',
       quantityInHand: parseInt(formData.get('quantityInHand') as string || '0'),
       colors: formData.get('colors')?.toString().split(',').filter(Boolean).map((s: string) => s.trim()),
       inches: inchesList

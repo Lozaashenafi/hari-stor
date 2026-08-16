@@ -1,7 +1,6 @@
 import { getAdminProducts } from '@/services/product.service'
 import ProductListClient from '../../../../src/components/admin/ProductListClient' // We will create this next
 import Link from 'next/link'
-import { Plus } from 'lucide-react'
 
 export default async function AdminProductsPage() {
   const products = await getAdminProducts();

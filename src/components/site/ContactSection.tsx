@@ -9,8 +9,10 @@ const ContactSection = async () => {
   // Logic remains unchanged
   const cleanWANumber = profile?.whatsapp?.replace(/\D/g, '') || '';
   const waLink = cleanWANumber ? `https://wa.me/${cleanWANumber}` : '#';
-  const igLink = `https://instagram.com/${profile?.instagram?.replace('@', '')}`;
-  const tkLink = `https://tiktok.com/@${profile?.tiktok?.replace('@', '')}`;
+  const igHandle = profile?.instagram?.replace('@', '')?.trim();
+  const igLink = igHandle ? `https://instagram.com/${igHandle}` : '#';
+  const tkHandle = profile?.tiktok?.replace('@', '')?.trim();
+  const tkLink = tkHandle ? `https://tiktok.com/@${tkHandle}` : '#';
 
   return (
     <footer className="relative bg-black py-24 px-6 border-t border-[#C5A059]/10">
@@ -22,7 +24,7 @@ const ContactSection = async () => {
             Customer Care
           </span>
           <h2 className="font-serif text-4xl md:text-7xl text-[#C5A059] uppercase tracking-wider">
-            Let's Connect
+            Let&apos;s Connect
           </h2>
           <div className="w-16 h-[1px] bg-[#C5A059] mx-auto mt-6" />
           

@@ -1,8 +1,10 @@
 'use client'
 import React, { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { X, MessageCircle, ChevronLeft, ChevronRight, Palette, Ruler } from 'lucide-react'
+import type { Product, ProductColor, ProductInch, CompanyProfile } from '@/lib/types'
 
-export default function PublicProductModal({ product, company, onClose }: { product: any, company: any, onClose: () => void }) {
+export default function PublicProductModal({ product, company, onClose }: { product: Product; company?: CompanyProfile | null; onClose: () => void }) {
   const [activeImage, setActiveImage] = useState(0)
   
   // 1. States to track selection
@@ -25,7 +27,7 @@ export default function PublicProductModal({ product, company, onClose }: { prod
 
   // --- DYNAMIC PRICE CALCULATION ---
   // Find the selected inch object to get its additionalPrice
-  const selectedInchData = inches.find((i: any) => i.inches.toString() === selectedInch)
+  const selectedInchData = inches.find((i: ProductInch) => i.inches.toString() === selectedInch)
   const additionalCost = selectedInchData?.additionalPrice || 0
   const totalPrice = product.price + additionalCost
   const displayPrice = (totalPrice / 100).toFixed(2)
@@ -67,11 +69,15 @@ export default function PublicProductModal({ product, company, onClose }: { prod
           {/* LEFT: IMAGE CAROUSEL */}
           <div className="w-full md:w-1/2 relative bg-zinc-950 flex flex-col flex-shrink-0 border-b md:border-b-0 md:border-r border-white/5">
             <div className="relative w-full aspect-[4/5] md:aspect-auto md:flex-1 overflow-hidden">
-              <img 
-                src={images[activeImage]?.imageUrl} 
-                className="w-full h-full object-cover transition-all duration-500" 
-                alt={product.name} 
-              />
+              {images[activeImage] && (
+                <Image 
+                  src={images[activeImage].imageUrl} 
+                  className="object-cover transition-all duration-500" 
+                  alt={product.name} 
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+              )}
 
               {images.length > 1 && (
                 <>
@@ -94,7 +100,7 @@ export default function PublicProductModal({ product, company, onClose }: { prod
             {/* Thumbnail Strip */}
             {images.length > 1 && (
               <div className="flex gap-2 p-3 bg-black/50 border-t border-white/5 overflow-x-auto no-scrollbar scroll-smooth">
-                {images.map((img: any, idx: number) => (
+                {images.map((img: Product['images'][number], idx: number) => (
                   <button 
                     key={idx} 
                     onClick={() => setActiveImage(idx)} 
@@ -102,7 +108,7 @@ export default function PublicProductModal({ product, company, onClose }: { prod
                       activeImage === idx ? 'border-[#5a3e00]' : 'border-transparent opacity-60'
                     }`}
                   >
-                    <img src={img.imageUrl} className="w-full h-full object-cover" alt="" />
+                    <Image src={img.imageUrl} alt="" fill sizes="56px" className="object-cover" />
                   </button>
                 ))}
               </div>
@@ -143,7 +149,7 @@ export default function PublicProductModal({ product, company, onClose }: { prod
                     <Palette size={12} className="text-[#5a3e00]" /> Select Color
                   </h4>
                   <div className="flex flex-wrap gap-2">
-                    {colors.map((c: any) => (
+                    {colors.map((c: ProductColor) => (
                       <button 
                         key={c.id} 
                         onClick={() => setSelectedColor(c.color)}
@@ -167,7 +173,7 @@ export default function PublicProductModal({ product, company, onClose }: { prod
                     <Ruler size={12} className="text-[#5a3e00]" /> Select Length
                   </h4>
                   <div className="flex flex-wrap gap-2">
-                    {inches.map((i: any) => (
+                    {inches.map((i: ProductInch) => (
                       <button 
                         key={i.id} 
                         onClick={() => setSelectedInch(i.inches.toString())}
@@ -177,7 +183,7 @@ export default function PublicProductModal({ product, company, onClose }: { prod
                           : 'border-white/10 text-white active:border-gray-500'
                         }`}
                       >
-                        {i.inches}"
+                        {i.inches}&quot;
                       </button>
                     ))}
                   </div>
@@ -213,7 +219,7 @@ export default function PublicProductModal({ product, company, onClose }: { prod
   )
 }
 
-function InfoRow({ label, value }: { label: string, value: string }) {
+function InfoRow({ label, value }: { label: string, value?: string | null }) {
   return (
     <div className="flex flex-col">
       <span className="text-[9px] uppercase tracking-widest text-zinc-500 mb-1">{label}</span>

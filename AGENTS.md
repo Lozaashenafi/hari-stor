@@ -10,16 +10,17 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - **Framework**: Next.js 16.2 (App Router)
 - **Database**: Neon PostgreSQL via Drizzle ORM + postgres.js
 - **Auth**: Better Auth (better-auth) with email/password
-- **Storage**: Local filesystem (`public/uploads/`) via `/api/upload`
+- **Storage**: Vercel Blob (`@vercel/blob`) via `/api/upload`
 
 ## Auth
 - Config: `src/auth/auth.ts` — Better Auth server config with Drizzle adapter + admin plugin
 - Client: `src/auth/client.ts` — `createAuthClient()` for client-side auth
 - Middleware: `src/middleware.ts` — session check, protects `/admin/*`
 - Server actions: `app/auth/actions.ts` — login, register, logout, admin management
+- Auth guard: `src/lib/auth-guard.ts` — `requireAdmin()` used by API routes and mutating server actions
 
 ## Key Differences from Supabase
 - No Supabase Auth, Storage, or RLS
 - Auth managed entirely by Better Auth tables (`user`, `session`, `account`, `verification`)
-- File uploads stored locally via `/api/upload` route
+- File uploads use Vercel Blob via `/api/upload` (admin-only)
 - Admin operations use Better Auth's admin plugin

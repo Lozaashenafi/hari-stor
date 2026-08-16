@@ -1,10 +1,12 @@
 'use client'
 import { useState } from 'react'
 import { deleteProduct } from '@/services/product.service'
+import { useRouter } from 'next/navigation'
 import { Trash2 } from 'lucide-react'
 
 export default function DeleteProductButton({ id }: { id: number }) {
   const [loading, setLoading] = useState(false)
+  const router = useRouter()
 
   const handleDelete = async () => {
     if (confirm("Are you sure you want to remove this piece from the collection?")) {
@@ -12,8 +14,9 @@ export default function DeleteProductButton({ id }: { id: number }) {
       const res = await deleteProduct(id)
       if (!res.success) {
         alert("Error deleting product")
-        setLoading(false)
       }
+      setLoading(false)
+      router.refresh()
     }
   }
 
@@ -23,7 +26,7 @@ export default function DeleteProductButton({ id }: { id: number }) {
       disabled={loading}
       className="p-2 bg-white/5 rounded-lg hover:bg-red-500 hover:text-white transition-all disabled:opacity-50"
     >
-      <Trash2 size={16} />
+      {loading ? <Trash2 size={16} className="animate-pulse" /> : <Trash2 size={16} />}
     </button>
   )
 }

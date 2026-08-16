@@ -1,8 +1,10 @@
 'use client'
 import React from 'react';
 import Link from 'next/link';
-import HeroImage from '../../../public/image/image.png'; 
-import HeroImage2 from '../../../public/hero-model.jpg'; 
+import Image from 'next/image';
+import HeroImage from '../../../public/image/image.png';
+import HeroImage2 from '../../../public/hero-model.jpg';
+import type { CompanyProfile } from '@/lib/types';
 
 // --- Custom Brand Icons (SVGs) ---
 const InstagramIcon = () => (
@@ -17,15 +19,20 @@ const WhatsAppIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-11.7 8.38 8.38 0 0 1 3.8.9L21 3z"/></svg>
 );
 
-const Hero = () => {
+const Hero = ({ profile }: { profile?: CompanyProfile | null }) => {
+  const instagramUrl = profile?.instagram ? `https://instagram.com/${profile.instagram.replace('@', '')}` : '#'
+  const tiktokUrl = profile?.tiktok ? `https://tiktok.com/@${profile.tiktok.replace('@', '')}` : '#'
+  const waNumber = profile?.whatsapp?.replace(/\D/g, '') || ''
+  const whatsappUrl = waNumber ? `https://wa.me/${waNumber}` : '#'
   return (
     <div className="w-full bg-black flex flex-col pb-12">
       
       {/* 1. TOP IMAGE SECTION */}
       <div className="w-full">
-        <img
-          src={HeroImage.src}
+        <Image
+          src={HeroImage}
           alt="Shally Luxe Hair Collection"
+          priority
           className="w-full h-auto object-cover max-h-[60vh] md:max-h-[80vh] object-top"
         />
       </div>
@@ -45,10 +52,13 @@ const Hero = () => {
       <div className="relative w-full min-h-[85vh] md:min-h-screen flex flex-col items-start justify-center overflow-hidden">
         
         {/* Background Image */}
-        <img
-          src={HeroImage2.src}
+        <Image
+          src={HeroImage2}
           alt="Premium Virgin Hair Model"
-          className="absolute inset-0 w-full h-full object-cover"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
         />
         
         {/* Dark Overlays (Slightly heavier on the left for text readability) */}
@@ -75,15 +85,15 @@ const Hero = () => {
           {/* Social Buttons Group - Aligned Left */}
           <div className="flex flex-col gap-3 w-full max-w-[280px]">
              <div className="grid grid-cols-2 gap-3">
-                <a href="https://www.instagram.com/shallyluxe" className="flex items-center justify-center gap-2 border border-white/20 bg-white/5 backdrop-blur-md py-4 px-2 rounded-full text-white text-[9px] tracking-widest uppercase hover:bg-white/10 transition">
+                <a href={instagramUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 border border-white/20 bg-white/5 backdrop-blur-md py-4 px-2 rounded-full text-white text-[9px] tracking-widest uppercase hover:bg-white/10 transition">
                     <InstagramIcon /> Insta
                 </a>
-                <a href="" className="flex items-center justify-center gap-2 border border-white/20 bg-white/5 backdrop-blur-md py-4 px-2 rounded-full text-white text-[9px] tracking-widest uppercase hover:bg-white/10 transition">
+                <a href={tiktokUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 border border-white/20 bg-white/5 backdrop-blur-md py-4 px-2 rounded-full text-white text-[9px] tracking-widest uppercase hover:bg-white/10 transition">
                     <TikTokIcon /> Tiktok
                 </a>
              </div>
              
-             <a href="https://wa.me/12265053725" className="flex items-center justify-center gap-3 border border-white/20 bg-white/5 backdrop-blur-md py-4 px-4 rounded-full text-white text-[9px] tracking-widest uppercase hover:bg-white/10 transition">
+             <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-3 border border-white/20 bg-white/5 backdrop-blur-md py-4 px-4 rounded-full text-white text-[9px] tracking-widest uppercase hover:bg-white/10 transition">
                 <WhatsAppIcon /> WhatsApp
              </a>
           </div>

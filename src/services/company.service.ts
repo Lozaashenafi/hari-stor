@@ -4,6 +4,8 @@ import { db } from "@/db"
 import { companyProfile } from "@/db/schema"
 import { eq } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
+import { requireAdmin } from "@/lib/auth-guard"
+import { companyProfileSchema, type CompanyInput } from "@/lib/validation"
 
 // 1. Get the single brand record
 export async function getCompanyProfile() {
@@ -17,18 +19,20 @@ export async function getCompanyProfile() {
 }
 
 // 2. Update or Create the record (Upsert)
-export async function updateCompanyProfile(data: any) {
+export async function updateCompanyProfile(data: CompanyInput) {
   try {
+    await requireAdmin();
+    const parsed = companyProfileSchema.parse(data)
     const existing = await db.select().from(companyProfile).limit(1)
 
     if (existing.length > 0) {
       // UPDATE
       await db.update(companyProfile)
-        .set(data)
+        .set(parsed)
         .where(eq(companyProfile.id, existing[0].id))
     } else {
       // CREATE the first ever record
-      await db.insert(companyProfile).values(data)
+      await db.insert(companyProfile).values(parsed)
     }
 
     revalidatePath('/admin/profile')

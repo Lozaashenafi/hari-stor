@@ -52,10 +52,10 @@ export async function GET(request: Request) {
       elapsed: `${elapsed}ms`,
       timestamp: new Date().toISOString(),
     });
-  } catch (error: any) {
-    console.error('[CRON] Keep-alive ping failed:', error.message);
+  } catch (error: unknown) {
+    console.error('[CRON] Keep-alive ping failed:', error instanceof Error ? error.message : error);
     return NextResponse.json(
-      { ok: false, error: error.message },
+      { ok: false, error: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 },
     );
   }

@@ -1,4 +1,5 @@
 import { getGalleryImages } from "@/services/gallery.service";
+import Image from "next/image";
 import Link from "next/link";
 
 // Simple Arrow SVG
@@ -36,9 +37,11 @@ export default async function FullGalleryPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {images.map((img) => (
             <div key={img.id} className="relative aspect-[3/4] rounded-xl overflow-hidden group border border-white/5 bg-zinc-900">
-              <img 
+              <Image 
                 src={img.imageUrl} 
-                className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" 
+                fill
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700" 
                 alt={img.title} 
               />
               <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">

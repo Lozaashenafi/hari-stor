@@ -1,6 +1,7 @@
 // components/site/Navbar.tsx
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { getCompanyProfile } from '@/services/company.service';
 import Logo from '../../../public/logo.jpg';
 import MobileMenu from './MobileMenu';
@@ -8,6 +9,9 @@ import { Search, User, ShoppingCart } from 'lucide-react';
 
 const Navbar = async () => {
   const profile = await getCompanyProfile();
+
+  const waNumber = profile?.whatsapp?.replace(/\D/g, '') || '';
+  const waLink = waNumber ? `https://wa.me/${waNumber}` : '/';
   
   const categories = [
     { name: 'HOME', href: '/' },
@@ -24,8 +28,8 @@ const Navbar = async () => {
       {/* DESKTOP LEFT: Logo             */}
       {/* ============================== */}
       <Link href="/" className="hidden lg:flex flex-col items-center group">
-        <img 
-          src={Logo.src} 
+        <Image 
+          src={Logo} 
           alt="Logo" 
           className="h-10 md:h-12 w-auto object-contain" 
         />
@@ -47,8 +51,8 @@ const Navbar = async () => {
       {/* Absolute positioning guarantees it stays perfectly centered on mobile */}
       <div className="lg:hidden absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
         <Link href="/" className="flex flex-col items-center group">
-          <img 
-            src={Logo.src} 
+          <Image 
+            src={Logo} 
             alt="Logo" 
             className="h-10 w-auto object-contain" 
           />
@@ -74,13 +78,17 @@ const Navbar = async () => {
       {/* ============================== */}
       <div className="flex items-center space-x-5 md:space-x-6 text-[#C5A059]">
         {/* Hide Search and User icons on mobile, show on large screens */}
-        <Search className="hidden lg:block cursor-pointer hover:text-white transition" size={18} />
+        <Link href="/search" className="hidden lg:block hover:text-white transition">
+          <Search size={18} />
+        </Link>
         <Link href="/login" className="hidden lg:block hover:text-white transition">
           <User size={18} />
         </Link>
         
         {/* Cart stays visible on BOTH mobile and desktop */}
-        <ShoppingCart className="cursor-pointer hover:text-white transition" size={20} />
+        <Link href={waLink} target={waNumber ? "_blank" : undefined} rel="noopener noreferrer" className="text-[#C5A059] hover:text-white transition">
+          <ShoppingCart className="cursor-pointer" size={20} />
+        </Link>
       </div>
 
     </nav>

@@ -1,36 +1,27 @@
 'use client'
-import React, { useState, useMemo, useEffect, useRef } from 'react'
+import React, { useState, useMemo, useRef } from 'react'
+import Image from 'next/image'
 import { Search, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react'
 import PublicProductModal from '@/components/site/PublicProductModal'
+import type { Product, CompanyProfile } from '@/lib/types'
 
-export default function AllProductsClient({ products, company, categoryName }: { products: any[], company: any, categoryName?: string }) {
+export default function AllProductsClient({ products, company, categoryName }: { products: Product[]; company: CompanyProfile | null; categoryName?: string }) {
   const [searchTerm, setSearchTerm] = useState('')
   const [sortOrder, setSortOrder] = useState('featured')
   const [filterType, setFilterType] = useState(categoryName || 'All')
-  const [selectedProduct, setSelectedProduct] = useState<any>(null)
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
   
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 4 // 12 items = 3 rows of 4 on desktop, 6 rows of 2 on mobile
   const gridTopRef = useRef<HTMLDivElement>(null)
 
-  // Banner Mapping
-  const categoryBanners: Record<string, string> = {
-    all: '/banners/all-collections.jpg', 
-    wigs: '/banners/wigs.jpg',
-    bundles: '/banners/bundles.jpg',
-    'clip ins': '/banners/clip-ins.jpg',
-    ponytail: '/banners/ponytail.jpg',
-  };
-
-  const safeCategoryKey = (categoryName || filterType || "all").toLowerCase();
-
   const types = useMemo(() => {
-    return ['All', ...Array.from(new Set(products.map(p => p.category?.name || p.hairType).filter(Boolean)))]
+    return ['All', ...Array.from(new Set(products.map(p => p.category?.name || p.hairType).filter((x): x is string => Boolean(x))))]
   }, [products])
 
   const filteredProducts = useMemo(() => {
-    let result = products.filter(p => {
+    const result = products.filter(p => {
       const pCategory = p.category?.name || p.hairType || ""
       const searchLower = searchTerm.toLowerCase()
       const matchesSearch = p.name.toLowerCase().includes(searchLower) || pCategory.toLowerCase().includes(searchLower);
@@ -42,11 +33,6 @@ export default function AllProductsClient({ products, company, categoryName }: {
     if (sortOrder === 'price-high') result.sort((a, b) => b.price - a.price)
     return result
   }, [searchTerm, filterType, sortOrder, products])
-
-  // Reset to page 1 whenever filters or search change
-  useEffect(() => {
-    setCurrentPage(1)
-  }, [searchTerm, filterType, sortOrder])
 
   // Pagination Logic
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage)
@@ -66,11 +52,14 @@ export default function AllProductsClient({ products, company, categoryName }: {
       
       {/* 1. STATIC BANNER */}
       <div className="max-w-7xl mx-auto px-4 pt-2"> 
-        <div className="aspect-[4/3] md:aspect-[21/9] w-full overflow-hidden bg-zinc-900 border border-white/5 shadow-2xl">
-            <img 
+        <div className="aspect-[4/3] md:aspect-[21/9] w-full overflow-hidden bg-zinc-900 border border-white/5 shadow-2xl relative">
+            <Image 
               src={'/image/hero.jpg'} 
               alt="Collection Banner"
-              className="w-full h-full object-cover object-top" 
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover object-top" 
             />
         </div>
       </div>
@@ -91,7 +80,7 @@ export default function AllProductsClient({ products, company, categoryName }: {
                         placeholder="Search..."
                         className="w-full bg-black border border-white/40 py-3 pl-10 pr-4 text-xs text-white focus:outline-none focus:border-[#C5A059]"
                         value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1) }}
                     />
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={16} />
                 </div>
@@ -103,7 +92,7 @@ export default function AllProductsClient({ products, company, categoryName }: {
                     <select 
                         className="w-full bg-black border border-white/40 py-3 px-4 text-xs appearance-none text-white focus:outline-none focus:border-[#C5A059]"
                         value={filterType}
-                        onChange={(e) => setFilterType(e.target.value)}
+                        onChange={(e) => { setFilterType(e.target.value); setCurrentPage(1) }}
                     >
                         {types.map(cat => <option key={cat} value={cat} className="bg-zinc-900">{cat === 'All' ? 'All Collections' : cat}</option>)}
                     </select>
@@ -117,7 +106,7 @@ export default function AllProductsClient({ products, company, categoryName }: {
                     <select 
                         className="w-full bg-black border border-white/40 py-3 px-4 text-xs appearance-none text-white focus:outline-none focus:border-[#C5A059]"
                         value={sortOrder}
-                        onChange={(e) => setSortOrder(e.target.value)}
+                        onChange={(e) => { setSortOrder(e.target.value); setCurrentPage(1) }}
                     >
                         <option value="featured" className="bg-zinc-900">Featured</option>
                         <option value="price-low" className="bg-zinc-900">Price, low to high</option>
@@ -145,11 +134,15 @@ export default function AllProductsClient({ products, company, categoryName }: {
 
                         {/* Image Container */}
                         <div className="aspect-square overflow-hidden bg-white mb-5 relative transition-all">
-                            <img 
-                                src={product.images[0]?.imageUrl} 
-                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                            {product.images[0] && (
+                            <Image 
+                                src={product.images[0].imageUrl} 
+                                fill
+                                sizes="(max-width: 768px) 50vw, 25vw"
+                                className="object-cover transition-transform duration-700 group-hover:scale-105"
                                 alt={product.name}
                             />
+                            )}
                         </div>
 
                         {/* Text Content */}

@@ -75,7 +75,7 @@ export default async function AdminDashboard() {
   );
 }
 
-function StatCard({ title, value, icon, subtitle }: any) {
+function StatCard({ title, value, icon, subtitle }: { title: string; value: string | number; icon: React.ReactNode; subtitle: string }) {
   return (
     <div className="bg-zinc-900 border border-zinc-800 p-8 rounded-[2rem] shadow-xl hover:border-[#5a3e00]/30 transition-all group">
       <div className="flex items-center justify-between mb-6">

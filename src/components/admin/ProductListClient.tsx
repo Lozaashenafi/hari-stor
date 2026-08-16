@@ -1,12 +1,14 @@
 'use client'
 import { useState } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { Edit2, Eye, Package, MapPin, Hash } from 'lucide-react'
 import ProductDetailsModal from '@/components/admin/ProductDetailsModal'
 import DeleteProductButton from '@/components/admin/DeleteProductButton'
+import type { Product } from '@/lib/types'
 
-export default function ProductListClient({ products }: { products: any[] }) {
-  const [selectedProduct, setSelectedProduct] = useState<any>(null)
+export default function ProductListClient({ products }: { products: Product[] }) {
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
 
   return (
     <>
@@ -15,9 +17,9 @@ export default function ProductListClient({ products }: { products: any[] }) {
         {products.map((product) => (
           <div key={product.id} className="bg-zinc-900 border border-zinc-700 p-5 rounded-3xl space-y-4">
             <div className="flex gap-4">
-              <div className="w-20 h-20 bg-black rounded-2xl overflow-hidden border border-zinc-700 flex-shrink-0">
+              <div className="w-20 h-20 bg-black rounded-2xl overflow-hidden border border-zinc-700 flex-shrink-0 relative">
                 {product.images?.[0] ? (
-                  <img src={product.images[0].imageUrl} className="w-full h-full object-cover" />
+                  <Image src={product.images[0].imageUrl} alt={product.name} fill sizes="80px" className="object-cover" />
                 ) : <Package className="w-full h-full p-5 text-zinc-800" />}
               </div>
               <div className="flex-1">
@@ -64,9 +66,9 @@ export default function ProductListClient({ products }: { products: any[] }) {
                 <tr key={product.id} className="hover:bg-white/[0.02] transition-colors group">
                   <td className="px-8 py-6">
                     <div className="flex items-center gap-5">
-                      <div className="w-16 h-16 bg-black rounded-2xl overflow-hidden border border-zinc-700 flex-shrink-0 shadow-lg">
+                      <div className="w-16 h-16 bg-black rounded-2xl overflow-hidden border border-zinc-700 flex-shrink-0 shadow-lg relative">
                         {product.images?.[0] && (
-                          <img src={product.images[0].imageUrl} className="w-full h-full object-cover" />
+                          <Image src={product.images[0].imageUrl} alt={product.name} fill sizes="64px" className="object-cover" />
                         )}
                       </div>
                       <div>

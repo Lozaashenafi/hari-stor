@@ -16,6 +16,11 @@ export async function middleware(request: NextRequest) {
         loginUrl.searchParams.set("callbackUrl", pathname);
         return NextResponse.redirect(loginUrl);
       }
+
+      // 2. Only administrators may access the admin area.
+      if (session.user.role !== "admin") {
+        return NextResponse.redirect(new URL("/", request.url));
+      }
     } catch (error) {
       // If the DB connection fails in middleware, don't crash the whole site
       console.error("Middleware Auth Error:", error);

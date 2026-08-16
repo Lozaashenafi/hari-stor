@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { LayoutDashboard, ShoppingBag, Building2, Menu, X, Users, ImageIcon } from 'lucide-react'
@@ -9,8 +9,7 @@ export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
 
-  // Close sidebar when clicking a link on mobile
-  useEffect(() => setIsOpen(false), [pathname])
+  const closeMenu = () => setIsOpen(false)
 
   const links = [
     { href: '/admin', icon: <LayoutDashboard size={20}/>, label: 'Dashboard' },
@@ -56,6 +55,7 @@ export default function Sidebar() {
             <Link 
               key={link.href}
               href={link.href} 
+              onClick={closeMenu}
               className={`flex items-center gap-4 px-4 py-4 rounded-2xl transition-all group ${
                 pathname === link.href 
                 ? 'bg-[#5a3e00] text-black font-bold shadow-lg shadow-gold/20' 

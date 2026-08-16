@@ -5,7 +5,10 @@ import { headers } from 'next/headers'
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await auth.api.getSession({ headers: await headers() })
+
   if (!session) redirect('/login')
+
+  if (session.user.role !== 'admin') redirect('/')
 
   return (
     <div className="flex flex-col lg:flex-row h-screen bg-[#050505]">

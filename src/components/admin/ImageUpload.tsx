@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import Image from 'next/image'
 import { Plus, X, Loader2 } from 'lucide-react'
 
 interface ImageUploadProps {
@@ -67,7 +68,7 @@ export default function ImageUpload({ urls, onUploadComplete, onRemove }: ImageU
 
         {urls.map((url, index) => (
           <div key={index} className="relative aspect-square rounded-2xl overflow-hidden border border-white/10 group">
-            <img src={url} alt="Product" className="w-full h-full object-cover" />
+            <Image src={url} alt="Product" fill sizes="150px" className="object-cover" />
             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
               <button
                 type="button"

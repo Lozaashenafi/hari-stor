@@ -20,8 +20,8 @@ export async function login(formData: FormData) {
       body: { email, password },
       headers: await headers(),
     })
-  } catch (err: any) {
-    return redirect('/login?error=' + encodeURIComponent(err.message || 'Invalid credentials'))
+  } catch (err: unknown) {
+    return redirect('/login?error=' + encodeURIComponent(err instanceof Error ? err.message : 'Invalid credentials'))
   }
 
   revalidatePath('/admin', 'layout')
@@ -36,7 +36,7 @@ export async function register(formData: FormData) {
   const password = formData.get('password') as string
   const displayName = formData.get('displayName') as string
 
-  let user: any
+  let user: { id: string } | null = null
 
   try {
     const result = await auth.api.signUpEmail({
@@ -47,9 +47,9 @@ export async function register(formData: FormData) {
       },
       headers: await headers(),
     })
-    user = result?.user
-  } catch (err: any) {
-    return { error: err.message }
+    user = result?.user ?? null
+  } catch (err: unknown) {
+    return { error: err instanceof Error ? err.message : 'Registration failed' }
   }
 
   if (user) {
@@ -72,7 +72,7 @@ export async function register(formData: FormData) {
 ========================= */
 export async function createNewAdmin(formData: FormData) {
   const session = await auth.api.getSession({ headers: await headers() })
-  if (!session) return { error: "Unauthorized" }
+  if (!session || session.user.role !== 'admin') return { error: "Unauthorized" }
 
   const email = formData.get('email') as string
   const password = formData.get('password') as string
@@ -99,8 +99,8 @@ export async function createNewAdmin(formData: FormData) {
 
     revalidatePath('/admin/users')
     return { success: "Admin created successfully" }
-  } catch (err: any) {
-    return { error: err.message || "Failed to create admin" }
+  } catch (err: unknown) {
+    return { error: err instanceof Error ? err.message : "Failed to create admin" }
   }
 }
 
@@ -131,8 +131,8 @@ export async function changePassword(formData: FormData) {
       headers: await headers(),
     })
     return { success: "Password updated successfully" }
-  } catch (err: any) {
-    return { error: err.message }
+  } catch (err: unknown) {
+    return { error: err instanceof Error ? err.message : 'Password change failed' }
   }
 }
 
@@ -153,7 +153,7 @@ export async function updateProfileInfo(formData: FormData) {
 
       revalidatePath('/admin/profile')
       return { success: "Profile updated" }
-    } catch (err) {
+    } catch {
       return { error: "Failed to update database" }
     }
   }

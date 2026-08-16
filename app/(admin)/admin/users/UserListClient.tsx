@@ -3,7 +3,14 @@ import { useState } from 'react'
 import { deleteAdminUser } from '@/services/user.service'
 import { Trash2, ShieldCheck, Mail } from 'lucide-react'
 
-export default function UserListClient({ users }: { users: any[] }) {
+interface AdminUser {
+  id: string
+  email: string
+  displayName: string | null
+}
+
+export default function UserListClient({ users: initialUsers }: { users: AdminUser[] }) {
+  const [users, setUsers] = useState<AdminUser[]>(initialUsers)
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
   async function handleDelete(userId: string, email: string) {
@@ -11,7 +18,11 @@ export default function UserListClient({ users }: { users: any[] }) {
     
     setDeletingId(userId)
     const res = await deleteAdminUser(userId)
-    if (!res.success) alert(res.error)
+    if (res.success) {
+      setUsers(users.filter(u => u.id !== userId))
+    } else {
+      alert(res.error || "Failed to delete user")
+    }
     setDeletingId(null)
   }
 

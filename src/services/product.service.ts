@@ -4,22 +4,9 @@ import { db } from "@/db"
 import { hairProducts, hairImages, hairColors, hairInches, categories } from "@/db/schema"
 import { desc, eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache"
-import { put, del } from "@vercel/blob"; // ADD THIS
-
-/* =========================
-   NEW: IMAGE UPLOAD ACTION
-========================= */
-export async function uploadFile(formData: FormData) {
-  const file = formData.get('file') as File;
-  if (!file) throw new Error("No file provided");
-
-  // Upload to Vercel Blob
-  const blob = await put(`products/${Date.now()}-${file.name}`, file, {
-    access: 'public',
-  });
-
-  return blob.url; // This returns the permanent https:// link
-}
+import { requireAdmin } from "@/lib/auth-guard";
+import { deleteStoredFile } from "@/lib/blob";
+import { productSchema, type ProductInput } from "@/lib/validation";
 
 /* =========================
    1. CATEGORY ACTIONS
@@ -54,7 +41,7 @@ export async function getProductsByCategory(slug: string) {
       },
       orderBy: [desc(hairProducts.id)],
     });
-  } catch (error) {
+  } catch {
     return [];
   }
 }
@@ -62,42 +49,44 @@ export async function getProductsByCategory(slug: string) {
 /* =========================
    2. CREATE PRODUCT
 ========================= */
-export async function createHairProduct(data: any) {
+export async function createHairProduct(data: ProductInput) {
   try {
-    // Note: 'data.images' should now be an array of Cloud URLs (https://...)
+    await requireAdmin();
+    const parsed = productSchema.parse(data)
+
     return await db.transaction(async (tx) => {
       const [product] = await tx.insert(hairProducts).values({
-        name: data.name,
-        categoryId: data.categoryId,
-        texture: data.texture,
-        hairType: data.hairType,
-        origin: data.origin,
-        processing: data.processing,
-        options: data.options,
-        price: data.price,
-        isOnSale: data.isOnSale || false,
+        name: parsed.name,
+        categoryId: parsed.categoryId,
+        texture: parsed.texture,
+        hairType: parsed.hairType,
+        origin: parsed.origin,
+        processing: parsed.processing,
+        options: parsed.options,
+        price: parsed.price,
+        isOnSale: parsed.isOnSale,
         previousPrice: null,
-        availability: data.availability || 'in_hand',
-        quantityInHand: data.quantityInHand || 0,
+        availability: parsed.availability,
+        quantityInHand: parsed.quantityInHand,
       }).returning();
 
-      if (data.images?.length > 0) {
+      if (parsed.images.length > 0) {
         await tx.insert(hairImages).values(
-          data.images.map((url: string) => ({ productId: product.id, imageUrl: url }))
+          parsed.images.map((url: string) => ({ productId: product.id, imageUrl: url }))
         );
       }
 
-      if (data.colors?.length > 0) {
+      if (parsed.colors.length > 0) {
         await tx.insert(hairColors).values(
-          data.colors.map((c: string) => ({ productId: product.id, color: c }))
+          parsed.colors.map((c: string) => ({ productId: product.id, color: c }))
         );
       }
 
-      if (data.inches?.length > 0) {
+      if (parsed.inches.length > 0) {
         await tx.insert(hairInches).values(
-          data.inches.map((i: any) => ({ 
+          parsed.inches.map((i) => ({ 
             productId: product.id, 
-            inches: parseInt(i.value), 
+            inches: i.value, 
             additionalPrice: i.extra 
           }))
         );
@@ -113,23 +102,20 @@ export async function createHairProduct(data: any) {
   }
 }
 
-/* ... updateHairProduct, getProductById, getAdminProducts (Keep same as your original) ... */
 export async function deleteProduct(id: number) {
   try {
-    // 1. Get images from DB to find the URLs
+    await requireAdmin();
     const images = await db.select().from(hairImages).where(eq(hairImages.productId, id));
-    
-    // 2. Delete each image from Vercel Cloud
+
     for (const img of images) {
-      await del(img.imageUrl);
+      await deleteStoredFile(img.imageUrl);
     }
 
-    // 3. Delete from Database
     await db.delete(hairProducts).where(eq(hairProducts.id, id));
-    
+
     revalidatePath('/admin/products');
     return { success: true };
-  } catch (error) {
+  } catch {
     return { success: false };
   }
 }
@@ -137,63 +123,83 @@ export async function deleteProduct(id: number) {
 /* =========================
    3. UPDATE PRODUCT
 ========================= */
-export async function updateHairProduct(id: number, data: any) {
+export async function updateHairProduct(id: number, data: ProductInput) {
   try {
+    await requireAdmin();
+    const parsed = productSchema.parse(data)
+
     const currentProduct = await db.query.hairProducts.findFirst({
       where: eq(hairProducts.id, id),
     });
 
+    // Capture existing images so we can remove any that are dropped from Blob
+    const existingImages = await db
+      .select()
+      .from(hairImages)
+      .where(eq(hairImages.productId, id));
+
     let previousPrice = currentProduct?.previousPrice;
-    if (currentProduct && currentProduct.price !== data.price) {
+    if (currentProduct && currentProduct.price !== parsed.price) {
       previousPrice = currentProduct.price;
     }
 
-    return await db.transaction(async (tx) => {
+    const result = await db.transaction(async (tx) => {
       // Update Main
       await tx.update(hairProducts)
         .set({
-          name: data.name,
-          categoryId: data.categoryId, // Updated
-          texture: data.texture,
-          hairType: data.hairType,
-          origin: data.origin,
-          processing: data.processing,
-          options: data.options,
-          price: data.price,
+          name: parsed.name,
+          categoryId: parsed.categoryId, // Updated
+          texture: parsed.texture,
+          hairType: parsed.hairType,
+          origin: parsed.origin,
+          processing: parsed.processing,
+          options: parsed.options,
+          price: parsed.price,
           previousPrice: previousPrice,
-          isOnSale: data.isOnSale,
-          availability: data.availability || 'in_hand',
-          quantityInHand: data.quantityInHand || 0,
+          isOnSale: parsed.isOnSale,
+          availability: parsed.availability,
+          quantityInHand: parsed.quantityInHand,
         })
         .where(eq(hairProducts.id, id));
 
       // Refresh Images
       await tx.delete(hairImages).where(eq(hairImages.productId, id));
-      if (data.images?.length > 0) {
-        await tx.insert(hairImages).values(data.images.map((url: string) => ({ productId: id, imageUrl: url })));
+      if (parsed.images.length > 0) {
+        await tx.insert(hairImages).values(parsed.images.map((url: string) => ({ productId: id, imageUrl: url })));
       }
 
       // Refresh Colors
       await tx.delete(hairColors).where(eq(hairColors.productId, id));
-      if (data.colors?.length > 0) {
-        await tx.insert(hairColors).values(data.colors.map((c: string) => ({ productId: id, color: c })));
+      if (parsed.colors.length > 0) {
+        await tx.insert(hairColors).values(parsed.colors.map((c: string) => ({ productId: id, color: c })));
       }
 
-      // Refresh Inches (Updated for Dynamic Pricing)
+      // Refresh Inches
       await tx.delete(hairInches).where(eq(hairInches.productId, id));
-      if (data.inches?.length > 0) {
+      if (parsed.inches.length > 0) {
         await tx.insert(hairInches).values(
-          data.inches.map((i: any) => ({ 
+          parsed.inches.map((i) => ({ 
             productId: id, 
-            inches: parseInt(i.value), 
+            inches: i.value, 
             additionalPrice: i.extra 
           }))
         );
       }
 
       revalidatePath('/admin/products');
+      revalidatePath('/');
       return { success: true };
     });
+
+    // Remove any stored files that were dropped in this update
+    const removed = existingImages.filter(
+      (img) => !parsed.images.includes(img.imageUrl)
+    );
+    for (const img of removed) {
+      await deleteStoredFile(img.imageUrl);
+    }
+
+    return result;
   } catch (error) {
     console.error("Update Error:", error);
     return { success: false };

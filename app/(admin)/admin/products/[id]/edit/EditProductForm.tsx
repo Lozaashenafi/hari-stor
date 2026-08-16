@@ -4,53 +4,11 @@ import { updateHairProduct } from '@/services/product.service'
 import { useRouter } from 'next/navigation'
 import ImageUpload from '@/components/admin/ImageUpload'
 import { Plus, Trash2 } from 'lucide-react'
+import type { Product, Category } from '@/lib/types'
 
-// Define Props with strict types
 interface EditProductFormProps {
-  product: ProductWithRelations;
+  product: Product;
   categories: Category[];
-}
-interface HairImage {
-  id: number;
-  productId: number;
-  imageUrl: string;
-}
-
-interface HairColor {
-  id: number;
-  productId: number;
-  color: string;
-}
-
-interface HairInch {
-  id: number;
-  productId: number;
-  inches: number;
-  additionalPrice: number;
-}
-
-interface Category {
-  id: number;
-  name: string;
-}
-
-interface ProductWithRelations {
-  id: number;
-  name: string;
-  categoryId: number | null;
-  texture: string | null;
-  hairType: string | null;
-  origin: string | null;
-  processing: string | null;
-  options: string | null;
-  price: number;
-  previousPrice: number | null;
-  isOnSale: boolean;
-  availability: string;
-  quantityInHand: number | null;
-  images: HairImage[];
-  colors: HairColor[];
-  inches: HairInch[];
 }
 
 interface InchRow {
@@ -93,7 +51,7 @@ export default function EditProductForm({ product, categories }: EditProductForm
     const priceInCents = Math.round(parseFloat(rawPrice) * 100)
     const isOnSale = formData.get('isOnSale') === 'on'
     const categoryId = formData.get('categoryId') as string
-    const availability = formData.get('availability') as string || 'in_hand'
+    const availability = (formData.get('availability') as string) || 'in_hand'
     const quantityInHand = formData.get('quantityInHand') as string
 
     const payload = {
@@ -106,7 +64,7 @@ export default function EditProductForm({ product, categories }: EditProductForm
       options: formData.get('options') as string,
       price: priceInCents,
       isOnSale,
-      availability,
+      availability: availability as 'in_hand' | 'order',
       quantityInHand: parseInt(quantityInHand || '0'),
       colors: formData.get('colors')?.toString().split(',').filter(Boolean).map((s: string) => s.trim()),
       inches: inchesList
