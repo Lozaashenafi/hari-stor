@@ -1,10 +1,6 @@
 import { pgTable, serial, text, integer, timestamp, boolean } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
-/* =========================
-   Better Auth Tables
-   See: https://better-auth.com
-========================= */
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
   email: text("email").notNull().unique(),

@@ -1,12 +1,11 @@
-import { drizzle } from "drizzle-orm/neon-http";
-import { neon } from "@neondatabase/serverless";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 import * as schema from "./schema";
 
-const connectionString = process.env.DATABASE_URL!;
+const client = postgres(process.env.DATABASE_URL!, {
+  max: 10,
+});
 
-// HTTP-based connection (compatible with better-auth's drizzle adapter)
-const sql = neon(connectionString);
-
-export const db = drizzle(sql, {
+export const db = drizzle(client, {
   schema,
 });

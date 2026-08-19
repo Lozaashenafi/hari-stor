@@ -54,7 +54,6 @@ export async function createHairProduct(data: ProductInput) {
     await requireAdmin();
     const parsed = productSchema.parse(data)
 
-    // Sequential inserts (no transaction needed — FK constraints ensure integrity)
     const [product] = await db.insert(hairProducts).values({
       name: parsed.name,
       categoryId: parsed.categoryId,
