@@ -54,48 +54,47 @@ export async function createHairProduct(data: ProductInput) {
     await requireAdmin();
     const parsed = productSchema.parse(data)
 
-    return await db.transaction(async (tx) => {
-      const [product] = await tx.insert(hairProducts).values({
-        name: parsed.name,
-        categoryId: parsed.categoryId,
-        texture: parsed.texture,
-        hairType: parsed.hairType,
-        origin: parsed.origin,
-        processing: parsed.processing,
-        options: parsed.options,
-        price: parsed.price,
-        isOnSale: parsed.isOnSale,
-        previousPrice: null,
-        availability: parsed.availability,
-        quantityInHand: parsed.quantityInHand,
-      }).returning();
+    // Sequential inserts (no transaction needed — FK constraints ensure integrity)
+    const [product] = await db.insert(hairProducts).values({
+      name: parsed.name,
+      categoryId: parsed.categoryId,
+      texture: parsed.texture,
+      hairType: parsed.hairType,
+      origin: parsed.origin,
+      processing: parsed.processing,
+      options: parsed.options,
+      price: parsed.price,
+      isOnSale: parsed.isOnSale,
+      previousPrice: null,
+      availability: parsed.availability,
+      quantityInHand: parsed.quantityInHand,
+    }).returning();
 
-      if (parsed.images.length > 0) {
-        await tx.insert(hairImages).values(
-          parsed.images.map((url: string) => ({ productId: product.id, imageUrl: url }))
-        );
-      }
+    if (parsed.images.length > 0) {
+      await db.insert(hairImages).values(
+        parsed.images.map((url: string) => ({ productId: product.id, imageUrl: url }))
+      );
+    }
 
-      if (parsed.colors.length > 0) {
-        await tx.insert(hairColors).values(
-          parsed.colors.map((c: string) => ({ productId: product.id, color: c }))
-        );
-      }
+    if (parsed.colors.length > 0) {
+      await db.insert(hairColors).values(
+        parsed.colors.map((c: string) => ({ productId: product.id, color: c }))
+      );
+    }
 
-      if (parsed.inches.length > 0) {
-        await tx.insert(hairInches).values(
-          parsed.inches.map((i) => ({ 
-            productId: product.id, 
-            inches: i.value, 
-            additionalPrice: i.extra 
-          }))
-        );
-      }
+    if (parsed.inches.length > 0) {
+      await db.insert(hairInches).values(
+        parsed.inches.map((i) => ({ 
+          productId: product.id, 
+          inches: i.value, 
+          additionalPrice: i.extra 
+        }))
+      );
+    }
 
-      revalidatePath('/admin/products');
-      revalidatePath('/');
-      return { success: true };
-    });
+    revalidatePath('/admin/products');
+    revalidatePath('/');
+    return { success: true };
   } catch (error) {
     console.error("Create Error:", error);
     return { success: false };
@@ -143,53 +142,51 @@ export async function updateHairProduct(id: number, data: ProductInput) {
       previousPrice = currentProduct.price;
     }
 
-    const result = await db.transaction(async (tx) => {
-      // Update Main
-      await tx.update(hairProducts)
-        .set({
-          name: parsed.name,
-          categoryId: parsed.categoryId, // Updated
-          texture: parsed.texture,
-          hairType: parsed.hairType,
-          origin: parsed.origin,
-          processing: parsed.processing,
-          options: parsed.options,
-          price: parsed.price,
-          previousPrice: previousPrice,
-          isOnSale: parsed.isOnSale,
-          availability: parsed.availability,
-          quantityInHand: parsed.quantityInHand,
-        })
-        .where(eq(hairProducts.id, id));
+    // Sequential updates (ON DELETE CASCADE handles child cleanup)
+    await db.update(hairProducts)
+      .set({
+        name: parsed.name,
+        categoryId: parsed.categoryId,
+        texture: parsed.texture,
+        hairType: parsed.hairType,
+        origin: parsed.origin,
+        processing: parsed.processing,
+        options: parsed.options,
+        price: parsed.price,
+        previousPrice: previousPrice,
+        isOnSale: parsed.isOnSale,
+        availability: parsed.availability,
+        quantityInHand: parsed.quantityInHand,
+      })
+      .where(eq(hairProducts.id, id));
 
-      // Refresh Images
-      await tx.delete(hairImages).where(eq(hairImages.productId, id));
-      if (parsed.images.length > 0) {
-        await tx.insert(hairImages).values(parsed.images.map((url: string) => ({ productId: id, imageUrl: url })));
-      }
+    // Refresh Images
+    await db.delete(hairImages).where(eq(hairImages.productId, id));
+    if (parsed.images.length > 0) {
+      await db.insert(hairImages).values(parsed.images.map((url: string) => ({ productId: id, imageUrl: url })));
+    }
 
-      // Refresh Colors
-      await tx.delete(hairColors).where(eq(hairColors.productId, id));
-      if (parsed.colors.length > 0) {
-        await tx.insert(hairColors).values(parsed.colors.map((c: string) => ({ productId: id, color: c })));
-      }
+    // Refresh Colors
+    await db.delete(hairColors).where(eq(hairColors.productId, id));
+    if (parsed.colors.length > 0) {
+      await db.insert(hairColors).values(parsed.colors.map((c: string) => ({ productId: id, color: c })));
+    }
 
-      // Refresh Inches
-      await tx.delete(hairInches).where(eq(hairInches.productId, id));
-      if (parsed.inches.length > 0) {
-        await tx.insert(hairInches).values(
-          parsed.inches.map((i) => ({ 
-            productId: id, 
-            inches: i.value, 
-            additionalPrice: i.extra 
-          }))
-        );
-      }
+    // Refresh Inches
+    await db.delete(hairInches).where(eq(hairInches.productId, id));
+    if (parsed.inches.length > 0) {
+      await db.insert(hairInches).values(
+        parsed.inches.map((i) => ({ 
+          productId: id, 
+          inches: i.value, 
+          additionalPrice: i.extra 
+        }))
+      );
+    }
 
-      revalidatePath('/admin/products');
-      revalidatePath('/');
-      return { success: true };
-    });
+    revalidatePath('/admin/products');
+    revalidatePath('/');
+    const result = { success: true };
 
     // Remove any stored files that were dropped in this update
     const removed = existingImages.filter(
