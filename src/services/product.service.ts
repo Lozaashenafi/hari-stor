@@ -93,10 +93,10 @@ export async function createHairProduct(data: ProductInput) {
 
     revalidatePath('/admin/products');
     revalidatePath('/');
-    return { success: true };
+    return { success: true , error: null};
   } catch (error) {
     console.error("Create Error:", error);
-    return { success: false };
+    return { success: false , error : error instanceof Error ? error.message : 'Unknown error' };
   }
 }
 

@@ -54,6 +54,7 @@ export default function NewProductPageForm({ categories }: { categories: Categor
       router.push('/admin/products')
       router.refresh()
     } else {
+      console.log("Error saving product:", res.error)
       console.error("Error saving product")
     }
     setLoading(false)
