@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { authClient } from '@/auth/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { convertRootFlightRouterStateToRouteTree } from 'next/dist/client/components/segment-cache/cache'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -17,6 +18,7 @@ export default function LoginPage() {
     setLoading(true)
     setErrorMsg(null)
 
+    console.log(email, password)
     const { error } = await authClient.signIn.email({ email, password })
 
     if (error) {
