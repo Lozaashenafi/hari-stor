@@ -1,8 +1,10 @@
 'use client'
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { X, MessageCircle, ChevronLeft, ChevronRight, Palette, Ruler } from 'lucide-react'
+import { X, MessageCircle, ChevronLeft, ChevronRight, Palette, Ruler, Minus, Plus, ShoppingBag, Check } from 'lucide-react'
 import type { Product, ProductColor, ProductInch, CompanyProfile } from '@/lib/types'
+import { useCart } from '@/context/CartContext'
+import { buildWhatsAppUrl } from '@/lib/cart'
 
 export default function PublicProductModal({ product, company, onClose }: { product: Product; company?: CompanyProfile | null; onClose: () => void }) {
   const [activeImage, setActiveImage] = useState(0)
@@ -10,6 +12,10 @@ export default function PublicProductModal({ product, company, onClose }: { prod
   // 1. States to track selection
   const [selectedColor, setSelectedColor] = useState<string | null>(null)
   const [selectedInch, setSelectedInch] = useState<string | null>(null)
+  const [qty, setQty] = useState(1)
+  const [added, setAdded] = useState(false)
+
+  const { addItem, setOpen: setCartOpen } = useCart()
 
   // Prevent background scroll when modal is open on mobile
   useEffect(() => {
@@ -33,17 +39,26 @@ export default function PublicProductModal({ product, company, onClose }: { prod
   const displayPrice = (totalPrice / 100).toFixed(2)
   // ---------------------------------
 
-  // 2. Generate Dynamic WhatsApp Message
+  // Add the current selection to the shopping bag, then open the bag drawer
+  // so the shopper immediately sees what they chose.
+  const handleAddToBag = () => {
+    addItem(product, { color: selectedColor, inches: selectedInch, qty })
+    setAdded(true)
+    setCartOpen(true)
+    // Reset so the button can flash again if the same selection is re-added
+    window.setTimeout(() => setAdded(false), 2000)
+  }
+
+  // 2. Generate Dynamic WhatsApp Message (properly URL-encoded)
   const generateWhatsAppLink = () => {
-    const baseUrl = `https://wa.me/${whatsappNumber}`
-    const intro = `Hi ShallyLuxe! ✨%0A%0AI am interested in ordering the following:%0A%0A`
-    const itemName = `*Product:* ${product.name}%0A`
-    const colorPart = selectedColor ? `*Color:* ${selectedColor}%0A` : `*Color:* Not selected%0A`
-    const inchPart = selectedInch ? `*Length:* ${selectedInch}"%0A` : `*Length:* Not selected%0A`
-    const pricePart = `*Total Price:* $${displayPrice}%0A` // Added total price to message
-    const footer = `%0APlease let me know the availability.`
-    
-    return `${baseUrl}?text=${intro}${itemName}${colorPart}${inchPart}${pricePart}${footer}`
+    const message =
+      `Hi ShallyLuxe! ✨\n\nI am interested in ordering the following:\n\n` +
+      `*Product:* ${product.name}\n` +
+      `*Color:* ${selectedColor ?? 'Not selected'}\n` +
+      `*Length:* ${selectedInch ? `${selectedInch}"` : 'Not selected'}\n` +
+      `*Total Price:* $${displayPrice}\n` +
+      `\nPlease let me know the availability.`
+    return buildWhatsAppUrl(whatsappNumber, message)
   }
 
   const nextImage = () => setActiveImage((prev) => (prev + 1) % images.length)
@@ -193,22 +208,62 @@ export default function PublicProductModal({ product, company, onClose }: { prod
 
             {/* 5. CALL TO ACTION */}
             <div className="mt-12 mb-8 md:mb-0 space-y-4">
-              <a 
-                href={generateWhatsAppLink()}
-                target="_blank"
-                className={`w-full font-black py-5 text-sm uppercase tracking-[0.3em] flex items-center justify-center gap-3 transition-all transform active:scale-95 shadow-xl ${
-                  selectedColor && selectedInch 
-                  ? 'bg-[#5a3e00] text-black' 
-                  : 'bg-zinc-800 text-zinc-500 border border-white/5 opacity-50'
-                }`}
-              >
-                <MessageCircle size={20} />
-                Order via WhatsApp
-              </a>
+              {/* ADD TO BAG: quantity stepper + add button */}
+              <div className="flex gap-3">
+                <div className="flex items-center border border-white/10 rounded-xl flex-shrink-0">
+                  <button
+                    onClick={() => setQty((q) => Math.max(1, q - 1))}
+                    disabled={qty <= 1}
+                    aria-label="Decrease quantity"
+                    className="px-4 py-4 text-gray-400 hover:text-white disabled:opacity-30 transition-colors"
+                  >
+                    <Minus size={14} />
+                  </button>
+                  <span className="w-8 text-center text-white text-sm font-bold">{qty}</span>
+                  <button
+                    onClick={() => setQty((q) => Math.min(99, q + 1))}
+                    disabled={qty >= 99}
+                    aria-label="Increase quantity"
+                    className="px-4 py-4 text-gray-400 hover:text-white disabled:opacity-30 transition-colors"
+                  >
+                    <Plus size={14} />
+                  </button>
+                </div>
+
+                <button
+                  onClick={handleAddToBag}
+                  className={`flex-1 font-black py-4 text-xs uppercase tracking-[0.25em] flex items-center justify-center gap-2 rounded-xl transition-all transform active:scale-95 shadow-xl ${
+                    added ? 'bg-white text-black' : 'bg-[#C5A059] text-black hover:bg-white'
+                  }`}
+                >
+                  {added ? <Check size={18} /> : <ShoppingBag size={18} />}
+                  {added ? 'Added to bag ✓' : 'Add to bag'}
+                </button>
+              </div>
+
+              {whatsappNumber ? (
+                <a
+                  href={generateWhatsAppLink()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`w-full font-black py-5 text-sm uppercase tracking-[0.3em] flex items-center justify-center gap-3 transition-all transform active:scale-95 shadow-xl ${
+                    selectedColor && selectedInch 
+                    ? 'bg-[#5a3e00] text-black' 
+                    : 'bg-zinc-800 text-zinc-500 border border-white/5 opacity-50'
+                  }`}
+                >
+                  <MessageCircle size={20} />
+                  Order via WhatsApp
+                </a>
+              ) : (
+                <div className="w-full bg-zinc-900 border border-white/5 text-zinc-500 font-bold py-5 px-4 text-[10px] uppercase tracking-[0.2em] flex items-center justify-center text-center">
+                  WhatsApp ordering unavailable — set the number in Admin → Profile
+                </div>
+              )}
               
               {(!selectedColor || !selectedInch) && (
                 <p className="text-[10px] text-red-400/80 text-center uppercase tracking-widest animate-pulse">
-                   Select color & length to order
+                   Select color & length for a WhatsApp order
                 </p>
               )}
             </div>

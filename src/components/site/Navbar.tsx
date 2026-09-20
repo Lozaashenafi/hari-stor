@@ -5,7 +5,8 @@ import Image from 'next/image';
 import { getCompanyProfile } from '@/services/company.service';
 import Logo from '../../../public/logo.jpg';
 import MobileMenu from './MobileMenu';
-import { Search, User, ShoppingCart } from 'lucide-react';
+import CartButton from './CartButton';
+import { Search, User } from 'lucide-react';
 
 const Navbar = async () => {
   const profile = await getCompanyProfile();
@@ -86,9 +87,7 @@ const Navbar = async () => {
         </Link>
         
         {/* Cart stays visible on BOTH mobile and desktop */}
-        <Link href={waLink} target={waNumber ? "_blank" : undefined} rel="noopener noreferrer" className="text-[#C5A059] hover:text-white transition">
-          <ShoppingCart className="cursor-pointer" size={20} />
-        </Link>
+        <CartButton whatsapp={waNumber} />
       </div>
 
     </nav>

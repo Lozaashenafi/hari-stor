@@ -14,7 +14,6 @@ import { headers } from 'next/headers'
 export async function login(formData: FormData) {
   const email = formData.get('email') as string
   const password = formData.get('password') as string
-  console.log('login', { email, password })
 
   try {
     await auth.api.signInEmail({

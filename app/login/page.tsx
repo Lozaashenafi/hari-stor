@@ -18,7 +18,6 @@ export default function LoginPage() {
     setLoading(true)
     setErrorMsg(null)
 
-    console.log(email, password)
     const { error } = await authClient.signIn.email({ email, password })
 
     if (error) {
