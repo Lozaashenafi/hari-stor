@@ -1,6 +1,14 @@
+import net from "node:net";
 import { neon, neonConfig } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
 import * as schema from "./schema";
+
+// This machine has no working IPv6 route, and Node's happy-eyeballs
+// (autoSelectFamily) misfires in that situation: the family race kills all
+// connection attempts and fetch() fails with ETIMEDOUT even though every
+// IPv4 address is individually reachable. Connecting sequentially
+// (IPv4 first) is reliable here. Must run before any connection is opened.
+net.setDefaultAutoSelectFamily(false);
 
 if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL is not set");

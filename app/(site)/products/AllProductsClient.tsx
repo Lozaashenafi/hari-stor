@@ -51,18 +51,18 @@ export default function AllProductsClient({ products, company, categoryName }: {
     <div className="bg-black min-h-screen pb-20">
       
       {/* 1. STATIC BANNER */}
-      <div className="max-w-7xl mx-auto px-4 pt-2"> 
-        <div className="aspect-[4/3] md:aspect-[21/9] w-full overflow-hidden bg-zinc-900 border border-white/5 shadow-2xl relative">
-            <Image 
-              src={'/image/hero.jpg'} 
-              alt="Collection Banner"
-              fill
-              priority
-              sizes="100vw"
-              className="object-cover object-top" 
-            />
-        </div>
-      </div>
+    <div className="max-w-7xl mx-auto px-4 pt-2">
+  <div className="aspect-[4/3] md:aspect-[21/9] w-full overflow-hidden bg-zinc-900 border border-white/5 shadow-2xl relative">
+    <Image
+      src="/image/hero.jpg"
+      alt="Collection Banner"
+      fill
+      priority
+      sizes="100vw"
+      className="object-cover object-center"
+    />
+  </div>
+</div>
 
       <div className="max-w-7xl mx-auto px-6 mt-12" ref={gridTopRef}>
         {/* 2. PAGE TITLE */}
