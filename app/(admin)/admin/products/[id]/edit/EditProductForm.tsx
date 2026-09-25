@@ -191,6 +191,9 @@ export default function EditProductForm({ product, categories }: EditProductForm
               <Plus size={12} /> Add Length
             </button>
           </div>
+          <p className="text-[10px] text-zinc-500 uppercase tracking-widest">
+            Clear all rows to auto-generate 14&quot;–30&quot; (wig +$20/inch, brazilian +$10/inch, others +$7/inch)
+          </p>
           <div className="space-y-3">
             {inchesList.map((row, index) => (
               <div key={index} className="flex gap-4 items-end">

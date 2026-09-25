@@ -7,6 +7,13 @@ import { revalidatePath } from "next/cache"
 import { requireAdmin } from "@/lib/auth-guard";
 import { deleteStoredFile } from "@/lib/blob";
 import { productSchema, type ProductInput } from "@/lib/validation";
+import { buildDefaultInches } from "@/lib/default-inches";
+
+async function getCategoryName(categoryId: number | null | undefined): Promise<string | null> {
+  if (!categoryId) return null;
+  const [cat] = await db.select().from(categories).where(eq(categories.id, categoryId));
+  return cat?.name ?? null;
+}
 
 /* =========================
    1. CATEGORY ACTIONS
@@ -81,11 +88,16 @@ export async function createHairProduct(data: ProductInput) {
       );
     }
 
-    if (parsed.inches.length > 0) {
+    const inchesToInsert =
+      parsed.inches.length > 0
+        ? parsed.inches
+        : buildDefaultInches(await getCategoryName(parsed.categoryId), parsed.origin);
+
+    if (inchesToInsert.length > 0) {
       await db.insert(hairInches).values(
-        parsed.inches.map((i) => ({ 
+        inchesToInsert.map((i) => ({ 
           productId: product.id, 
-          inches: i.value, 
+          inches: Number(i.value), 
           additionalPrice: i.extra 
         }))
       );
@@ -173,11 +185,15 @@ export async function updateHairProduct(id: number, data: ProductInput) {
 
     // Refresh Inches
     await db.delete(hairInches).where(eq(hairInches.productId, id));
-    if (parsed.inches.length > 0) {
+    const inchesToInsert =
+      parsed.inches.length > 0
+        ? parsed.inches
+        : buildDefaultInches(await getCategoryName(parsed.categoryId), parsed.origin);
+    if (inchesToInsert.length > 0) {
       await db.insert(hairInches).values(
-        parsed.inches.map((i) => ({ 
+        inchesToInsert.map((i) => ({ 
           productId: id, 
-          inches: i.value, 
+          inches: Number(i.value), 
           additionalPrice: i.extra 
         }))
       );

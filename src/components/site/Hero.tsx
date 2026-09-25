@@ -96,6 +96,10 @@ const Hero = ({ profile }: { profile?: CompanyProfile | null }) => {
              <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-3 border border-white/20 bg-white/5 backdrop-blur-md py-4 px-4 rounded-full text-white text-[9px] tracking-widest uppercase hover:bg-white/10 transition">
                 <WhatsAppIcon /> WhatsApp
              </a>
+
+             <p className="text-center font-serif italic text-white/90 text-sm md:text-base leading-relaxed max-w-[320px] mx-auto">
+               You can visit us to check the quality and take measurements by booking appointment for 15-20 minutes.
+             </p>
           </div>
         </div>
       </div>
