@@ -52,17 +52,17 @@ export default function CategoryClient({ initialProducts, categoryName, company 
   }, [initialProducts, textureFilter, originFilter, sortOrder]);
 
 const categoryBanners: Record<string, string> = {
-  wigs: '/banners/wigs.png',
+  wigs: '/banners/wig.PNG',
 
-  bundle: '/banners/bundles.png',
-  bundles: '/banners/bundles.png',
+  bundle: '/banners/Bundles.png',
+  bundles: '/banners/Bundles.png',
 
-  clip: '/banners/clip-ins.png',
-  clips: '/banners/clip-ins.png',
-  'clip-ins': '/banners/clip-ins.png',
+  clip: '/banners/clipins.PNG',
+  clips: '/banners/clipins.PNG',
+  'clip-ins': '/banners/clipins.PNG',
 
-  ponytail: '/banners/ponytail.png',
-  ponytails: '/banners/ponytail.png',
+  ponytail: '/banners/Ponytail.PNG',
+  ponytails: '/banners/Ponytail.PNG',
 };
   return (
     <div className="pb-20">
