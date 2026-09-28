@@ -66,20 +66,20 @@ const categoryBanners: Record<string, string> = {
 };
   return (
     <div className="pb-20">
-      {/* FEATURED CATEGORY IMAGE */}
-      <div className="max-w-7xl mx-auto px-4 mt-8">
-        <div className="aspect-[4/3] md:aspect-[21/9] w-full overflow-hidden bg-zinc-900 border border-white/5 shadow-2xl relative">
-          <Image 
-            src={categoryBanners[safeCategoryKey] || '/banners/default.jpg'} 
-            alt={categoryName}
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover object-center"
-          />
-        </div>
+     
+    {/* FEATURED CATEGORY IMAGE */}
+    <div className="max-w-7xl mx-auto px-4 mt-8">
+      <div className="aspect-[4/3] md:aspect-[21/9] w-full overflow-hidden bg-zinc-900 border border-white/5 shadow-2xl relative">
+        <Image 
+          src={categoryBanners[safeCategoryKey] || '/banners/default.jpg'} 
+          alt={categoryName}
+          fill
+          priority
+          sizes="100vw"
+          className="object-contain object-center"
+        />
       </div>
-
+    </div>
       <div className="max-w-7xl mx-auto px-6 mt-12 text-center md:text-left">
         <h1 className="text-4xl md:text-5xl font-serif text-[#C5A059] uppercase tracking-widest mb-10 italic">
           {categoryName}

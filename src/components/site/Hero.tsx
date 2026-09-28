@@ -97,7 +97,7 @@ const Hero = ({ profile }: { profile?: CompanyProfile | null }) => {
                 <WhatsAppIcon /> WhatsApp
              </a>
 
-             <p className="text-center font-serif italic text-white/90 text-sm md:text-base leading-relaxed max-w-[320px] mx-auto">
+             <p className="text-center font-serif italic text-[#C5A059]  text-sm md:text-base leading-relaxed max-w-[320px] mx-auto">
                You can visit us to check the quality and take measurements by booking appointment for 15-20 minutes.
              </p>
           </div>
