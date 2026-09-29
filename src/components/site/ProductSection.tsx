@@ -7,10 +7,10 @@ import { ArrowRight } from 'lucide-react'
 
 // Static content — swap these paths for any images in /public
 const ESSENTIALS = [
-  { src: '/image/1.png', name: 'Full Lace Front Wig', price: '$180.00' },
-  { src: '/image/2.PNG', name: 'U Part Wig', price: '$150.00' },
-  { src: '/image/3.PNG', name: 'Head Band Wig', price: '$120.00' },
-  { src: '/image/4.PNG', name: 'V Part Wig', price: '$140.00' },
+  { src: '/image/1.png', name: 'Full Lace Front Wig', price: '$815.00' },
+  { src: '/image/2.PNG', name: 'Deep Wave 100% Raww Human Hair Bundles', price: '$200.00' },
+  { src: '/image/3.PNG', name: 'Classic Clip-In Wigs', price: '$480.00' },
+  { src: '/image/4.PNG', name: 'V Part Wig', price: '$530.00' },
 ]
 
 export default function ProductSection() {
