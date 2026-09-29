@@ -9,7 +9,7 @@ import { ArrowRight } from 'lucide-react'
 const ESSENTIALS = [
   { src: '/image/1.png', name: 'Full Lace Front Wig', price: '$815.00' },
   { src: '/image/2.PNG', name: 'Deep Wave 100% Raww Human Hair Bundles', price: '$200.00' },
-  { src: '/image/3.PNG', name: 'Classic Clip-In Wigs', price: '$480.00' },
+  { src: '/image/5.webp', name: 'U part Natural Wave', price: '$300.00' },
   { src: '/image/4.PNG', name: 'V Part Wig', price: '$530.00' },
 ]
 
