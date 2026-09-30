@@ -2,7 +2,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import HeroImage from '../../../public/image/image.png';
+import HeroImage from '../../../public/image/image.PNG';
 import HeroImage2 from '../../../public/hero-model.jpg';
 import type { CompanyProfile } from '@/lib/types';
 

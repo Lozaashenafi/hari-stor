@@ -11,7 +11,18 @@ export default function PublicProductModal({ product, company, onClose }: { prod
   
   // 1. States to track selection
   const [selectedColor, setSelectedColor] = useState<string | null>(null)
-  const [selectedInch, setSelectedInch] = useState<string | null>(null)
+  // Default to 24" — the length most clients need — so its price shows first.
+  // Falls back to the length closest to 24" for products without one (e.g. 18"
+  // or 7" pieces). Changing the selection re-prices everything dynamically.
+  const [selectedInch, setSelectedInch] = useState<string | null>(() => {
+    const list = product?.inches || []
+    if (list.length === 0) return null
+    const exact = list.find((i) => i.inches === 24)
+    const target =
+      exact ??
+      list.reduce((best, i) => (Math.abs(i.inches - 24) < Math.abs(best.inches - 24) ? i : best), list[0])
+    return target.inches.toString()
+  })
   const [qty, setQty] = useState(1)
   const [added, setAdded] = useState(false)
 
