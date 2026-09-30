@@ -101,7 +101,7 @@ export default function NewProductPageForm({ categories }: { categories: Categor
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className={labelClass}>Base Price ($)</label>
+                <label className={labelClass}>Base Price ($) — 14"</label>
                 <input name="price" type="number" step="0.01" className={inputClass} required />
               </div>
               <div className="flex items-end pb-1">

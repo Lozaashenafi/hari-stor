@@ -8,7 +8,7 @@ import ContactSection from "@/components/site/ContactSection";
 
 // Hand-picked products featured in the homepage "The Essentials" section.
 // Change these IDs to feature different products.
-const FEATURED_PRODUCT_IDS = [60, 77 ,67 ,81];
+const FEATURED_PRODUCT_IDS = [60, 87 , 69 ,81];
 
 export default async function HomePage() {
   const [products, company] = await Promise.all([

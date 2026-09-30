@@ -134,7 +134,7 @@ export default function EditProductForm({ product, categories }: EditProductForm
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-                <label className={labelClass}>Price ($)</label>
+                <label className={labelClass}>Base Price ($) — 14"</label>
                 <input name="price" type="number" step="0.01" defaultValue={(product.price / 100).toFixed(2)} className={inputClass} required />
             </div>
             <div className={`flex items-center gap-4 p-5 rounded-2xl border transition-all mt-6 ${product.isOnSale ? 'bg-[#C5A059]/10 border-[#C5A059]/40' : 'bg-zinc-800/50 border-zinc-700'}`}>

@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { X, MessageCircle, ChevronLeft, ChevronRight, ChevronDown, Palette, Ruler, Minus, Plus, ShoppingBag, Check } from 'lucide-react'
 import type { Product, ProductColor, ProductInch, CompanyProfile } from '@/lib/types'
 import { useCart } from '@/context/CartContext'
-import { buildWhatsAppUrl } from '@/lib/cart'
+import { buildWhatsAppUrl, getIncrementCents } from '@/lib/cart'
 
 export default function PublicProductModal({ product, company, onClose }: { product: Product; company?: CompanyProfile | null; onClose: () => void }) {
   const [activeImage, setActiveImage] = useState(0)
@@ -35,7 +35,10 @@ export default function PublicProductModal({ product, company, onClose }: { prod
   // Find the selected inch object to get its additionalPrice
   const selectedInchData = inches.find((i: ProductInch) => i.inches.toString() === selectedInch)
   const additionalCost = selectedInchData?.additionalPrice || 0
-  const totalPrice = product.price + additionalCost
+  const unitPrice = product.price + additionalCost
+  // Per-origin increment × quantity (never hardcoded)
+  const increment = getIncrementCents(product.origin, qty)
+  const totalPrice = unitPrice * qty + increment
   const displayPrice = (totalPrice / 100).toFixed(2)
   // ---------------------------------
 
@@ -56,6 +59,7 @@ export default function PublicProductModal({ product, company, onClose }: { prod
       `*Product:* ${product.name}\n` +
       `*Color:* ${selectedColor ?? 'Not selected'}\n` +
       `*Length:* ${selectedInch ? `${selectedInch}"` : 'Not selected'}\n` +
+      `*Quantity:* ${qty}\n` +
       `*Total Price:* $${displayPrice}\n` +
       `\nPlease let me know the availability.`
     return buildWhatsAppUrl(whatsappNumber, message)
@@ -143,10 +147,17 @@ export default function PublicProductModal({ product, company, onClose }: { prod
                   </span>
                 </div>
                 <h2 className="font-serif text-3xl md:text-5xl text-[#5a3e00] mb-2 italic leading-tight">{product.name}</h2>
-                {/* DYNAMIC PRICE DISPLAY */}
-                <p className="text-gray-400 font-serif text-2xl font-light italic transition-all duration-300">
-                  ${displayPrice}
-                </p>
+                {/* DYNAMIC PRICE DISPLAY (unit × qty + origin increment) */}
+                {qty > 1 || increment > 0 ? (
+                  <p className="text-gray-400 font-serif text-2xl font-light italic transition-all duration-300">
+                    ${displayPrice}
+                    <span className="text-sm text-gray-500 not-italic"> (${(unitPrice / 100).toFixed(2)} × {qty}{increment > 0 ? ` + $${(increment / 100).toFixed(2)} origin` : ''})</span>
+                  </p>
+                ) : (
+                  <p className="text-gray-400 font-serif text-2xl font-light italic transition-all duration-300">
+                    ${displayPrice}
+                  </p>
+                )}
               </div>
 
               {/* SPEC GRID */}

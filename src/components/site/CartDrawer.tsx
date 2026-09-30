@@ -3,10 +3,10 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { X, Minus, Plus, Trash2, MessageCircle, ShoppingBag } from 'lucide-react'
 import { useCart } from '@/context/CartContext'
-import { buildCartWhatsAppLink, formatPriceCents } from '@/lib/cart'
+import { buildCartWhatsAppLink, formatPriceCents, getIncrementPerPieceCents } from '@/lib/cart'
 
 export default function CartDrawer({ whatsapp }: { whatsapp: string }) {
-  const { items, isOpen, setOpen, updateQty, removeItem, clear, subtotalCents, count } = useCart()
+  const { items, isOpen, setOpen, updateQty, removeItem, clear, subtotalCents, incrementCents, totalCents, count } = useCart()
 
   if (!isOpen) return null
 
@@ -58,7 +58,9 @@ export default function CartDrawer({ whatsapp }: { whatsapp: string }) {
                   <p className="text-gray-500 text-[11px] uppercase tracking-widest mt-1">
                     {[item.color, item.inches ? `${item.inches}"` : null].filter(Boolean).join(' / ') || 'Standard'}
                   </p>
-                  <p className="text-[#C5A059] text-sm font-bold mt-1">{formatPriceCents(item.unitPriceCents)}</p>
+                  <p className="text-[#C5A059] text-sm font-bold mt-1">
+                    {formatPriceCents((item.unitPriceCents + getIncrementPerPieceCents(item.origin)) * item.qty)}
+                  </p>
 
                   <div className="flex items-center justify-between mt-2">
                     <div className="flex items-center border border-white/10 rounded">
@@ -101,6 +103,18 @@ export default function CartDrawer({ whatsapp }: { whatsapp: string }) {
               <span className="text-gray-400 uppercase tracking-widest text-[11px]">Subtotal</span>
               <span className="text-white font-bold text-lg">{formatPriceCents(subtotalCents)}</span>
             </div>
+            {incrementCents > 0 && (
+              <>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-400 uppercase tracking-widest text-[11px]">Origin increment</span>
+                  <span className="text-[#C5A059] font-bold">+{formatPriceCents(incrementCents)}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm border-t border-white/10 pt-3">
+                  <span className="text-gray-300 uppercase tracking-widest text-[11px] font-bold">Total</span>
+                  <span className="text-white font-bold text-lg">{formatPriceCents(totalCents)}</span>
+                </div>
+              </>
+            )}
             <p className="text-[11px] text-gray-500">No payment online — you confirm and pay on WhatsApp.</p>
 
             <a

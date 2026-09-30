@@ -1,7 +1,7 @@
 'use client'
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import type { Product } from '@/lib/types'
-import { makeCartKey, priceForSelection, type CartItem } from '@/lib/cart'
+import { makeCartKey, priceForSelection, getIncrementCents, type CartItem } from '@/lib/cart'
 
 const STORAGE_KEY = 'shallyluxe-cart'
 
@@ -15,6 +15,10 @@ interface CartContextValue {
   items: CartItem[]
   count: number
   subtotalCents: number
+  /** Sum of per-origin increments (per-piece rate × qty) across all items. */
+  incrementCents: number
+  /** subtotalCents + incrementCents — the full checkout total. */
+  totalCents: number
   /** False until the cart has been loaded from localStorage on the client. */
   hydrated: boolean
   isOpen: boolean
@@ -78,7 +82,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }
       return [
         ...prev,
-        { key, productId: product.id, name: product.name, imageUrl, color, inches, unitPriceCents, qty },
+        { key, productId: product.id, name: product.name, imageUrl, color, inches, unitPriceCents, qty, origin: product.origin ?? null },
       ]
     })
   }, [])
@@ -94,16 +98,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const clear = useCallback(() => setItems([]), [])
 
-  const { count, subtotalCents } = useMemo(() => {
+  const { count, subtotalCents, incrementCents } = useMemo(() => {
     return {
       count: items.reduce((n, i) => n + i.qty, 0),
       subtotalCents: items.reduce((sum, i) => sum + i.unitPriceCents * i.qty, 0),
+      incrementCents: items.reduce((sum, i) => sum + getIncrementCents(i.origin, i.qty), 0),
     }
   }, [items])
+  // Total = subtotal + origin increments (kept separate so the UI can show the breakdown)
+  const totalCents = subtotalCents + incrementCents
 
   const value = useMemo(
-    () => ({ items, count, subtotalCents, hydrated, isOpen, setOpen, addItem, removeItem, updateQty, clear }),
-    [items, count, subtotalCents, hydrated, isOpen, addItem, removeItem, updateQty, clear]
+    () => ({ items, count, subtotalCents, incrementCents, totalCents, hydrated, isOpen, setOpen, addItem, removeItem, updateQty, clear }),
+    [items, count, subtotalCents, incrementCents, totalCents, hydrated, isOpen, addItem, removeItem, updateQty, clear]
   )
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>
