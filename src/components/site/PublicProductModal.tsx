@@ -85,13 +85,13 @@ export default function PublicProductModal({ product, company, onClose }: { prod
 
         <div className="flex flex-col md:flex-row h-full overflow-y-auto md:overflow-visible">
           
-          {/* LEFT: IMAGE CAROUSEL */}
-          <div className="w-full md:w-1/2 relative bg-zinc-950 flex flex-col flex-shrink-0 border-b md:border-b-0 md:border-r border-white/5">
+          {/* LEFT: IMAGE CAROUSEL — white backdrop so contained images blend in */}
+          <div className="w-full md:w-1/2 relative bg-white flex flex-col flex-shrink-0 border-b md:border-b-0 md:border-r border-white/5">
             <div className="relative w-full aspect-[4/5] md:aspect-auto md:flex-1 overflow-hidden">
               {images[activeImage] && (
                 <Image 
                   src={images[activeImage].imageUrl} 
-                  className="object-cover transition-all duration-500" 
+                  className="object-contain transition-all duration-500" 
                   alt={product.name} 
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
@@ -118,16 +118,16 @@ export default function PublicProductModal({ product, company, onClose }: { prod
 
             {/* Thumbnail Strip */}
             {images.length > 1 && (
-              <div className="flex gap-2 p-3 bg-black/50 border-t border-white/5 overflow-x-auto no-scrollbar scroll-smooth">
+              <div className="flex gap-2 p-3 bg-white border-t border-zinc-200 overflow-x-auto no-scrollbar scroll-smooth">
                 {images.map((img: Product['images'][number], idx: number) => (
                   <button 
                     key={idx} 
                     onClick={() => setActiveImage(idx)} 
                     className={`relative w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 border-2 transition-all ${
-                      activeImage === idx ? 'border-[#5a3e00]' : 'border-transparent opacity-60'
+                      activeImage === idx ? 'border-[#5a3e00]' : 'border-zinc-300 opacity-80'
                     }`}
                   >
-                    <Image src={img.imageUrl} alt="" fill sizes="56px" className="object-cover" />
+                    <Image src={img.imageUrl} alt="" fill sizes="56px" className="object-contain" />
                   </button>
                 ))}
               </div>

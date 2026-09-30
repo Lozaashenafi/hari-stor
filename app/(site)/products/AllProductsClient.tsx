@@ -139,7 +139,7 @@ export default function AllProductsClient({ products, company, categoryName }: {
                                 src={product.images[0].imageUrl} 
                                 fill
                                 sizes="(max-width: 768px) 50vw, 25vw"
-                                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                                className="object-contain transition-transform duration-700 group-hover:scale-105"
                                 alt={product.name}
                             />
                             )}

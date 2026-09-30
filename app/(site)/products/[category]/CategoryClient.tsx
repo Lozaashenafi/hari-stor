@@ -151,13 +151,13 @@ const categoryBanners: Record<string, string> = {
               className="group cursor-pointer flex flex-col"
               onClick={() => setSelectedProduct(product)}
             >
-              <div className="relative aspect-[4/5] bg-zinc-900 overflow-hidden mb-4 border border-white/5">
+              <div className="relative aspect-[4/5] bg-white overflow-hidden mb-4 border border-zinc-200">
                 {product.images[0] && (
                 <Image 
                   src={product.images[0].imageUrl} 
                   fill
                   sizes="(max-width: 768px) 50vw, 25vw"
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
+                  className="object-contain transition-transform duration-700 group-hover:scale-110"
                   alt={product.name}
                 />
                 )}

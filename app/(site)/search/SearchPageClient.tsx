@@ -77,7 +77,7 @@ export default function SearchPageClient({ products = [], company }: { products?
               <div key={product.id} className="group cursor-pointer" onClick={() => setSelectedProduct(product)}>
                 <div className="aspect-square overflow-hidden bg-white mb-4 relative">
                   {product.images?.[0]?.imageUrl && (
-                    <Image src={product.images[0].imageUrl} alt={product.name} fill sizes="(max-width: 768px) 50vw, 25vw" className="object-cover" />
+                    <Image src={product.images[0].imageUrl} alt={product.name} fill sizes="(max-width: 768px) 50vw, 25vw" className="object-contain" />
                   )}
                 </div>
                 <h3 className="text-[#C5A059] text-center">{product.name}</h3>

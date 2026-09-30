@@ -55,7 +55,7 @@ export default function ProductSection({ products, company }: { products: Produc
                     alt={product.name}
                     fill
                     sizes="(max-width: 768px) 50vw, 25vw"
-                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    className="object-contain transition-transform duration-700 group-hover:scale-105"
                   />
                 )}
               </div>
