@@ -54,7 +54,7 @@ export default function AllProductsClient({ products, company, categoryName }: {
   <div className="max-w-7xl mx-auto px-4 pt-2">
   <div className="aspect-[4/3] md:aspect-[21/9] w-full overflow-hidden bg-zinc-900 border border-white/5 shadow-2xl relative">
     <Image
-      src="/image/heroq.jpeg"
+      src="/image/hero1.PNG"
       alt="Collection Banner"
       fill
       priority
