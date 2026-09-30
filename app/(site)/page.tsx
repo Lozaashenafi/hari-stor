@@ -1,18 +1,26 @@
-
 import Hero from "@/components/site/Hero";
 import ProductSection from "@/components/site/ProductSection";
+import { getProductsByIds } from "@/services/product.service";
 import { getCompanyProfile } from "@/services/company.service";
 import GallerySection from "@/components/site/GallerySection";
 import Features from "@/components/site/Features";
 import ContactSection from "@/components/site/ContactSection";
 
+// Hand-picked products featured in the homepage "The Essentials" section.
+// Change these IDs to feature different products.
+const FEATURED_PRODUCT_IDS = [60, 77 ,67 ,81];
+
 export default async function HomePage() {
-  const company = await getCompanyProfile();
+  const [products, company] = await Promise.all([
+    getProductsByIds(FEATURED_PRODUCT_IDS),
+    getCompanyProfile(),
+  ]);
+
   return (
     <main>
       <Hero profile={company} />
-      {/* Static Essentials — 4 images from /public */}
-      <ProductSection />
+      {/* The Essentials — hand-picked products (FEATURED_PRODUCT_IDS above) */}
+      <ProductSection products={products} company={company} />
   {/* Add the Gallery Section here */}
       <GallerySection />
       {/* Add a placeholder footer */}

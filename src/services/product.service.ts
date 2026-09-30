@@ -2,7 +2,7 @@
 import { unstable_noStore as noStore } from 'next/cache';
 import { db } from "@/db"
 import { hairProducts, hairImages, hairColors, hairInches, categories } from "@/db/schema"
-import { desc, eq, sql } from "drizzle-orm";
+import { desc, eq, inArray, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache"
 import { requireAdmin } from "@/lib/auth-guard";
 import { deleteStoredFile } from "@/lib/blob";
@@ -238,6 +238,33 @@ export async function getProductById(id: number) {
   } catch (error) {
     console.error("Error fetching product:", error);
     return null;
+  }
+}
+
+// Fetch specific products by id, preserving the given order.
+// Used by the homepage "Essentials" section to feature hand-picked products.
+export async function getProductsByIds(ids: number[]) {
+  noStore();
+  try {
+    const cleanIds = ids.filter((id) => Number.isInteger(id) && id > 0);
+    if (cleanIds.length === 0) return [];
+
+    const rows = await db.query.hairProducts.findMany({
+      where: inArray(hairProducts.id, cleanIds),
+      with: {
+        category: true,
+        images: true,
+        colors: true,
+        inches: true,
+      },
+    });
+
+    // findMany returns DB order — reorder to match the caller's id order.
+    const byId = new Map(rows.map((p) => [p.id, p]));
+    return cleanIds.map((id) => byId.get(id)).filter((p): p is (typeof rows)[number] => Boolean(p));
+  } catch (error) {
+    console.error("Error fetching products by ids:", error);
+    return [];
   }
 }
 

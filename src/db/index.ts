@@ -14,11 +14,17 @@ if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL is not set");
 }
 
-// This network intermittently drops connections to Neon's endpoints
-// (broken IPv6 + flaky/blackholed IPv4 routes), so retry connection-level
-// failures with a short backoff before giving up.
-const MAX_ATTEMPTS = 4;
-const ATTEMPT_TIMEOUT_MS = 15_000;
+// The path to this Neon endpoint is lossy (broken IPv6 + a flaky IPv4 route
+// where the first packet often gets blackholed), so the FIRST request after
+// an idle period frequently takes 5-10s while connections warm up, then
+// settles to ~180ms. We can't fix the network, so we ride it out:
+//   - longer per-attempt timeout (30s) so a slow warm-up doesn't abort
+//   - more attempts (5) with a capped backoff
+// Worst case is ~2.5 minutes of retries instead of an error page; typical
+// cold case is one slow request that succeeds.
+const MAX_ATTEMPTS = 5;
+const ATTEMPT_TIMEOUT_MS = 30_000;
+const MAX_BACKOFF_MS = 2_000;
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -38,7 +44,7 @@ async function fetchWithRetry(
       // Caller cancelled — do not retry
       if (init?.signal?.aborted) throw error;
       if (attempt < MAX_ATTEMPTS) {
-        await sleep(attempt * 300);
+        await sleep(Math.min(attempt * 500, MAX_BACKOFF_MS));
       }
     }
   }

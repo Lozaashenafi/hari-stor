@@ -1,7 +1,7 @@
 'use client'
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { X, MessageCircle, ChevronLeft, ChevronRight, Palette, Ruler, Minus, Plus, ShoppingBag, Check } from 'lucide-react'
+import { X, MessageCircle, ChevronLeft, ChevronRight, ChevronDown, Palette, Ruler, Minus, Plus, ShoppingBag, Check } from 'lucide-react'
 import type { Product, ProductColor, ProductInch, CompanyProfile } from '@/lib/types'
 import { useCart } from '@/context/CartContext'
 import { buildWhatsAppUrl } from '@/lib/cart'
@@ -187,20 +187,26 @@ export default function PublicProductModal({ product, company, onClose }: { prod
                   <h4 className="text-[10px] text-gray-500 uppercase tracking-widest mb-4 font-black flex items-center gap-2">
                     <Ruler size={12} className="text-[#5a3e00]" /> Select Length
                   </h4>
-                  <div className="flex flex-wrap gap-2">
-                    {inches.map((i: ProductInch) => (
-                      <button 
-                        key={i.id} 
-                        onClick={() => setSelectedInch(i.inches.toString())}
-                        className={`min-h-[44px] min-w-[50px] px-5 py-2 text-[12px] transition-all border rounded-xl ${
-                          selectedInch === i.inches.toString() 
-                          ? 'bg-[#5a3e00] text-black border-[#5a3e00] font-bold' 
-                          : 'border-white/10 text-white active:border-gray-500'
-                        }`}
-                      >
-                        {i.inches}&quot;
-                      </button>
-                    ))}
+                  <div className="relative">
+                    <select
+                      aria-label="Select length"
+                      className="w-full bg-zinc-900 border border-white/10 text-white text-[12px] appearance-none rounded-xl py-3 px-4 pr-10 focus:outline-none focus:border-[#5a3e00] transition-all cursor-pointer"
+                      value={selectedInch ?? ''}
+                      onChange={(e) => setSelectedInch(e.target.value || null)}
+                    >
+                      <option value="" disabled>
+                        Choose length…
+                      </option>
+                      {inches.map((i: ProductInch) => (
+                        <option key={i.id} value={i.inches.toString()}>
+                          {i.inches}" — +${(i.additionalPrice / 100).toFixed(2)}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown
+                      size={14}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400"
+                    />
                   </div>
                 </div>
               )}
