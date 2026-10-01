@@ -2,6 +2,7 @@ import React from 'react';
 import { getCompanyProfile } from '@/services/company.service';
 import { Icons } from '@/components/ui/Icons'; // Assuming this contains Phone, MapPin, Globe, etc.
 import { Phone, MapPin, Globe } from 'lucide-react';
+import { buildSocialUrl } from '@/lib/social';
 
 const ContactSection = async () => {
   const profile = await getCompanyProfile();
@@ -9,10 +10,8 @@ const ContactSection = async () => {
   // Logic remains unchanged
   const cleanWANumber = profile?.whatsapp?.replace(/\D/g, '') || '';
   const waLink = cleanWANumber ? `https://wa.me/${cleanWANumber}` : '#';
-  const igHandle = profile?.instagram?.replace('@', '')?.trim();
-  const igLink = igHandle ? `https://instagram.com/${igHandle}` : '#';
-  const tkHandle = profile?.tiktok?.replace('@', '')?.trim();
-  const tkLink = tkHandle ? `https://tiktok.com/@${tkHandle}` : '#';
+  const igLink = buildSocialUrl(profile?.instagram, 'instagram') ?? '#';
+  const tkLink = buildSocialUrl(profile?.tiktok, 'tiktok') ?? '#';
 
   return (
     <footer className="relative bg-black py-24 px-6 border-t border-[#C5A059]/10">

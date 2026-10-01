@@ -2,9 +2,10 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import HeroImage from '../../../public/image/image.PNG';
+import HeroImage from '../../../public/image/image.png';
 import HeroImage2 from '../../../public/hero-model.jpg';
 import type { CompanyProfile } from '@/lib/types';
+import { buildSocialUrl } from '@/lib/social';
 
 // --- Custom Brand Icons (SVGs) ---
 const InstagramIcon = () => (
@@ -20,8 +21,8 @@ const WhatsAppIcon = () => (
 );
 
 const Hero = ({ profile }: { profile?: CompanyProfile | null }) => {
-  const instagramUrl = profile?.instagram ? `https://instagram.com/${profile.instagram.replace('@', '')}` : '#'
-  const tiktokUrl = profile?.tiktok ? `https://tiktok.com/@${profile.tiktok.replace('@', '')}` : '#'
+  const instagramUrl = buildSocialUrl(profile?.instagram, 'instagram') ?? '#'
+  const tiktokUrl = buildSocialUrl(profile?.tiktok, 'tiktok') ?? '#'
   const waNumber = profile?.whatsapp?.replace(/\D/g, '') || ''
   const whatsappUrl = waNumber ? `https://wa.me/${waNumber}` : '#'
   return (
