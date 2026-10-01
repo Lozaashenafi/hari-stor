@@ -1,8 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { getGalleryImages } from '@/services/gallery.service';
 import { ArrowRight } from 'lucide-react';
+import GalleryImageCard from './GalleryImageCard';
 
 const GallerySection = async () => {
   const images = await getGalleryImages();
@@ -41,16 +41,14 @@ const GallerySection = async () => {
               key={item.id} 
               className="relative w-full aspect-[3/4] overflow-hidden border border-white/5 group bg-zinc-900 shadow-xl transition-all hover:border-[#C5A059]/30"
             >
-              <Image 
-                src={item.imageUrl} 
+              <GalleryImageCard
+                src={item.imageUrl}
                 alt={item.title}
-                fill
                 sizes="(max-width: 768px) 50vw, 25vw"
-                className="object-cover transition-transform duration-700 group-hover:scale-105"
               />
               
               {/* Minimalist Hover Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6 pointer-events-none">
                 <p className="text-[#C5A059] text-[9px] uppercase tracking-[0.3em] font-bold mb-1">
                   Collection Feature
                 </p>

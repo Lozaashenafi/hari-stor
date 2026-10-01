@@ -1,6 +1,15 @@
 import { z } from 'zod'
 
 const optionalText = z.string().trim().max(500).nullish()
+
+// Origin/texture are stored lowercase so filtering can compare exactly and
+// casing differences can never create duplicate filter options.
+const lowerText = z
+  .string()
+  .trim()
+  .max(500)
+  .nullish()
+  .transform((v) => (v ? v.toLowerCase() : v))
 const url = z.string().trim().url().max(1000)
 
 const imageUrl = url.max(2000)
@@ -8,9 +17,9 @@ const imageUrl = url.max(2000)
 export const productSchema = z.object({
   name: z.string().trim().min(1, 'Product name is required').max(200),
   categoryId: z.number().int().positive().nullable(),
-  texture: optionalText,
+  texture: lowerText,
   hairType: optionalText,
-  origin: optionalText,
+  origin: lowerText,
   processing: optionalText,
   options: optionalText,
   price: z.number().int().nonnegative().max(100_000_000),

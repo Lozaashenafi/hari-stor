@@ -15,28 +15,42 @@ export default function CategoryClient({ initialProducts, categoryName, company 
 
   const safeCategoryKey = (categoryName || "").toLowerCase();
 
-  // Derived filter options (populated from actual product data)
+  // Derived filter options (populated from actual product data).
+  // Origin/texture are stored lowercase and compared lowercase — casing can
+  // never create duplicates. Display is title-cased for readability.
+  const buildOptions = (values: (string | null)[]) => {
+    const seen = new Set<string>()
+    const out: { value: string; label: string }[] = []
+    for (const v of values) {
+      const key = (v ?? '').trim().toLowerCase()
+      if (!key || seen.has(key)) continue
+      seen.add(key)
+      out.push({ value: key, label: key.replace(/\b\w/g, (c) => c.toUpperCase()) })
+    }
+    return out
+  }
+
   const textures = useMemo(
-    () => Array.from(new Set(initialProducts.map((p) => p.texture).filter((x): x is string => Boolean(x)))),
+    () => buildOptions(initialProducts.map((p) => p.texture)),
     [initialProducts]
-  );
+  )
   const origins = useMemo(
-    () => Array.from(new Set(initialProducts.map((p) => p.origin).filter((x): x is string => Boolean(x)))),
+    () => buildOptions(initialProducts.map((p) => p.origin)),
     [initialProducts]
-  );
+  )
 
   // --- 2. FILTERING & SORTING LOGIC ---
   const filteredProducts = useMemo(() => {
     let result = [...initialProducts];
 
-    // Filter by Texture
+    // Filter by Texture — compare fully lowercase
     if (textureFilter !== 'all') {
-      result = result.filter(p => p.texture === textureFilter);
+      result = result.filter(p => p.texture?.trim().toLowerCase() === textureFilter);
     }
 
-    // Filter by Origin
+    // Filter by Origin — compare fully lowercase
     if (originFilter !== 'all') {
-      result = result.filter(p => p.origin === originFilter);
+      result = result.filter(p => p.origin?.trim().toLowerCase() === originFilter);
     }
 
     // Sorting
@@ -99,7 +113,7 @@ const categoryBanners: Record<string, string> = {
               >
                 <option value="all">All Textures</option>
                 {textures.map((t) => (
-                  <option key={t} value={t}>{t}</option>
+                  <option key={t.value} value={t.value}>{t.label}</option>
                 ))}
               </select>
               <ChevronDown size={12} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400" />
@@ -117,7 +131,7 @@ const categoryBanners: Record<string, string> = {
               >
                 <option value="all">All Origins</option>
                 {origins.map((o) => (
-                  <option key={o} value={o}>{o}</option>
+                  <option key={o.value} value={o.value}>{o.label}</option>
                 ))}
               </select>
               <ChevronDown size={12} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400" />
