@@ -1,8 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { getGalleryImages } from '@/services/gallery.service';
 import { ArrowRight } from 'lucide-react';
-import GalleryImageCard from './GalleryImageCard';
 
 const GallerySection = async () => {
   const images = await getGalleryImages();
@@ -41,10 +41,12 @@ const GallerySection = async () => {
               key={item.id} 
               className="relative w-full aspect-[3/4] overflow-hidden border border-white/5 group bg-zinc-900 shadow-xl transition-all hover:border-[#C5A059]/30"
             >
-              <GalleryImageCard
+              <Image
                 src={item.imageUrl}
                 alt={item.title}
+                fill
                 sizes="(max-width: 768px) 50vw, 25vw"
+                className="object-cover"
               />
               
               {/* Minimalist Hover Overlay */}

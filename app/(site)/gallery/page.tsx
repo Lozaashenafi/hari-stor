@@ -1,6 +1,6 @@
 import { getGalleryImages } from "@/services/gallery.service";
-import Image from "next/image";
 import Link from "next/link";
+import GalleryImageCard from "@/components/site/GalleryImageCard";
 
 // Simple Arrow SVG
 const BackArrow = () => (
@@ -34,31 +34,23 @@ export default async function FullGalleryPage() {
         </header>
 
         {/* Grid for all images: 4 in a row.
-            Pure CSS color reveal: grayscale until the user HOVERS the card
-            (group-hover) or CLICKS/TAPS it (hidden checkbox via peer-checked,
-            which locks the color until clicked again). No JavaScript needed. */}
+            Grayscale until the user HOVERS the card or CLICKS/TAPS it
+            (handled by GalleryImageCard). */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {images.map((img) => (
-            <label
+            <div
               key={img.id}
-              className="group relative block aspect-[3/4] rounded-xl overflow-hidden border border-white/5 bg-zinc-900 cursor-pointer group-focus-within:ring-2 group-focus-within:ring-[#C5A059]"
+              className="group relative block aspect-[3/4] rounded-xl overflow-hidden border border-white/5 bg-zinc-900"
             >
-              <input
-                type="checkbox"
-                className="peer sr-only"
-                aria-label={`Show ${img.title} in full color`}
-              />
-              <Image
+              <GalleryImageCard
                 src={img.imageUrl}
                 alt={img.title}
-                fill
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                className="object-cover grayscale transition-all duration-700 group-hover:grayscale-0 group-hover:scale-105 peer-checked:grayscale-0 peer-checked:scale-105"
               />
-              <div className="pointer-events-none absolute inset-0 flex items-end bg-black/60 p-6 opacity-0 transition-opacity duration-500 group-hover:opacity-100 peer-checked:opacity-100">
+              <div className="pointer-events-none absolute inset-0 flex items-end bg-black/60 p-6 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
                 <p className="text-white font-serif text-lg italic">{img.title}</p>
               </div>
-            </label>
+            </div>
           ))}
         </div>
 
