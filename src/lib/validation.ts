@@ -32,7 +32,8 @@ export const productSchema = z.object({
     .array(
       z.object({
         value: z.coerce.number().int().positive().max(200),
-        extra: z.coerce.number().int().nonnegative().max(100_000_000),
+        // Negative = discount for lengths below the 24" base.
+        extra: z.coerce.number().int().min(-100_000_000).max(100_000_000),
       })
     )
     .max(30)

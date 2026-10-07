@@ -101,7 +101,7 @@ export default function NewProductPageForm({ categories }: { categories: Categor
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className={labelClass}>Base Price ($) — 14"</label>
+                <label className={labelClass}>Base Price ($) — 24&quot;</label>
                 <input name="price" type="number" step="0.01" className={inputClass} required />
               </div>
               <div className="flex items-end pb-1">
@@ -129,7 +129,7 @@ export default function NewProductPageForm({ categories }: { categories: Categor
               </button>
             </div>
             <p className="text-[10px] text-zinc-500 uppercase tracking-widest">
-              Leave empty to auto-generate 14&quot;–30&quot; (wig +$20/inch, brazilian +$10/inch, others +$7/inch)
+              Leave empty to auto-generate 14&quot;–30&quot; (24&quot; = base price; per inch: wigs $21 asian/$30 brazilian, clip-ins $14/$20, bundles &amp; ponytail $7/$10)
             </p>
 
             <div className="space-y-3">

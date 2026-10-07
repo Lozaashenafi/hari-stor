@@ -23,17 +23,18 @@ async function main() {
 
   const { db } = await import('../src/db/index')
   const { hairInches } = await import('../src/db/schema')
-  const { buildDefaultInches } = await import('../src/lib/default-inches')
+  const { buildDefaultInches, getInchRateCents } = await import('../src/lib/default-inches')
   const { eq } = await import('drizzle-orm')
 
   const products = await db.query.hairProducts.findMany({
     with: { category: true },
   })
 
-  console.log(`Backfilling default inches for ${products.length} product(s)...\n`)
+  console.log(`Replacing inch rows for ${products.length} product(s)...\n`)
 
   for (const product of products) {
-    const rows = buildDefaultInches(product.category?.name ?? null, product.origin)
+    const categoryName = product.category?.name ?? null
+    const rows = buildDefaultInches(categoryName, product.origin, product.name)
 
     await db.delete(hairInches).where(eq(hairInches.productId, product.id))
     await db.insert(hairInches).values(
@@ -44,10 +45,12 @@ async function main() {
       }))
     )
 
-    const rate = rows[1] ? rows[1].extra / 100 / 2 : 0
+    const rate = getInchRateCents(categoryName, product.origin, product.name) / 100
+    const at14 = product.price + rows[0].extra
+    const at30 = product.price + rows[rows.length - 1].extra
     console.log(
-      `  #${product.id} "${product.name}" [${product.category?.name ?? 'no category'} / ${product.origin ?? 'no origin'}] ` +
-        `-> ${rows.length} rows (14" = $${(product.price / 100).toFixed(2)}, 30" = $${((product.price + rows[rows.length - 1].extra) / 100).toFixed(2)}, step $${rate.toFixed(2)}/in)`
+      `  #${product.id} "${product.name}" [${categoryName ?? 'no category'} / ${product.origin ?? 'no origin'}] ` +
+        `-> $${rate.toFixed(2)}/inch, 24" = $${(product.price / 100).toFixed(2)} (base), 14" = $${(at14 / 100).toFixed(2)}, 30" = $${(at30 / 100).toFixed(2)}`
     )
   }
 

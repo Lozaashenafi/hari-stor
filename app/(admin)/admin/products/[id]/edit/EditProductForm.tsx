@@ -134,7 +134,7 @@ export default function EditProductForm({ product, categories }: EditProductForm
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-                <label className={labelClass}>Base Price ($) — 14"</label>
+                <label className={labelClass}>Base Price ($) — 24&quot;</label>
                 <input name="price" type="number" step="0.01" defaultValue={(product.price / 100).toFixed(2)} className={inputClass} required />
             </div>
             <div className={`flex items-center gap-4 p-5 rounded-2xl border transition-all mt-6 ${product.isOnSale ? 'bg-[#C5A059]/10 border-[#C5A059]/40' : 'bg-zinc-800/50 border-zinc-700'}`}>
@@ -192,7 +192,7 @@ export default function EditProductForm({ product, categories }: EditProductForm
             </button>
           </div>
           <p className="text-[10px] text-zinc-500 uppercase tracking-widest">
-            Clear all rows to auto-generate 14&quot;–30&quot; (wig +$20/inch, brazilian +$10/inch, others +$7/inch)
+            Clear all rows to auto-generate 14&quot;–30&quot; (24&quot; = base price; per inch: wigs $21 asian/$30 brazilian, clip-ins $14/$20, bundles &amp; ponytail $7/$10)
           </p>
           <div className="space-y-3">
             {inchesList.map((row, index) => (

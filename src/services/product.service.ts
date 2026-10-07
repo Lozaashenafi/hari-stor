@@ -91,7 +91,7 @@ export async function createHairProduct(data: ProductInput) {
     const inchesToInsert =
       parsed.inches.length > 0
         ? parsed.inches
-        : buildDefaultInches(await getCategoryName(parsed.categoryId), parsed.origin);
+        : buildDefaultInches(await getCategoryName(parsed.categoryId), parsed.origin, parsed.name);
 
     if (inchesToInsert.length > 0) {
       await db.insert(hairInches).values(
@@ -188,7 +188,7 @@ export async function updateHairProduct(id: number, data: ProductInput) {
     const inchesToInsert =
       parsed.inches.length > 0
         ? parsed.inches
-        : buildDefaultInches(await getCategoryName(parsed.categoryId), parsed.origin);
+        : buildDefaultInches(await getCategoryName(parsed.categoryId), parsed.origin, parsed.name);
     if (inchesToInsert.length > 0) {
       await db.insert(hairInches).values(
         inchesToInsert.map((i) => ({ 
