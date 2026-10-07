@@ -8,11 +8,12 @@ export interface DefaultInch {
   extra: number // cents relative to the 24" base price (negative below 24)
 }
 
-// Per-INCH price difference (in cents) by category × origin:
-// - Wigs:      $21 / inch asian, $30 / inch brazilian
-// - Clip-ins:  $14 / inch asian, $20 / inch brazilian
-// - Bundles:    $7 / inch asian, $10 / inch brazilian
-// - Ponytail:   $7 / inch asian, $10 / inch brazilian
+// Price difference per 2-inch LENGTH STEP (in cents) by category × origin.
+// Lengths move 14 → 16 → 18 … so each listed length applies the rate once:
+// - Wigs:      $21 / step asian, $30 / step brazilian  (26" = +$30 brazilian)
+// - Clip-ins:  $14 / step asian, $20 / step brazilian
+// - Bundles:    $7 / step asian, $10 / step brazilian
+// - Ponytail:   $7 / step asian, $10 / step brazilian
 // Origins other than brazilian (asian, pixie, blank) use the asian rate.
 const RATES = {
   wig: { asian: 2100, brazilian: 3000 },
@@ -39,7 +40,8 @@ export function getInchRateCents(
   return brazilian ? table.brazilian : table.asian
 }
 
-// 24" = base price (extra 0). price(inches) = base + (inches − 24) × rate.
+// 24" = base price (extra 0). Each 2-inch step away from 24" adds/subtracts the rate:
+// price(inches) = base + ((inches − 24) / 2) × rate.
 export function buildDefaultInches(
   categoryName?: string | null,
   origin?: string | null,
@@ -48,6 +50,6 @@ export function buildDefaultInches(
   const rate = getInchRateCents(categoryName, origin, productName)
   return DEFAULT_INCHES.map((value) => ({
     value,
-    extra: (value - BASE_INCHES) * rate,
+    extra: ((value - BASE_INCHES) / 2) * rate,
   }))
 }

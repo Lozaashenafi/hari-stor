@@ -50,7 +50,7 @@ async function main() {
     const at30 = product.price + rows[rows.length - 1].extra
     console.log(
       `  #${product.id} "${product.name}" [${categoryName ?? 'no category'} / ${product.origin ?? 'no origin'}] ` +
-        `-> $${rate.toFixed(2)}/inch, 24" = $${(product.price / 100).toFixed(2)} (base), 14" = $${(at14 / 100).toFixed(2)}, 30" = $${(at30 / 100).toFixed(2)}`
+        `-> $${rate.toFixed(2)}/step, 24" = $${(product.price / 100).toFixed(2)} (base), 14" = $${(at14 / 100).toFixed(2)}, 30" = $${(at30 / 100).toFixed(2)}`
     )
   }
 

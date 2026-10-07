@@ -129,7 +129,7 @@ export default function NewProductPageForm({ categories }: { categories: Categor
               </button>
             </div>
             <p className="text-[10px] text-zinc-500 uppercase tracking-widest">
-              Leave empty to auto-generate 14&quot;–30&quot; (24&quot; = base price; per inch: wigs $21 asian/$30 brazilian, clip-ins $14/$20, bundles &amp; ponytail $7/$10)
+              Leave empty to auto-generate 14&quot;–30&quot; (24&quot; = base price; each 2&quot; step: wigs $21 asian/$30 brazilian, clip-ins $14/$20, bundles &amp; ponytail $7/$10)
             </p>
 
             <div className="space-y-3">
